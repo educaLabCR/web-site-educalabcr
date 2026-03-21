@@ -1,109 +1,100 @@
 'use client';
 import { motion } from 'framer-motion';
 import { Clock, Monitor, Wallet, BookOpen, Users, CalendarDays, ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-
-interface Session {
-  day: string;
-  date: string;
-  month: string;
-  time: string;
+interface Sesion {
+  dia: string;
+  fecha_dia: string;
+  mes: string;
+  horario: string;
 }
 
-interface LiveCourse {
-  title: string;
-  subtitle: string;
-  target: string;
-  desc: string;
-  weeks: string;
-  modality: string;
-  price: string;
-  hours: string;
-  sessions: number;
-  sessionFrequency: string;
-  schedule: Session[];
-  tags: string[];
-  accentColor: string;
-  bgColor: string;
-  image?: string;
+interface Curso {
+  titulo: string;
+  subtitulo: string;
+  dirigido_a: string;
+  descripcion: string;
+  semanas: string;
+  modalidad: string;
+  precio: string;
+  horas: string;
+  cantidad_sesiones: number;
+  frecuencia_sesiones: string;
+  sesiones_curso: Sesion[];
+  etiquetas: string[];
+  color_acento: string;
+  color_fondo: string;
+  imagen?: string;
 }
 
-const liveCourses: LiveCourse[] = [
-  {
-    title: 'Herramientas Digitales: LaTeX, GeoGebra y Classpad.net',
-    subtitle: 'Para Matemáticas',
-    target: 'Docentes de matemáticas de secundaria y superior',
-    desc: 'Llevá tus clases de matemáticas al siguiente nivel con este curso práctico y actualizado. Aprenderás a redactar con LaTeX, crear visualizaciones dinámicas con GeoGebra y usar Classpad para potenciar el pensamiento algebraico. Un enfoque integral para enseñar matemática con precisión, innovación y claridad.',
-    weeks: '10 Semanas',
-    modality: 'Virtual Híbrido',
-    price: '₡45.000 / $90 USD',
-    hours: '80 Horas',
-    sessions: 5,
-    sessionFrequency: 'Sesiones Bisemanales',
-    schedule: [
-      { day: 'Jueves', date: '14', month: 'Agosto', time: '5:00 – 7:00 PM' },
-    ],
-    tags: ['LaTeX', 'GeoGebra', 'Classpad', 'IA'],
-    accentColor: '#22c55e',
-    bgColor: '#f0fdf4',
-  },
-  {
-    title: 'Diseño y Creación de Materiales Educativos con IA',
-    subtitle: 'Canva + Herramientas de Inteligencia Artificial',
-    target: 'Docentes y profesionales de la educación',
-    desc: 'Aprende a crear visuales e impactantes con Canva y herramientas de inteligencia artificial. Desde los fundamentos del diseño gráfico hasta la producción de videos educativos profesionales para el aula.',
-    weeks: '10 Semanas',
-    modality: 'Virtual Híbrido',
-    price: '₡45.000 / $90 USD',
-    hours: '80 Horas',
-    sessions: 5,
-    sessionFrequency: 'Sesiones Bisemanales',
-    schedule: [
-      { day: 'Martes', date: '12', month: 'Agosto', time: '5:00 – 7:00 PM' },
-    ],
-    tags: ['Canva', 'IA Generativa', 'Video Educativo', 'Diseño Gráfico'],
-    accentColor: '#3b82f6',
-    bgColor: '#eff6ff',
-  },
-  {
-    title: 'Evaluación Formativa e Instrumentos con Inteligencia Artificial',
-    subtitle: 'Transformá tu práctica evaluativa',
-    target: 'Docentes y profesionales de la educación',
-    desc: 'Aprenda a generar rúbricas inteligentes, crear exámenes digitales, diseñar instrumentos alternativos con IA, automatizar la calificación y brindar retroalimentación efectiva y personalizada a sus estudiantes.',
-    weeks: '10 Semanas',
-    modality: 'Virtual Híbrido',
-    price: '₡45.000 / $90 USD',
-    hours: '80 Horas',
-    sessions: 5,
-    sessionFrequency: 'Sesiones Bisemanales',
-    schedule: [
-      { day: 'Miércoles', date: '13', month: 'Agosto', time: '5:00 – 7:00 PM' },
-    ],
-    tags: ['Rúbricas IA', 'Evaluación Digital', 'Retroalimentación', 'Calificación Automática'],
-    accentColor: '#8b5cf6',
-    bgColor: '#f5f3ff',
-  },
-  {
-    title: 'Docencia Digital con Inteligencia Artificial Avanzada',
-    subtitle: 'Transformá tu práctica docente completa',
-    target: 'Docentes y profesionales de la educación',
-    desc: 'Aprenda a crear secuencias didácticas con IA, diseñar bots educativos y construir entornos digitales interactivos. Un programa integral para llevar la innovación al corazón de su práctica docente.',
-    weeks: '16 Semanas',
-    modality: 'Virtual Híbrido',
-    price: '₡60.000 / $120 USD',
-    hours: '80 Horas',
-    sessions: 4,
-    sessionFrequency: 'Sesiones Semanales',
-    schedule: [
-      { day: 'Lunes', date: '11', month: 'Agosto', time: '6:00 – 8:00 PM' },
-    ],
-    tags: ['Secuencias Didácticas', 'Bots Educativos', 'Entornos Digitales', 'IA Avanzada'],
-    accentColor: '#f59e0b',
-    bgColor: '#fffbeb',
-  },
-];
+interface MetodoPago {
+  titulo: string;
+  descripcion: string;
+  detalle: string;
+  color: string;
+}
+
+interface ContenidoPagina {
+  titulo_hero: string;
+  subtitulo_hero: string;
+  texto_badge: string;
+  texto_zoom?: string;
+  texto_cupos_limitados?: string;
+  pildora_1?: string;
+  pildora_2?: string;
+  pildora_3?: string;
+  imagen_hero?: string;
+}
 
 export default function OfertasEnVivo() {
+  const [courses, setCourses] = useState<Curso[]>([]);
+  const [payments, setPayments] = useState<MetodoPago[]>([]);
+  const [content, setContent] = useState<ContenidoPagina | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      const url = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://control-directus-9ee74c-76-13-234-106.traefik.me';
+      try {
+        const [coursesRes, paymentsRes, contentRes] = await Promise.all([
+          fetch(`${url}/items/cursos_en_vivo?fields=*,sesiones_curso.*&filter[estado][_eq]=published`),
+          fetch(`${url}/items/metodos_pago?filter[estado][_eq]=published`),
+          fetch(`${url}/items/contenido_pagina_ofertas`),
+        ]);
+
+        const coursesData = await coursesRes.json();
+        const paymentsData = await paymentsRes.json();
+        const contentData = await contentRes.json();
+
+        setCourses(coursesData.data || []);
+        setPayments(paymentsData.data || []);
+        setContent(contentData.data || null);
+      } catch (error) {
+        console.error('Error fetching data from Directus:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  const page = content || {
+    titulo_hero: 'Cursos en Vivo & Directo',
+    subtitulo_hero: 'Interactúa con expertos en tiempo real. Formaciones intensivas diseñadas para transformar tus competencias digitales con acompañamiento constante.',
+    texto_badge: 'Sincrónico · Acompañamiento Real',
+    texto_zoom: 'Sesiones por Zoom',
+    texto_cupos_limitados: 'Cupos Limitados'
+  };
+
   return (
     <main className="max-w-[1400px] mx-auto overflow-hidden pb-20">
 
@@ -123,7 +114,7 @@ export default function OfertasEnVivo() {
               className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/5 text-primary font-semibold text-xs uppercase tracking-[0.2em] mb-8 border border-primary/12"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-primary-bright animate-pulse" />
-              Sincrónico · Acompañamiento Real
+              {page.texto_badge}
             </motion.span>
 
             {/* Title */}
@@ -133,17 +124,20 @@ export default function OfertasEnVivo() {
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
               className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 leading-[1.05] mb-6"
             >
-              Cursos en <br/>
-              <span className="text-primary-bright relative">
-                Vivo & Directo
-                {/* Underline decoration */}
-                <motion.span
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: 0.7, ease: 'easeOut', delay: 0.6 }}
-                  className="absolute left-0 -bottom-1 h-1 w-full bg-primary-bright/30 rounded-full origin-left block"
-                />
-              </span>
+              {page.titulo_hero.split('&').map((part, i, arr) => (
+                <span key={i}>
+                  {i === 0 ? part : <span className="text-primary-bright relative">
+                    & {part}
+                    <motion.span
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: 0.7, ease: 'easeOut', delay: 0.6 }}
+                      className="absolute left-0 -bottom-1 h-1 w-full bg-primary-bright/30 rounded-full origin-left block"
+                    />
+                  </span>}
+                  {i < arr.length - 1 && <br />}
+                </span>
+              ))}
             </motion.h1>
 
             {/* Subtitle */}
@@ -153,7 +147,7 @@ export default function OfertasEnVivo() {
               transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
               className="text-xl text-slate-500 leading-relaxed mb-12 max-w-xl font-medium"
             >
-              Interactúa con expertos en tiempo real. Formaciones intensivas diseñadas para transformar tus competencias digitales con acompañamiento constante.
+              {page.subtitulo_hero}
             </motion.p>
 
             {/* CTAs */}
@@ -173,7 +167,7 @@ export default function OfertasEnVivo() {
 
               <div className="flex items-center gap-3 px-5 py-3.5 rounded-full bg-white border border-slate-200 text-slate-600 font-semibold text-sm shadow-sm font-bold">
                  <Monitor className="w-4 h-4 text-primary" />
-                 Sesiones por Zoom
+                 {page.texto_zoom}
               </div>
             </motion.div>
           </div>
@@ -201,12 +195,26 @@ export default function OfertasEnVivo() {
                    </div>
                 </div>
 
-                <div className="flex-1 bg-slate-50 rounded-2xl relative overflow-hidden flex items-center justify-center">
-                   <Monitor className="w-20 h-20 text-slate-200" />
+                <div className="flex-1 bg-slate-100 rounded-2xl relative overflow-hidden group">
+                   <img 
+                      src={page.imagen_hero ? `/directus-api/assets/${page.imagen_hero}` : "/images/clase-en-vivo.png"} 
+                      alt="Clase en Vivo" 
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                   />
+                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent"></div>
                    <div className="absolute bottom-4 left-4 right-4 flex gap-2">
-                      <div className="w-1/3 h-20 bg-white/40 backdrop-blur rounded-lg border border-white/20"></div>
-                      <div className="w-1/3 h-20 bg-white/40 backdrop-blur rounded-lg border border-white/20"></div>
-                      <div className="w-1/3 h-20 bg-white/40 backdrop-blur rounded-lg border border-white/20"></div>
+                      <div className="w-1/3 h-20 bg-white/20 backdrop-blur-md rounded-lg border border-white/20 shadow-lg flex flex-col items-center justify-center text-center p-2">
+                         <Monitor className="w-4 h-4 text-white mb-1" />
+                         <p className="text-[9px] font-black text-white leading-tight uppercase tracking-widest">{page.pildora_1 || 'Clases en Vivo'}</p>
+                      </div>
+                      <div className="w-1/3 h-20 bg-white/20 backdrop-blur-md rounded-lg border border-white/20 shadow-lg flex flex-col items-center justify-center text-center p-2">
+                         <Users className="w-4 h-4 text-white mb-1" />
+                         <p className="text-[9px] font-black text-white leading-tight uppercase tracking-widest">{page.pildora_2 || '100% en Vivo'}</p>
+                      </div>
+                      <div className="w-1/3 h-20 bg-white/20 backdrop-blur-md rounded-lg border border-white/20 shadow-lg flex flex-col items-center justify-center text-center p-2">
+                         <Clock className="w-4 h-4 text-white mb-1" />
+                         <p className="text-[9px] font-black text-white leading-tight uppercase tracking-widest">{page.pildora_3 || 'Grabaciones Disponibles'}</p>
+                      </div>
                    </div>
                 </div>
 
@@ -243,15 +251,15 @@ export default function OfertasEnVivo() {
                className="absolute -bottom-6 left-1/4 bg-[#1A1F36] text-white px-6 py-4 rounded-2xl shadow-xl flex gap-3 items-center z-20 border border-white/10"
              >
                 <Users className="w-5 h-5 text-neon" />
-                <p className="font-bold text-xs uppercase tracking-widest">Cupos Limitados</p>
+                <p className="font-bold text-xs uppercase tracking-widest">{page.texto_cupos_limitados}</p>
              </motion.div>
           </motion.div>
         </div>
       </section>
 
       {/* Course Cards */}
-      <section className="px-6 md:px-12 space-y-16 mt-4">
-        {liveCourses.map((course, idx) => (
+      <section id="cursos" className="px-6 md:px-12 space-y-16 mt-4">
+        {courses.map((course, idx) => (
           <motion.div
             key={idx}
             initial={{ opacity: 0, y: 40 }}
@@ -264,16 +272,33 @@ export default function OfertasEnVivo() {
 
               {/* Left: Visual Panel */}
               <div
-                className="lg:col-span-2 relative flex flex-col items-center justify-center p-10 min-h-[360px] overflow-hidden"
-                style={{ background: course.bgColor }}
+                className="lg:col-span-2 relative flex flex-col items-center justify-center p-10 min-h-[360px] overflow-hidden group/card"
+                style={{ background: course.color_fondo }}
               >
+                {/* Background Image Overlay */}
+                <div className="absolute inset-0 z-0">
+                   <img 
+                      src={course.imagen ? `/directus-api/assets/${course.imagen}` : (
+                        course.titulo.includes('LaTeX') ? '/images/matematicas.png' :
+                        course.titulo.includes('Canva') ? '/images/canva.png' :
+                        course.titulo.includes('Evaluación') ? '/images/evaluacion.png' :
+                        course.titulo.includes('Docencia') ? '/images/docencia.png' :
+                        '/images/clase-en-vivo.png'
+                      )}
+                      alt={course.titulo}
+                      className="w-full h-full object-cover opacity-80 mix-blend-multiply transition-transform duration-1000 group-hover/card:scale-110"
+                   />
+                </div>
+                {/* Subtle Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent z-[1]" />
+
                 {/* Big decorative number */}
-                <div className="absolute top-6 left-6 flex flex-col items-start gap-1">
+                <div className="absolute top-6 left-6 flex flex-col items-start gap-1 z-10">
                   <div className="flex items-end gap-2">
-                    <span className="text-[5rem] font-black leading-none" style={{ color: course.accentColor }}>{course.sessions}</span>
+                    <span className="text-[5rem] font-black leading-none" style={{ color: course.color_acento }}>{course.cantidad_sesiones}</span>
                     <div className="mb-3">
                       <p className="text-xs font-black uppercase tracking-widest text-slate-500">Sesiones</p>
-                      <p className="text-xs font-bold text-slate-400">{course.sessionFrequency}</p>
+                      <p className="text-xs font-bold text-slate-400">{course.frecuencia_sesiones}</p>
                     </div>
                   </div>
                 </div>
@@ -281,11 +306,11 @@ export default function OfertasEnVivo() {
                 {/* Tags strip */}
                 <div className="absolute bottom-0 left-0 right-0 overflow-hidden h-14">
                   <div className="flex items-center gap-0 whitespace-nowrap animate-[marquee_20s_linear_infinite]">
-                    {[...course.tags, ...course.tags, ...course.tags].map((tag, i) => (
+                    {course.etiquetas && [...course.etiquetas, ...course.etiquetas, ...course.etiquetas].map((tag, i) => (
                       <span
                         key={i}
                         className="inline-block px-4 py-2 text-sm font-black uppercase tracking-wider text-white"
-                        style={{ background: course.accentColor, marginRight: '2px' }}
+                        style={{ background: course.color_acento, marginRight: '2px' }}
                       >
                         {tag}
                       </span>
@@ -295,18 +320,18 @@ export default function OfertasEnVivo() {
 
                 {/* Schedule badges */}
                 <div className="mt-16 flex flex-col gap-3 w-full">
-                  {course.schedule.map((s, i) => (
+                  {course.sesiones_curso && course.sesiones_curso.map((s, i) => (
                     <div key={i} className="flex items-center gap-4 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-white/50">
                       <div
                         className="text-white rounded-xl p-3 text-center shrink-0 min-w-[56px]"
-                        style={{ background: course.accentColor }}
+                        style={{ background: course.color_acento }}
                       >
-                        <div className="text-2xl font-black leading-none">{s.date}</div>
-                        <div className="text-[10px] font-bold uppercase tracking-wide opacity-90">{s.month}</div>
+                        <div className="text-2xl font-black leading-none">{s.fecha_dia}</div>
+                        <div className="text-[10px] font-bold uppercase tracking-wide opacity-90">{s.mes}</div>
                       </div>
                       <div>
-                        <p className="font-bold text-slate-800 text-base">{s.day}</p>
-                        <p className="text-sm text-slate-500 font-medium">{s.time}</p>
+                        <p className="font-bold text-slate-800 text-base">{s.dia}</p>
+                        <p className="text-sm text-slate-500 font-medium">{s.horario}</p>
                       </div>
                     </div>
                   ))}
@@ -315,7 +340,7 @@ export default function OfertasEnVivo() {
                 {/* Vertical label */}
                 <div
                   className="absolute right-0 top-0 bottom-14 w-10 flex items-center justify-center"
-                  style={{ background: course.accentColor }}
+                  style={{ background: course.color_acento }}
                 >
                   <span
                     className="text-white text-xs font-black uppercase tracking-[0.25em] whitespace-nowrap"
@@ -333,62 +358,62 @@ export default function OfertasEnVivo() {
                   <div className="flex items-center gap-2 mb-4">
                     <Users className="w-4 h-4 text-slate-400 shrink-0" />
                     <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
-                      Dirigido a: <span className="text-slate-700">{course.target}</span>
+                      Dirigido a: <span className="text-slate-700">{course.dirigido_a}</span>
                     </p>
                   </div>
 
                   {/* Title */}
                   <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight mb-2">
-                    {course.title}
+                    {course.titulo}
                   </h2>
-                  <p className="text-sm font-semibold uppercase tracking-wider mb-6" style={{ color: course.accentColor }}>
-                    {course.subtitle}
+                  <p className="text-sm font-semibold uppercase tracking-wider mb-6" style={{ color: course.color_acento }}>
+                    {course.subtitulo}
                   </p>
 
                   {/* Description */}
                   <p className="text-slate-600 leading-relaxed text-base md:text-lg mb-8">
-                    {course.desc}
+                    {course.descripcion}
                   </p>
 
                   {/* Info chips */}
                   <div
                     className="rounded-2xl p-5 grid grid-cols-2 gap-4 mb-8"
-                    style={{ background: course.bgColor }}
+                    style={{ background: course.color_fondo }}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0" style={{ background: course.accentColor }}>
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0" style={{ background: course.color_acento }}>
                         <Clock className="w-4 h-4" />
                       </div>
                       <div>
                         <p className="text-xs text-slate-400 font-medium">Duración</p>
-                        <p className="font-bold text-slate-800">{course.weeks}</p>
+                        <p className="font-bold text-slate-800">{course.semanas}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0" style={{ background: course.accentColor }}>
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0" style={{ background: course.color_acento }}>
                         <Monitor className="w-4 h-4" />
                       </div>
                       <div>
                         <p className="text-xs text-slate-400 font-medium">Modalidad</p>
-                        <p className="font-bold text-slate-800">{course.modality}</p>
+                        <p className="font-bold text-slate-800">{course.modalidad}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0" style={{ background: course.accentColor }}>
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0" style={{ background: course.color_acento }}>
                         <Wallet className="w-4 h-4" />
                       </div>
                       <div>
                         <p className="text-xs text-slate-400 font-medium">Inversión</p>
-                        <p className="font-bold text-slate-800">{course.price}</p>
+                        <p className="font-bold text-slate-800">{course.precio}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0" style={{ background: course.accentColor }}>
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0" style={{ background: course.color_acento }}>
                         <BookOpen className="w-4 h-4" />
                       </div>
                       <div>
                         <p className="text-xs text-slate-400 font-medium">Horas</p>
-                        <p className="font-bold text-slate-800">{course.hours}</p>
+                        <p className="font-bold text-slate-800">{course.horas}</p>
                       </div>
                     </div>
                   </div>
@@ -401,7 +426,7 @@ export default function OfertasEnVivo() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 font-black text-white px-8 py-4 rounded-full text-sm uppercase tracking-widest shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
-                    style={{ background: course.accentColor, boxShadow: `0 8px 30px ${course.accentColor}40` }}
+                    style={{ background: course.color_acento, boxShadow: `0 8px 30px ${course.color_acento}40` }}
                   >
                     Consultar Plan de Estudios
                     <ArrowRight className="w-4 h-4" />
@@ -428,31 +453,12 @@ export default function OfertasEnVivo() {
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 text-center mb-3">Información de pagos</h2>
           <p className="text-slate-500 text-center mb-12 max-w-2xl mx-auto">Facilitamos múltiples métodos de pago para que inicies tu formación sin obstáculos.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'Transferencia Bancaria',
-                desc: 'Transferencia vía SINPE Móvil o Transferencia al IBAN de la empresa.',
-                detail: 'SINPE: 7014-7031',
-                color: '#22c55e',
-              },
-              {
-                title: 'Plataforma Segura',
-                desc: 'Pago con tarjeta de crédito o débito a través de plataformas financieras avaladas.',
-                detail: 'Mercado Pago · PayPal',
-                color: '#3b82f6',
-              },
-              {
-                title: 'Financiamiento BAC',
-                desc: 'Si eres cliente de BAC Credomatic, puedes solicitar 3 meses tasa cero',
-                detail: 'Sin intereses adicionales',
-                color: '#f59e0b',
-              },
-            ].map((m, i) => (
+            {payments.map((m, i) => (
               <div key={i} className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-3 h-3 rounded-full mb-5" style={{ background: m.color }} />
-                <h3 className="text-lg font-bold text-slate-900 mb-2">{m.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed mb-4">{m.desc}</p>
-                <p className="text-sm font-bold" style={{ color: m.color }}>{m.detail}</p>
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{m.titulo}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed mb-4">{m.descripcion}</p>
+                <p className="text-sm font-bold" style={{ color: m.color }}>{m.detalle}</p>
               </div>
             ))}
           </div>

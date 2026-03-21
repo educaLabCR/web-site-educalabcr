@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
 import { 
   ArrowRight, CheckCircle, Zap, Users, PlayCircle, ShieldCheck, Star, LineChart, 
-  Globe, Briefcase, Award, TrendingUp, MonitorPlay, MessageCircle, FileText, Smartphone
+  Globe, Briefcase, Award, TrendingUp, MonitorPlay, MessageCircle, FileText, Smartphone,
+  GraduationCap, BookOpen, ClipboardCheck, MessageSquare
 } from 'lucide-react';
 
 export default function Home() {
@@ -34,8 +35,8 @@ export default function Home() {
             </motion.div>
 
             <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl font-bold text-slate-900 leading-[1.1] mb-6 tracking-tight">
-              Potencia tu <span className="text-primary relative inline-block">
-                Futuro
+              Regístrate y <span className="text-primary relative inline-block">
+                Potencia
                 {/* Decoration behind text */}
                 <svg className="absolute -bottom-2 -left-2 w-[110%] h-4 text-neon -z-10 opacity-60" viewBox="0 0 100 10" preserveAspectRatio="none">
                   <path d="M0 5 Q 50 10 100 5 L 100 10 L 0 10 Z" fill="currentColor"/>
@@ -46,16 +47,19 @@ export default function Home() {
                   <TrendingUp className="w-6 h-6" />
                 </div>
               </span><br/>
-              Profesional
+              tu Carrera
             </motion.h1>
             
             <motion.p variants={itemVariants} className="text-lg text-slate-500 leading-relaxed mb-10 font-medium">
               EducaLab es una innovadora herramienta de formación enfocada en potenciar tus habilidades profesionales con eficiencia y simplicidad.
             </motion.p>
             
-            <motion.div variants={itemVariants}>
-              <Link href="/ofertas-en-vivo" className="inline-flex items-center justify-center bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-primary transition-all shadow-xl shadow-slate-900/10 gap-2">
-                Comenzar Ahora
+            <motion.div variants={itemVariants} className="flex flex-wrap gap-4">
+              <Link href="https://demo.educalabcr.tech/" className="inline-flex items-center justify-center bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-primary transition-all shadow-xl shadow-slate-900/10 gap-2">
+                Registrarme Ahora
+              </Link>
+              <Link href="https://www.youtube.com/playlist?list=PL0EctyuBX1HLspwlVmSzEM_D7vBz3jKjM" className="inline-flex items-center justify-center border-2 border-slate-900/10 text-slate-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-slate-50 transition-all gap-2" target="_blank" rel="noopener noreferrer">
+                Mira la Demo <PlayCircle className="w-5 h-5"/>
               </Link>
             </motion.div>
           </motion.div>
@@ -120,6 +124,65 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* 1.5 Registro Educativo Docente (NUEVA SEGUNDA SECCIÓN) */}
+      <section className="bg-white py-24 border-y border-slate-100 overflow-hidden">
+        <div className="max-w-[1200px] mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-16">
+          <div className="w-full md:w-5/12 relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-bold text-xs uppercase tracking-wider mb-6">
+              <GraduationCap className="w-4 h-4" /> Para Educadores
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight mb-6">
+              <span className="text-primary-bright">Registro</span> Educativo Docente
+            </h2>
+            <p className="text-slate-500 font-medium mb-10 leading-relaxed text-lg">
+              Optimiza tu trayectoria profesional con nuestro sistema de registro especializado para educadores. Gestiona tus certificaciones, méritos y acceso a programas con aval institucional de forma ágil y centralizada.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Link href="https://demo.educalabcr.tech/" className="inline-flex items-center justify-center bg-primary text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-primary-bright transition-all shadow-lg shadow-primary/20">
+                Iniciar Registro Docente
+              </Link>
+            </div>
+          </div>
+          
+          <div className="w-full md:w-6/12 relative h-80 flex items-center justify-center scale-110">
+             {/* Center icon - Education focus */}
+             <div className="w-24 h-24 bg-primary rounded-3xl shadow-2xl shadow-primary/40 flex items-center justify-center z-20 relative transform rotate-3">
+               <GraduationCap className="w-12 h-12 text-neon" />
+               
+               {/* Connecting lines with educational particles */}
+               <svg className="absolute inset-[-150px] w-[380px] h-[380px] -z-10 text-slate-200 stroke-[1.5px] opacity-60" fill="none">
+                 <path d="M190,190 L100,50" strokeDasharray="4 4" />
+                 <path d="M190,190 L280,50" strokeDasharray="4 4" />
+                 <path d="M190,190 L50,190" strokeDasharray="4 4" />
+                 <path d="M190,190 L330,190" strokeDasharray="4 4" />
+                 <path d="M190,190 L100,330" strokeDasharray="4 4" />
+                 <path d="M190,190 L280,330" strokeDasharray="4 4" />
+               </svg>
+             </div>
+             
+             {/* Surrounding floating education icons */}
+             <div className="absolute top-4 left-16 w-16 h-16 bg-white rounded-2xl shadow-xl border border-slate-100 flex items-center justify-center text-primary animate-bounce-slow" style={{animationDelay: '0.2s'}}>
+                <BookOpen className="w-7 h-7"/>
+             </div>
+             <div className="absolute top-4 right-16 w-16 h-16 bg-white rounded-2xl shadow-xl border border-slate-100 flex items-center justify-center text-accent animate-bounce-slow" style={{animationDelay: '1.2s'}}>
+                <Award className="w-7 h-7"/>
+             </div>
+             <div className="absolute top-1/2 left-0 -translate-y-1/2 w-16 h-16 bg-white rounded-2xl shadow-xl border border-slate-100 flex items-center justify-center text-blue-500 animate-bounce-slow" style={{animationDelay: '0.8s'}}>
+                <ClipboardCheck className="w-7 h-7"/>
+             </div>
+             <div className="absolute top-1/2 right-0 -translate-y-1/2 w-16 h-16 bg-white rounded-2xl shadow-xl border border-slate-100 flex items-center justify-center text-neon-dark animate-bounce-slow" style={{animationDelay: '2.4s'}}>
+                <Users className="w-7 h-7"/>
+             </div>
+             <div className="absolute bottom-4 left-16 w-16 h-16 bg-white rounded-2xl shadow-xl border border-slate-100 flex items-center justify-center text-orange-500 animate-bounce-slow" style={{animationDelay: '1.8s'}}>
+                <FileText className="w-7 h-7"/>
+             </div>
+             <div className="absolute bottom-4 right-16 w-16 h-16 bg-white rounded-2xl shadow-xl border border-slate-100 flex items-center justify-center text-slate-800 animate-bounce-slow" style={{animationDelay: '3.1s'}}>
+                <ShieldCheck className="w-7 h-7"/>
+             </div>
+          </div>
         </div>
       </section>
 
@@ -265,9 +328,12 @@ export default function Home() {
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight mb-4">
             <span className="text-primary-bright">Comunidad</span> Global de<br/>Estudio Conectada
           </h2>
-          <p className="text-slate-500 font-medium mb-16 max-w-lg mx-auto leading-relaxed">
+          <p className="text-slate-500 font-medium mb-8 max-w-lg mx-auto leading-relaxed">
             Plataforma diseñada para derribar fronteras. Únete o recibe capacitación con colegas de innumerables puntos de Latinoamérica.
           </p>
+          <Link href="/foro" className="inline-flex items-center justify-center bg-primary/10 text-primary px-8 py-3 rounded-full font-bold text-sm hover:bg-primary hover:text-white transition-all mb-16 gap-2">
+            <MessageSquare className="w-4 h-4"/> Explorar el Foro de Usuarios
+          </Link>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
             {/* Column 1 */}
@@ -319,7 +385,10 @@ export default function Home() {
                 </div>
               </div>
               <h3 className="font-bold text-slate-900 text-lg mb-2">Colaboración Ilimitada</h3>
-              <p className="text-slate-500 text-sm font-medium leading-relaxed">Forma grupos de estudio, comparte tus avances y recibe feedback constante.</p>
+              <p className="text-slate-500 text-sm font-medium leading-relaxed mb-4">Forma grupos de estudio, comparte tus avances y recibe feedback constante.</p>
+              <Link href="/foro" className="text-primary font-bold text-sm flex items-center gap-2 hover:translate-x-1 transition-transform">
+                Ir al Foro <ArrowRight className="w-4 h-4"/>
+              </Link>
             </div>
           </div>
         </div>
@@ -387,48 +456,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. Integrate with tools */}
-      <section className="bg-white py-24 mb-16 border-y border-slate-100">
-        <div className="max-w-[1200px] mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-16">
-          <div className="w-full md:w-5/12">
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight mb-6">
-              <span className="text-primary-bright">Integración</span> con tus Herramientas Favoritas
-            </h2>
-            <p className="text-slate-500 font-medium mb-10 leading-relaxed">
-              Contecta nuestro entorno educativo con el software que ya usas día a día para simplificar entregas y mantener la organización impecable.
-            </p>
-            <Link href="/contacto" className="inline-flex items-center justify-center bg-slate-900 text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-slate-800 transition-all">
-              Explorar Integraciones
-            </Link>
-          </div>
-          
-          <div className="w-full md:w-6/12 relative h-80 flex items-center justify-center">
-             {/* Center icon */}
-             <div className="w-20 h-20 bg-primary rounded-2xl shadow-xl shadow-primary/30 flex items-center justify-center z-20 relative">
-               <Globe className="w-10 h-10 text-neon" />
-               
-               {/* Connecting lines */}
-               <svg className="absolute inset-[-150px] w-[380px] h-[380px] -z-10 text-slate-200 stroke-[1.5px]" fill="none">
-                 <path d="M190,190 L100,50" />
-                 <path d="M190,190 L280,50" />
-                 <path d="M190,190 L50,190" />
-                 <path d="M190,190 L330,190" />
-                 <path d="M190,190 L100,330" />
-                 <path d="M190,190 L280,330" />
-               </svg>
-             </div>
-             
-             {/* Surrounding floating tool icons */}
-             {/* Note: Just using Lucide icons as placeholders for tools like Google, Slack, Figma */}
-             <div className="absolute top-4 left-16 w-14 h-14 bg-white rounded-full shadow-lg border border-slate-100 flex items-center justify-center text-blue-500"><MessageCircle className="w-6 h-6"/></div>
-             <div className="absolute top-4 right-16 w-14 h-14 bg-white rounded-full shadow-lg border border-slate-100 flex items-center justify-center text-purple-500"><MonitorPlay className="w-6 h-6"/></div>
-             <div className="absolute top-1/2 left-0 -translate-y-1/2 w-14 h-14 bg-white rounded-full shadow-lg border border-slate-100 flex items-center justify-center text-red-500"><FileText className="w-6 h-6"/></div>
-             <div className="absolute top-1/2 right-0 -translate-y-1/2 w-14 h-14 bg-white rounded-full shadow-lg border border-slate-100 flex items-center justify-center text-pink-500"><Smartphone className="w-6 h-6"/></div>
-             <div className="absolute bottom-4 left-16 w-14 h-14 bg-white rounded-full shadow-lg border border-slate-100 flex items-center justify-center text-orange-500"><Award className="w-6 h-6"/></div>
-             <div className="absolute bottom-4 right-16 w-14 h-14 bg-white rounded-full shadow-lg border border-slate-100 flex items-center justify-center text-slate-800"><Briefcase className="w-6 h-6"/></div>
-          </div>
-        </div>
-      </section>
+
 
       {/* 8. Big CTA Block and 9. Bottom Cards */}
       <section className="max-w-[1200px] mx-auto px-6 md:px-12 pb-24">
@@ -464,13 +492,13 @@ export default function Home() {
 
            <div className="w-full md:w-6/12 relative z-20">
              <h2 className="text-3xl md:text-5xl font-bold leading-tight mb-6">
-                Listo para <span className="text-neon">Acelerar</span> tu Carrera <br/>Profesional?
+                Listo para <span className="text-neon">Registrarte</span> y Potenciar tu <br/>Carrera?
              </h2>
              <p className="text-slate-400 font-medium mb-10 leading-relaxed text-lg">
-                Miles de estudiantes ya transforman su futuro con nosotros.
+                Crea tu cuenta hoy mismo y únete a miles de profesionales que ya están transformando su futuro con nosotros.
              </p>
-             <Link href="/ofertas-en-vivo" className="inline-flex items-center justify-center bg-[#427FE1] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-blue-600 transition-all gap-2 shadow-lg shadow-blue-500/30">
-                Empezar Grátis <ArrowRight className="w-5 h-5"/>
+             <Link href="https://demo.educalabcr.tech/" className="inline-flex items-center justify-center bg-[#427FE1] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-blue-600 transition-all gap-2 shadow-lg shadow-blue-500/30">
+                Registrarme Ahora <ArrowRight className="w-5 h-5"/>
              </Link>
            </div>
         </div>
@@ -484,7 +512,7 @@ export default function Home() {
              <div>
                <h3 className="text-3xl font-bold mb-3">Soporte en Vivo</h3>
                <p className="text-white/80 font-medium mb-8 leading-relaxed">Conecta de manera instantánea con nuestros asesores académicos si tienes dudas.</p>
-               <Link href="/contacto" className="inline-flex items-center justify-center border border-white/30 text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-white hover:text-[#A460EE] transition-all">
+               <Link href="https://api.whatsapp.com/send/?phone=50670147031&text=Deseo+tener+mayor+informaci%C3%B3n.&type=phone_number&app_absent=0" className="inline-flex items-center justify-center border border-white/30 text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-white hover:text-[#A460EE] transition-all" target="_blank" rel="noopener noreferrer">
                   Contactar Asesor
                </Link>
              </div>
@@ -497,8 +525,8 @@ export default function Home() {
              <div>
                <h3 className="text-3xl font-bold mb-3">Mira una Demo</h3>
                <p className="text-primary/70 font-medium mb-8 leading-relaxed">Descubre en formato video cómo nuestra plataforma logra maximizar tus resultados.</p>
-               <Link href="/acerca-de-nosotros" className="inline-flex items-center justify-center border border-primary/30 text-primary px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary hover:text-neon transition-all">
-                  Ver Video Ahora
+               <Link href="https://www.youtube.com/playlist?list=PL0EctyuBX1HLspwlVmSzEM_D7vBz3jKjM" className="inline-flex items-center justify-center border border-primary/30 text-primary px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary hover:text-neon transition-all" target="_blank" rel="noopener noreferrer">
+                  Mira la Demo
                </Link>
              </div>
            </div>

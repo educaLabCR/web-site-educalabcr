@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { ArrowRight, Clock, Tag, BookOpen, Sparkles, ChevronRight } from 'lucide-react';
 
 /* ─── Types ─── */
@@ -21,113 +21,14 @@ type Article = {
   tags: string[];
 };
 
-/* ─── Article data ─── */
-const articles: Article[] = [
-  {
-    id: 1,
-    slug: 'ia-en-el-aula',
-    category: 'Tecnología Educativa',
-    categoryColor: 'bg-emerald-100 text-emerald-700',
-    title: 'Inteligencia Artificial en el Aula: Guía Práctica para Docentes 2026',
-    excerpt:
-      'Descubre cómo integrar herramientas de IA como ChatGPT, Gemini y Copilot en tu práctica docente para personalizar el aprendizaje, ahorrar tiempo en planificación y potenciar la creatividad de tus estudiantes.',
-    author: 'Equipo EducaLab',
-    authorRole: 'Editorial',
-    date: '15 marzo 2026',
-    readTime: '8 min',
-    image:
-      'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&q=80&w=1200',
-    featured: true,
-    tags: ['IA', 'Innovación', 'Docentes'],
-  },
-  {
-    id: 2,
-    slug: 'neurociencia-aprendizaje',
-    category: 'Neurociencia',
-    categoryColor: 'bg-violet-100 text-violet-700',
-    title: 'Cómo el Cerebro Aprende: Estrategias Basadas en Neurociencia',
-    excerpt:
-      'La neurociencia nos revela que el aprendizaje significativo requiere emociones, repetición espaciada y contexto. Conoce las 7 estrategias que transforman cómo enseñas cada día.',
-    author: 'Dra. María Fernández',
-    authorRole: 'Especialista en Neuroeducación',
-    date: '10 marzo 2026',
-    readTime: '6 min',
-    image:
-      'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&q=80&w=800',
-    featured: false,
-    tags: ['Neurociencia', 'Estrategias', 'Cerebro'],
-  },
-  {
-    id: 3,
-    slug: 'evaluacion-autentica',
-    category: 'Pedagogía',
-    categoryColor: 'bg-sky-100 text-sky-700',
-    title: 'Evaluación Auténtica: Más Allá del Examen Tradicional',
-    excerpt:
-      'Los proyectos, portafolios y rúbricas holísticas están reemplazando a los exámenes. Aprende a diseñar evaluaciones que reflejen el verdadero aprendizaje de tus estudiantes.',
-    author: 'Prof. Carlos Rodríguez',
-    authorRole: 'Pedagogo',
-    date: '5 marzo 2026',
-    readTime: '5 min',
-    image:
-      'https://images.unsplash.com/photo-1434030216411-0b793f4b4273?auto=format&fit=crop&q=80&w=800',
-    featured: false,
-    tags: ['Evaluación', 'Metodología', 'Innovación'],
-  },
-  {
-    id: 4,
-    slug: 'bienestar-docente',
-    category: 'Bienestar',
-    categoryColor: 'bg-rose-100 text-rose-700',
-    title: 'Burnout Docente: Señales de Alerta y Estrategias de Recuperación',
-    excerpt:
-      'El agotamiento profesional afecta al 65% de los educadores. Identificar las señales a tiempo y aplicar técnicas de mindfulness y gestión del tiempo puede transformar tu vida laboral.',
-    author: 'Lic. Ana Torres',
-    authorRole: 'Psicóloga Organizacional',
-    date: '28 febrero 2026',
-    readTime: '7 min',
-    image:
-      'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800',
-    featured: false,
-    tags: ['Bienestar', 'Salud Mental', 'Docentes'],
-  },
-  {
-    id: 5,
-    slug: 'aula-invertida',
-    category: 'Metodologías',
-    categoryColor: 'bg-amber-100 text-amber-700',
-    title: 'Aula Invertida: Cómo Implementarla en 4 Pasos Sencillos',
-    excerpt:
-      'El modelo flipped classroom libera el tiempo de clase para la práctica y el debate. Te mostramos una guía paso a paso para transformar tus lecciones sin complicaciones tecnológicas.',
-    author: 'Equipo EducaLab',
-    authorRole: 'Editorial',
-    date: '20 febrero 2026',
-    readTime: '4 min',
-    image:
-      'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800',
-    featured: false,
-    tags: ['Metodología', 'Flipped Classroom', 'Innovación'],
-  },
-  {
-    id: 6,
-    slug: 'inclusion-dua',
-    category: 'Inclusión',
-    categoryColor: 'bg-teal-100 text-teal-700',
-    title: 'DUA en la Práctica: Incluir a Todos sin Duplicar el Trabajo',
-    excerpt:
-      'El Diseño Universal para el Aprendizaje no es complicado. Con pequeños ajustes en tus materiales y actividades puedes atender la diversidad sin crear planificaciones paralelas.',
-    author: 'Esp. Laura Jiménez',
-    authorRole: 'Docente Inclusiva',
-    date: '12 febrero 2026',
-    readTime: '5 min',
-    image:
-      'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=800',
-    featured: false,
-    tags: ['DUA', 'Inclusión', 'Diversidad'],
-  },
-];
-
-const categories = ['Todos', 'Tecnología Educativa', 'Neurociencia', 'Pedagogía', 'Bienestar', 'Metodologías', 'Inclusión'];
+const categoryStyleMap: Record<string, string> = {
+  'Tecnología Educativa': 'bg-emerald-100 text-emerald-700',
+  'Neurociencia': 'bg-violet-100 text-violet-700',
+  'Pedagogía': 'bg-sky-100 text-sky-700',
+  'Bienestar': 'bg-rose-100 text-rose-700',
+  'Metodologías': 'bg-amber-100 text-amber-700',
+  'Inclusión': 'bg-teal-100 text-teal-700',
+};
 
 /* ─── InView helper ─── */
 function FadeIn({
@@ -181,7 +82,7 @@ function ArticleCard({ article, index }: { article: Article; index: number }) {
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
         <div className="absolute top-4 left-4">
-          <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${article.categoryColor}`}>
+          <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${article.categoryColor || 'bg-slate-100 text-slate-700'}`}>
             {article.category}
           </span>
         </div>
@@ -191,7 +92,7 @@ function ArticleCard({ article, index }: { article: Article; index: number }) {
       <div className="p-6 flex flex-col flex-1">
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5 mb-3">
-          {article.tags.map((tag) => (
+          {article.tags?.map((tag) => (
             <span
               key={tag}
               className="text-[11px] font-semibold text-slate-400 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-100"
@@ -212,7 +113,7 @@ function ArticleCard({ article, index }: { article: Article; index: number }) {
         <div className="flex items-center justify-between pt-4 border-t border-slate-100">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
-              {article.author.split(' ').map((w) => w[0]).join('').slice(0, 2)}
+              {article.author?.split(' ').map((w) => w[0]).join('').slice(0, 2)}
             </div>
             <div>
               <p className="text-xs font-semibold text-slate-700 leading-none">{article.author}</p>
@@ -252,7 +153,7 @@ function FeaturedArticle({ article }: { article: Article }) {
 
         {/* Content */}
         <div className="p-8 md:p-12 flex flex-col justify-center order-2 md:order-1">
-          <span className={`self-start px-3 py-1.5 rounded-full text-xs font-bold mb-5 ${article.categoryColor}`}>
+          <span className={`self-start px-3 py-1.5 rounded-full text-xs font-bold mb-5 ${article.categoryColor || 'bg-slate-100 text-slate-700'}`}>
             {article.category}
           </span>
           <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight tracking-tight mb-4 group-hover:text-primary transition-colors">
@@ -265,7 +166,7 @@ function FeaturedArticle({ article }: { article: Article }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                {article.author.split(' ').map((w) => w[0]).join('').slice(0, 2)}
+                {article.author?.split(' ').map((w) => w[0]).join('').slice(0, 2)}
               </div>
               <div>
                 <p className="text-sm font-bold text-slate-800">{article.author}</p>
@@ -286,8 +187,92 @@ function FeaturedArticle({ article }: { article: Article }) {
 
 /* ─── Page ─── */
 export default function Boletin() {
-  const featured = articles.find((a) => a.featured)!;
-  const rest = articles.filter((a) => !a.featured);
+  const [articlesData, setArticlesData] = useState<Article[]>([]);
+  const [siteData, setSiteData] = useState<any>({});
+  const [categories, setCategories] = useState<string[]>(['Todos']);
+  const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/boletin');
+        if (!response.ok) throw new Error('Failed to fetch from /api/boletin');
+
+        const { articles, site } = await response.json();
+        const BASE_URL = 'http://control-directus-9ee74c-76-13-234-106.traefik.me';
+
+        const mappedArticles: Article[] = articles.map((a: any) => ({
+          id: a.id,
+          slug: a.slug,
+          category: a.categoria || 'General',
+          categoryColor: categoryStyleMap[a.categoria] || 'bg-slate-100 text-slate-700',
+          title: a.titulo,
+          excerpt: a.resumen,
+          author: a.autor,
+          authorRole: a.autor_rol,
+          date: a.fecha,
+          readTime: a.tiempo_lectura,
+          image: a.imagen 
+            ? (String(a.imagen).startsWith('http') ? a.imagen : `${BASE_URL}/assets/${a.imagen}`)
+            : 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800',
+          featured: a.destacado,
+          tags: Array.isArray(a.tags) ? a.tags : []
+        }));
+
+        setArticlesData(mappedArticles);
+        setSiteData(site || {});
+
+        const uniqueCats = Array.from(new Set(mappedArticles.map(a => a.category))).filter(Boolean);
+        setCategories(['Todos', ...uniqueCats]);
+      } catch (error) {
+        console.error('Error fetching boletin:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // Filtrado dinámico
+  const filteredArticles = selectedCategory === 'Todos' 
+    ? articlesData 
+    : articlesData.filter(a => a.category === selectedCategory);
+
+  const featured = filteredArticles.find((a) => a.featured) || filteredArticles[0];
+  const rest = filteredArticles.filter((a) => a.id !== featured?.id);
+
+  const renderTitle = (title: string) => {
+    if (!title) return null;
+    const parts = title.split(' ');
+    return parts.map((part, i) => (
+      <span key={i}>
+        {part === 'transforman' ? (
+          <span className="text-primary-bright relative">
+            {part}
+            <motion.span
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.7, ease: 'easeOut', delay: 0.6 }}
+              className="absolute left-0 -bottom-1 h-1 w-full bg-primary-bright/30 rounded-full origin-left block"
+            />
+          </span>
+        ) : (
+          part
+        )}
+        {i < parts.length - 1 ? ' ' : ''}
+        {i === 1 ? <br/> : ''}
+      </span>
+    ));
+  };
 
   return (
     <main className="max-w-[1400px] mx-auto overflow-hidden pb-24">
@@ -308,7 +293,7 @@ export default function Boletin() {
               className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/5 border border-primary/12 text-primary font-semibold text-xs uppercase tracking-widest mb-8"
             >
               <BookOpen className="w-3.5 h-3.5" />
-              Recursos Gratuitos · Actualización Semanal
+              {siteData.badge_texto || 'Recursos Gratuitos · Actualización Semanal'}
             </motion.div>
 
             {/* Title */}
@@ -318,18 +303,7 @@ export default function Boletin() {
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
               className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 leading-[1.05] mb-6"
             >
-              Ideas que <br/>
-              <span className="text-primary-bright relative">
-                transforman
-                {/* Underline decoration */}
-                <motion.span
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: 0.7, ease: 'easeOut', delay: 0.6 }}
-                  className="absolute left-0 -bottom-1 h-1 w-full bg-primary-bright/30 rounded-full origin-left block"
-                />
-              </span>
-              <br />la educación
+              {renderTitle(siteData.hero_titulo || 'Ideas que transforman la educación')}
             </motion.h1>
 
             {/* Subtitle */}
@@ -339,7 +313,7 @@ export default function Boletin() {
               transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
               className="text-xl text-slate-500 leading-relaxed mb-12 max-w-xl font-medium"
             >
-              Artículos, guías y recursos seleccionados para que te mantengas a la vanguardia de la innovación educativa y la tecnología.
+              {siteData.hero_subtitulo || 'Artículos, guías y recursos seleccionados para que te mantengas a la vanguardia de la innovación educativa y la tecnología.'}
             </motion.p>
 
             {/* CTAs */}
@@ -350,7 +324,7 @@ export default function Boletin() {
               className="flex flex-wrap items-center gap-4"
             >
               <a
-                href="#newsletter"
+                href={siteData.cta_whatsapp_url || "#newsletter"}
                 className="bg-primary text-white px-8 py-4 rounded-full font-bold text-base hover:bg-primary-bright hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/25 transition-all duration-200 flex items-center gap-2"
               >
                 Suscribirme Gratis
@@ -432,20 +406,20 @@ export default function Boletin() {
         </div>
       </section>
 
-      {/* ═══════════════════════ CATEGORY FILTER ═══════════════════════ */}
       <FadeIn delay={0} className="px-6 md:px-12 mb-14">
         <div className="overflow-x-auto scrollbar-hide">
           <div className="flex gap-2.5 pb-2 min-w-max md:justify-center">
             {categories.map((cat, i) => (
               <button
                 key={i}
+                onClick={() => setSelectedCategory(cat)}
                 className={`flex items-center gap-2.5 px-6 py-3 rounded-full text-sm font-bold border transition-all duration-300 whitespace-nowrap ${
-                  i === 0
+                  selectedCategory === cat
                     ? 'bg-primary text-white border-primary shadow-xl shadow-primary/20 scale-105'
                     : 'bg-white text-slate-600 border-slate-100 hover:border-primary/30 hover:text-primary hover:bg-primary/5'
                 }`}
               >
-                {i === 0 && <Tag className="w-4 h-4" />}
+                {cat === 'Todos' && <Tag className="w-4 h-4" />}
                 {cat}
               </button>
             ))}
@@ -454,9 +428,11 @@ export default function Boletin() {
       </FadeIn>
 
       {/* ═══════════════════════ FEATURED ARTICLE ═══════════════════════ */}
-      <section className="px-6 md:px-12 mb-20">
-        <FeaturedArticle article={featured} />
-      </section>
+      {featured && (
+        <section className="px-6 md:px-12 mb-20">
+          <FeaturedArticle article={featured} />
+        </section>
+      )}
 
       {/* ═══════════════════════ ARTICLE GRID ═══════════════════════ */}
       <section className="px-6 md:px-12">
@@ -495,11 +471,10 @@ export default function Boletin() {
                 Comunidad Educativa
               </span>
               <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-                Recibe el boletín <br/>
-                <span className="text-neon">más completo</span>
+                {siteData.newsletter_titulo || 'Recibe el boletín más completo'}
               </h2>
               <p className="text-white/60 leading-relaxed text-lg max-w-xl mx-auto lg:mx-0 font-medium">
-                Únete a más de 1,500 docentes. Recibe guías, plantillas y las últimas noticias de IA y educación cada martes.
+                {siteData.newsletter_subtitulo || 'Únete a más de 1,500 docentes. Recibe guías, plantillas y las últimas noticias de IA y educación cada martes.'}
               </p>
             </div>
 
