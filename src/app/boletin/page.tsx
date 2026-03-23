@@ -200,7 +200,7 @@ export default function Boletin() {
         if (!response.ok) throw new Error('Failed to fetch from /api/boletin');
 
         const { articles, site } = await response.json();
-        const BASE_URL = 'http://control-directus-9ee74c-76-13-234-106.traefik.me';
+        const BASE_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || '/directus-api';
 
         const mappedArticles: Article[] = articles.map((a: any) => ({
           id: a.id,

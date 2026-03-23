@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const BASE_URL = 'http://control-directus-9ee74c-76-13-234-106.traefik.me';
-  const TOKEN = 'nFBbco3X_5cd8_Hm_-nHbJLK7ceTAJ_p';
+  const BASE_URL = process.env.DIRECTUS_API_URL || 'http://control-directus-9ee74c-76-13-234-106.traefik.me';
+  const TOKEN = process.env.DIRECTUS_ADMIN_TOKEN || 'nFBbco3X_5cd8_Hm_-nHbJLK7ceTAJ_p';
 
   try {
     const [articlesRes, siteRes] = await Promise.all([

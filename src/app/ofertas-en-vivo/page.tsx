@@ -55,7 +55,7 @@ export default function OfertasEnVivo() {
 
   useEffect(() => {
     async function fetchData() {
-      const url = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://control-directus-9ee74c-76-13-234-106.traefik.me';
+      const url = process.env.NEXT_PUBLIC_DIRECTUS_URL || '/directus-api';
       try {
         const [coursesRes, paymentsRes, contentRes] = await Promise.all([
           fetch(`${url}/items/cursos_en_vivo?fields=*,sesiones_curso.*&filter[estado][_eq]=published`),

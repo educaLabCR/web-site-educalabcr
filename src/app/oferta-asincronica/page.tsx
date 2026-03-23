@@ -59,7 +59,7 @@ function CourseCard({ course, index }: { course: any; index: number }) {
   const imageUrl = course.imagen?.startsWith('http')
     ? course.imagen
     : course.imagen
-      ? `${process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://control-directus-9ee74c-76-13-234-106.traefik.me'}/assets/${course.imagen}`
+      ? `${process.env.NEXT_PUBLIC_DIRECTUS_URL || '/directus-api'}/assets/${course.imagen}`
       : 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800';
 
   return (
@@ -144,7 +144,7 @@ export default function OfertaAsincronica() {
 
   useEffect(() => {
     async function fetchData() {
-      const BASE_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://control-directus-9ee74c-76-13-234-106.traefik.me';
+      const BASE_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || '/directus-api';
       try {
         const response = await fetch('/api/oferta-asincronica');
         if (!response.ok) throw new Error(`Failed to fetch from /api/oferta-asincronica`);

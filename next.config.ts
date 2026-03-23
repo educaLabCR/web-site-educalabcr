@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/directus-api/:path*',
-        destination: 'http://control-directus-9ee74c-76-13-234-106.traefik.me/:path*',
+        destination: `${process.env.DIRECTUS_API_URL || 'http://control-directus-9ee74c-76-13-234-106.traefik.me'}/:path*`,
       },
     ];
   },
