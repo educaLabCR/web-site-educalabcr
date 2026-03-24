@@ -5,9 +5,9 @@ const TOKEN = process.env.DIRECTUS_ADMIN_TOKEN || 'nFBbco3X_5cd8_Hm_-nHbJLK7ceTA
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const response = await fetch(`${BASE_URL}/items/foro_respuestas?filter[tema_id][_eq]=${id}&sort=date_created&access_token=${TOKEN}`, { cache: 'no-store' });
@@ -25,9 +25,9 @@ export async function GET(
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const data = await req.json();

@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const BASE_URL = process.env.DIRECTUS_API_URL || 'http://control-directus-9ee74c-76-13-234-106.traefik.me';
   const TOKEN = process.env.DIRECTUS_ADMIN_TOKEN || 'nFBbco3X_5cd8_Hm_-nHbJLK7ceTAJ_p';
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const response = await fetch(`${BASE_URL}/items/foro_temas/${id}?fields=*,categoria_id.*&access_token=${TOKEN}`, { cache: 'no-store' });
