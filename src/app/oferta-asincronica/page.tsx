@@ -56,10 +56,10 @@ function InViewSection({
 }
 
 function CourseCard({ course, index }: { course: any; index: number }) {
-  const imageUrl = course.imagen?.startsWith('http')
-    ? course.imagen
-    : course.imagen
-      ? `${process.env.NEXT_PUBLIC_DIRECTUS_URL || '/directus-api'}/assets/${course.imagen}`
+  const imageUrl = (course.imagen || course.Imagen)?.startsWith('http')
+    ? (course.imagen || course.Imagen)
+    : (course.imagen || course.Imagen)
+      ? `${process.env.NEXT_PUBLIC_DIRECTUS_URL || '/directus-api'}/assets/${course.imagen || course.Imagen}`
       : 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800';
 
   return (

@@ -1,0 +1,35 @@
+const baseUrl = 'http://control-directus-9ee74c-76-13-234-106.traefik.me';
+const token = 'nFBbco3X_5cd8_Hm_-nHbJLK7ceTAJ_p';
+const policy = "8fa65190-2a0-72c5-46a1-81c8-fd7c07879e59"; // The alternative one
+
+async function applyPermissions() {
+  const collections = ["foro_categorias", "foro_temas", "foro_respuestas"];
+  const actions = ["read", "create", "update", "delete"];
+
+  for (const col of collections) {
+    for (const act of actions) {
+      console.log(`Applying ${act} to ${col}...`);
+      const res = await fetch(`${baseUrl}/permissions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          collection: col,
+          action: act,
+          fields: ["*"],
+          policy: policy
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.error(`Error applying ${act} to ${col}:`, JSON.stringify(data));
+      } else {
+        console.log(`Success: ID ${data.data.id}`);
+      }
+    }
+  }
+}
+
+applyPermissions().catch(console.error);
