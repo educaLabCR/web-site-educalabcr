@@ -63,6 +63,12 @@ export default function AcercaDeNosotros() {
       role: 'Estratega Digital',
       desc: 'Experto en el área de comunicación, publicidad y mercadeo de EducaLab.',
       initials: 'JM'
+    },
+    {
+      name: 'Kenneth Andrés Real Gonzáles',
+      role: 'Encargado de creaciones digitales, publicidad y atención al cliente.',
+      desc: 'Gestión de comunicación integral y experiencia de usuario en entornos digitales.',
+      initials: 'KR'
     }
   ];
 
