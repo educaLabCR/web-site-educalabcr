@@ -3,7 +3,7 @@ import { motion, Variants } from 'framer-motion';
 import { 
   Users, Target, Heart, Award, Sparkles, BookOpen, 
   MessageSquare, Lightbulb, GraduationCap, CheckCircle,
-  TrendingUp, Globe, ShieldCheck
+  TrendingUp, Globe, ShieldCheck, ArrowRight
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -23,15 +23,15 @@ export default function AcercaDeNosotros() {
 
   const team = [
     {
-      name: 'Jesús Real',
+      name: 'MSc. Jesús Real',
       role: 'Fundador & Especialista en Estudios Sociales',
-      desc: 'Docente apasionado por la transformación de la educación virtual en Costa Rica.',
+      desc: 'Lic en evaluación, Máster en Administración Educativa y en Estudios Sociales y Educación Cívica.',
       initials: 'JR'
     },
     {
-      name: 'Jorge Pérez',
+      name: 'MSc. Jorge Pérez',
       role: 'Fundador & Arquitecto Pedagógico',
-      desc: 'Arquitecto con formación en pedagogía, enfocado en el diseño de experiencias de aprendizaje.',
+      desc: 'MSc. En Administración Educativa y Licenciado en Educación y en Arquitectura.',
       initials: 'JP'
     },
     {
@@ -39,6 +39,30 @@ export default function AcercaDeNosotros() {
       role: 'Estratega de IA & Innovación',
       desc: 'Académico experto en inteligencia artificial y tecnologías educativas aplicadas.',
       initials: 'SC'
+    },
+    {
+      name: 'Lic. Fernando Xavier Alfaro Bonilla',
+      role: 'Experto en evaluación de los aprendizajes y Enseñanza de los Estudios Sociales.',
+      desc: 'Director de Investigación y Desarrollo de Tecnologías EducaLab.',
+      initials: 'FA'
+    },
+    {
+      name: 'Yolanda Patricia Quesada Quesada',
+      role: 'Encargada del departamento de creaciones digitales, publicidad y atención al cliente.',
+      desc: 'Gestión de comunicación integral y experiencia de usuario en entornos digitales.',
+      initials: 'YQ'
+    },
+    {
+      name: 'Yosuan Damian Maciel Multineddu',
+      role: 'Desarrollador de Software & Arquitecto Full-Stack',
+      desc: 'Experto en el desarrollo de infraestructuras escalables, diseño de interfaces dinámicas y soluciones tecnológicas avanzadas para educación.',
+      initials: 'DM'
+    },
+    {
+      name: 'Juan Manuel Rivera González',
+      role: 'Estratega Digital',
+      desc: 'Experto en el área de comunicación, publicidad y mercadeo de EducaLab.',
+      initials: 'JM'
     }
   ];
 
@@ -145,7 +169,7 @@ export default function AcercaDeNosotros() {
                ¿Quiénes <span className="text-accent underline decoration-neon/50 underline-offset-8">somos</span>?
              </h2>
              <p className="text-slate-500 font-medium leading-relaxed mb-8 text-lg">
-                EducaLabCR es una iniciativa educativa fundada por Jesús Real y Jorge Pérez, ambos comprometidos con la transformación de la educación virtual en nuestro país.
+                EducaLabCR es una iniciativa educativa fundada por el MSc. Jesús Real y el MSc. Jorge Pérez, ambos comprometidos con la transformación de la educación virtual en nuestro país.
              </p>
              <p className="text-slate-500 font-medium leading-relaxed mb-10">
                 A este equipo se suma el Dr. Salomón Fernando Chaves Cascante, experto en inteligencia artificial, quien fortalece nuestra propuesta con visión estratégica e innovación de vanguardia.
@@ -254,44 +278,41 @@ export default function AcercaDeNosotros() {
       <section className="max-w-[1200px] mx-auto px-6 md:px-12 py-20 pb-32">
         <div className="bg-[#fcfcfc] rounded-[3.5rem] p-12 md:p-20 border border-slate-100 shadow-sm relative overflow-hidden">
            {/* Background branding */}
-           <div className="absolute -bottom-20 -right-20 text-[180px] font-black text-slate-900/[0.03] pointer-events-none select-none uppercase tracking-tighter">
+           <div className="absolute -bottom-20 -right-20 text-[220px] font-black text-slate-900/[0.03] pointer-events-none select-none uppercase tracking-tighter">
               TEAM
            </div>
            
-           <div className="flex flex-col lg:flex-row gap-16 items-start">
-              <div className="lg:w-1/3">
-                 <h2 className="text-4xl md:text-5xl font-black text-slate-900 leading-[1.1] mb-8 tracking-tight">
-                    El Liderazgo <br/><span className="text-primary-bright">Detrás de</span> <br/>la Misión
+           <div className="flex flex-col gap-16">
+              <div className="max-w-3xl">
+                 <h2 className="text-4xl md:text-6xl font-black text-slate-900 leading-[1.1] mb-8 tracking-tight">
+                    El Liderazgo <br/><span className="text-primary-bright">Detrás de</span> la Misión
                  </h2>
-                 <p className="text-slate-500 font-medium mb-10 leading-relaxed">
-                    Un equipo multidisciplinario que combina pedagogía, arquitectura y tecnología para crear el futuro hoy.
+                 <p className="text-slate-500 font-medium text-lg mb-10 leading-relaxed max-w-2xl">
+                    Un equipo multidisciplinario que combina pedagogía, arquitectura y tecnología para crear el futuro hoy, impulsando la educación en Costa Rica y Latinoamérica.
                  </p>
-                 <Link href="/contacto" className="inline-flex items-center justify-center bg-slate-900 text-white px-8 py-3.5 rounded-full font-bold text-sm hover:bg-primary transition-all shadow-lg shadow-slate-900/10">
-                    Contactar al Equipo
+                 <Link href="/contacto" className="inline-flex items-center justify-center bg-slate-900 text-white px-10 py-4 rounded-full font-bold text-sm hover:bg-primary transition-all shadow-xl shadow-slate-900/10 gap-2">
+                    <Users className="w-5 h-5" /> Contactar al Equipo
                  </Link>
               </div>
 
-              <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full relative z-10">
                  {team.map((member, i) => (
-                    <div key={i} className="glass p-8 rounded-[2.5rem] hover:shadow-2xl transition-all duration-500 group border border-slate-100/50">
-                       <div className="w-16 h-16 rounded-2xl bg-slate-100/50 flex items-center justify-center text-2xl font-black text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                    <motion.div 
+                      key={i} 
+                      whileHover={{ y: -10 }}
+                      className="bg-white p-10 rounded-[2.5rem] hover:shadow-2xl hover:shadow-slate-200/60 transition-all duration-500 group border border-slate-100 flex flex-col h-full"
+                    >
+                       <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-2xl font-black text-primary mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
                           {member.initials}
                        </div>
-                       <h4 className="text-xl font-bold text-slate-900 mb-1 leading-tight">{member.name}</h4>
-                       <p className="text-primary-bright font-bold text-[10px] uppercase tracking-widest mb-4">{member.role}</p>
-                       <p className="text-slate-500 text-sm leading-relaxed font-medium">
+                       <h4 className="text-2xl font-bold text-slate-900 mb-2 leading-tight">{member.name}</h4>
+                       <p className="text-primary-bright font-bold text-xs uppercase tracking-[0.15em] mb-6">{member.role}</p>
+                       <p className="text-slate-500 text-[15px] leading-relaxed font-medium flex-1">
                           {member.desc}
                        </p>
-                    </div>
+                    </motion.div>
                  ))}
                  
-                 {/* Join us card */}
-                 <div className="bg-primary-bright rounded-[2.5rem] p-8 flex flex-col justify-center items-center text-center text-white relative overflow-hidden group cursor-pointer hover:shadow-xl hover:shadow-primary-bright/20 transition-all">
-                    <div className="absolute inset-0 bg-primary opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                    <Users className="w-12 h-12 mb-4 text-neon" />
-                    <h4 className="text-xl font-bold mb-2">Únete a la Red</h4>
-                    <p className="text-white/70 text-sm leading-relaxed">¿Te apasiona la educación virtual?</p>
-                 </div>
               </div>
            </div>
         </div>
