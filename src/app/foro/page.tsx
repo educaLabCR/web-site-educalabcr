@@ -286,9 +286,12 @@ export default function ForoPage() {
                           <div className="flex items-center gap-1.5 text-slate-500 text-sm font-bold">
                             <Heart className="w-4 h-4 text-red-400 fill-red-400/10"/> {post.likes || 0} <span className="font-medium text-slate-400">me gusta</span>
                           </div>
-                          <button className="ml-auto flex items-center gap-2 text-slate-900 font-bold text-sm bg-slate-50 px-5 py-2 rounded-xl group-hover:bg-primary group-hover:text-white transition-all">
+                          <Link 
+                            href={`/foro/${post.id}`}
+                            className="ml-auto flex items-center gap-2 text-slate-900 font-bold text-sm bg-slate-50 px-5 py-2 rounded-xl group-hover:bg-primary group-hover:text-white transition-all"
+                          >
                             Leer debate <ArrowRight className="w-4 h-4"/>
-                          </button>
+                          </Link>
                         </div>
                       </div>
                     </div>
