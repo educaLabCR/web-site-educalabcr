@@ -152,11 +152,23 @@ def process_js(path, content):
         content=content.replace('d=`/contacto`','d=`/productos`')
         content=content.replace('new URL(e),i=!1','new URL(e,window.location.origin),i=!1')
     if path.name.startswith('home-D0Nz'):
-        content='import{homeCards as EL_HOME,relayHome as EL_RELAY}from"./educalab-catalog.js";'+content
+        content='import{homeCards as EL_HOME,relayHome as EL_RELAY,ecosystemCards as EL_ECO}from"./educalab-catalog.js";'+content
         home_fn='function Jt(){let e=(0,F.useRef)(null),i=r();return A(e),(0,I.jsxs)(`section`,{ref:e,id:`templates`,className:`bg-canvas px-6 py-section`,children:[(0,I.jsx)(N,{children:(0,I.jsxs)(`div`,{className:`flex items-baseline justify-between gap-6`,children:[(0,I.jsx)(`h2`,{"data-reveal":`0`,className:`text-h2 text-balance text-ink`,children:`Conozca los productos.`}),(0,I.jsx)(`a`,{href:`/productos`,onClick:a(`/productos`,i),"data-reveal":`0`,className:`shrink-0 rounded-sm text-body text-muted transition-ui hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink`,children:`Ver todos`})]})}),(0,I.jsxs)(`a`,{href:EL_RELAY.href,"data-reveal":`1`,className:`home-relay`,children:[(0,I.jsx)(`img`,{src:EL_RELAY.image,alt:EL_RELAY.imageAlt}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`span`,{className:`home-product-status`,children:EL_RELAY.status}),(0,I.jsx)(`strong`,{children:EL_RELAY.title}),(0,I.jsx)(`p`,{children:EL_RELAY.text}),(0,I.jsx)(`span`,{className:`home-relay-cta`,children:EL_RELAY.cta})]})]}),(0,I.jsx)(`div`,{"data-reveal":`1`,className:`home-product-grid`,children:EL_HOME.map(function(p){return (0,I.jsxs)(`a`,{href:p.href,className:`home-product-card`,children:[(0,I.jsx)(`span`,{className:`home-product-status`,children:p.status}),(0,I.jsx)(`strong`,{children:p.name}),(0,I.jsx)(`p`,{children:p.text})]},p.href);})})]})}'
         content,count=re.subn(r'function Jt\(\)\{.*?\}function Yt\(', home_fn+'function Yt(', content, count=1, flags=re.S)
         if count!=1:
             raise SystemExit('No se encontró la sección de productos de la portada.')
+        eco_fn=(
+            'function tn(){let e=(0,F.useRef)(null),t=r();return A(e),(0,I.jsxs)(`section`,{ref:e,id:`ecosistema-home`,className:`bg-canvas px-6 py-section`,children:(0,I.jsxs)(N,{className:`flex flex-col`,children:['
+            '(0,I.jsxs)(`div`,{className:`eco-band-head`,"data-reveal":`0`,children:[(0,I.jsx)(`h2`,{className:`text-center text-h1 text-balance text-ink`,children:Qt}),(0,I.jsx)(`p`,{className:`mx-auto max-w-[46ch] text-center text-body text-pretty text-muted`,children:$t}),(0,I.jsx)(`a`,{href:`/ecosistema`,onClick:a(`/ecosistema`,t),className:`eco-band-more`,children:en})]}),'
+            '(0,I.jsx)(`div`,{"data-reveal":`1`,className:`eco-stage`,children:(0,I.jsx)(`div`,{className:`eco-grid`,children:EL_ECO.map(function(p){return (0,I.jsxs)(`article`,{className:`eco-card`,style:{"--eco":p.color},children:['
+            '(0,I.jsxs)(`div`,{className:p.image?`eco-visual`:`eco-visual eco-visual-mark`,children:[(0,I.jsxs)(`div`,{className:`eco-wordmark`,children:[(0,I.jsx)(`span`,{className:`eco-mark`,"aria-hidden":`true`,children:p.mark}),(0,I.jsx)(`h3`,{className:`eco-name`,children:(0,I.jsx)(`a`,{href:p.href,onClick:a(p.href,t),children:p.name})})]}),p.image?(0,I.jsx)(`img`,{className:p.image.includes(`relay`)?`eco-logo eco-logo-cover`:`eco-logo`,src:p.image,alt:``,loading:`lazy`}):null]}),'
+            '(0,I.jsxs)(`div`,{className:`eco-card-copy`,children:[(0,I.jsx)(`p`,{className:`eco-status`,children:p.status}),(0,I.jsx)(`p`,{className:`eco-kicker`,children:p.kicker}),(0,I.jsx)(`p`,{className:`eco-text`,children:p.text}),(0,I.jsx)(`ul`,{className:`eco-points`,children:p.points.map(function(point){return (0,I.jsx)(`li`,{children:point},point)})})]}),'
+            '(0,I.jsxs)(`div`,{className:`eco-actions`,children:[(0,I.jsxs)(`a`,{href:p.href,onClick:a(p.href,t),className:`eco-cta`,"aria-label":p.cta+` de `+p.name,children:[p.cta,(0,I.jsx)(`span`,{"aria-hidden":`true`,children:`→`})]}),(0,I.jsx)(`a`,{href:p.publicHref,className:`eco-public`,target:p.publicExternal?`_blank`:void 0,rel:p.publicExternal?`noopener noreferrer`:void 0,"aria-label":p.publicLabel+`, `+p.name,children:p.publicLabel})]})'
+            ']},p.href)})})})]})})}'
+        )
+        content,count=re.subn(r'function tn\(\)\{.*?\}function an\(', eco_fn+'function an(', content, count=1, flags=re.S)
+        if count!=1:
+            raise SystemExit('No se encontró el bloque Ecosistema EducaLabCR de la portada.')
     if path.name.startswith('templates-CJl'):
         content=content.replace('let p=n(`${r}/?template=${encodeURIComponent(e.templateId)}`);','let p=e.title.startsWith(`Sigma`)?`https://demo.educalabcr.tech/`:`/contacto`;')
         content=content.replace('${e.title} template preview','Vista de ${e.title}')

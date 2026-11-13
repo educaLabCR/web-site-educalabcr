@@ -42,6 +42,9 @@ for blocked in ['relay2.educalabagentes.tech','educalab.cr','github.io/Sigma-Mod
     assert blocked not in catalog,blocked
 home=(dist/'assets'/'home-D0NzNBsQ.js').read_text()
 assert 'EL_HOME' in home and 'Conozca los productos.' in home
+assert 'EL_ECO' in home and 'eco-grid' in home and 'eco-card' in home
+pages_js=(dist/'assets'/'educalab-pages.js').read_text()
+assert 'eco-page-grid' in pages_js and 'brand-card-points' in pages_js
 for name in ['sigma.webp','luma.webp','relay.webp','lapiz.webp','idea-ensenar-ia.webp','idea-materiales.webp','idea-tecnologia.webp','educalab-mark.svg','educalab-wordmark.svg']:
     assert (dist/'brand'/name).stat().st_size>100,name
 assert (dist/'og.png').is_file()

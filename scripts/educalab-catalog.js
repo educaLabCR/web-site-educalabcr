@@ -166,6 +166,21 @@ export const taskos={
 
 export const products=[sigma,teku,luma,relay,idoneidad,taskos];
 export const homeCards=products.map(p=>({name:p.name,status:p.status,text:p.home,href:p.path}));
+export const ecosystemCards=products.map(p=>({
+ name:p.name,
+ mark:p.mark,
+ color:p.color,
+ kicker:p.kicker,
+ status:p.status,
+ image:p.image,
+ text:p.home,
+ points:p.points.map(point=>point[0]),
+ href:p.path,
+ cta:'Ver la ficha',
+ publicHref:p.links[0].href,
+ publicLabel:p.links[0].label,
+ publicExternal:!!p.links[0].external
+}));
 
 export const oferta={
  title:'Cursos a la medida',
