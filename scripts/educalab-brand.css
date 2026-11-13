@@ -147,3 +147,76 @@ footer>div[aria-hidden=true]>span{visibility:hidden}
 .relay-figure figcaption{margin-top:12px;color:#56645d;font-size:14px;text-align:center}
 @media(max-width:900px){.home-product-grid{grid-template-columns:1fr 1fr}.brand-detail-actions{margin-top:0}.sigma-plan-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.home-product-grid,.home-relay,.sigma-plan-grid{grid-template-columns:1fr}.brand-product-grid{grid-template-columns:1fr}}
+
+/* Ecosistema: banda con transición de color y fichas de los seis productos. */
+.eco-band-head{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;margin-bottom:36px}
+.eco-band-more{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 4px;color:#144b3c;font-weight:700;text-decoration:underline;text-underline-offset:4px;border-radius:8px}
+.eco-band-more:hover{color:#0d3329}
+.eco-band-more:focus-visible{outline:3px solid #127d70;outline-offset:4px}
+.eco-stage{position:relative;isolation:isolate;overflow:hidden;border-radius:32px;padding:clamp(14px,2vw,22px);background:#d7e4de}
+.eco-stage::before{content:"";position:absolute;inset:0;z-index:0;border-radius:inherit;background:
+ radial-gradient(42% 55% at 8% 28%,#144b3c 0%,transparent 72%),
+ radial-gradient(38% 50% at 92% 10%,#6356a5 0%,transparent 70%),
+ radial-gradient(40% 55% at 96% 88%,#2067b0 0%,transparent 72%),
+ radial-gradient(36% 48% at 16% 94%,#8a4b2f 0%,transparent 70%),
+ radial-gradient(34% 46% at 52% 48%,#0f6b5c 0%,transparent 70%),
+ radial-gradient(38% 50% at 68% 16%,#1d4e89 0%,transparent 72%);
+ background-color:#d7e4de;background-size:180% 180%;animation:eco-shift 18s ease-in-out infinite}
+.eco-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.eco-card{display:flex;flex-direction:column;min-width:0;background:#fff;border:1px solid rgba(255,255,255,.85);border-radius:22px;overflow:hidden;box-shadow:0 12px 28px rgba(12,36,28,.1);transition:border-color .35s ease,box-shadow .35s ease,transform .35s ease}
+.eco-card:hover{border-color:var(--eco);transform:translateY(-4px);box-shadow:0 18px 36px color-mix(in srgb,var(--eco) 32%,transparent)}
+.eco-card:focus-within{border-color:var(--eco);box-shadow:0 0 0 3px #fff,0 0 0 6px var(--eco)}
+.eco-visual{display:flex;flex-direction:column;justify-content:space-between;gap:12px;height:200px;min-height:200px;padding:16px;background:var(--eco);background:linear-gradient(155deg,var(--eco),color-mix(in srgb,var(--eco) 58%,#04110d));background-size:180% 180%;background-position:0% 40%;transition:background-position .55s ease}
+.eco-card:hover .eco-visual,.eco-card:focus-within .eco-visual{background-position:100% 70%}
+.eco-visual-mark{justify-content:center}
+.eco-visual-mark .eco-name{font-size:26px}
+.eco-wordmark{display:flex;align-items:center;gap:12px;min-width:0}
+.eco-mark{flex:0 0 auto;width:46px;height:46px;display:grid;place-items:center;border-radius:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.45);color:#fff;font-weight:700;letter-spacing:-.04em;font-size:15px}
+.eco-name{margin:0;min-width:0;font-size:22px;line-height:1.15;letter-spacing:-.03em;font-weight:700;text-wrap:balance}
+.eco-name a{color:#fff;text-decoration:none;border-radius:6px}
+.eco-name a:hover{text-decoration:underline;text-underline-offset:3px}
+.eco-name a:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.eco-logo{display:block;width:100%;height:108px;flex:0 0 108px;object-fit:contain;object-position:center;background:rgba(255,255,255,.94);border-radius:12px}
+.eco-logo-cover{object-fit:contain;object-position:center;background:#07111f}
+.eco-card-copy{display:flex;flex-direction:column;gap:8px;padding:16px 16px 0;flex:1}
+.eco-status{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:#3e5c4e}
+.eco-kicker{margin:0;font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--eco)}
+.eco-text{margin:0;font-size:15px;line-height:1.5;color:#243832}
+.eco-points{margin:4px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.eco-points li{position:relative;padding-left:16px;font-size:14px;line-height:1.4;color:#243832}
+.eco-points li::before{content:"";position:absolute;left:0;top:.45em;width:7px;height:7px;border-radius:99px;background:var(--eco)}
+.eco-actions{display:flex;flex-direction:column;align-items:stretch;gap:4px;margin-top:auto;padding:14px 16px 16px}
+.eco-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 16px;border-radius:999px;background:var(--eco);color:#fff;font-weight:700;font-size:15px;text-decoration:none;transition:gap .3s ease,background-color .3s ease}
+.eco-cta:hover{gap:14px;background:color-mix(in srgb,var(--eco) 86%,#000)}
+.eco-cta:focus-visible{outline:3px solid #102820;outline-offset:3px}
+.eco-public{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 8px;color:var(--eco);font-weight:700;font-size:14px;text-align:center;text-decoration:underline;text-underline-offset:3px;border-radius:8px}
+.eco-public:hover{color:color-mix(in srgb,var(--eco) 80%,#000)}
+.eco-public:focus-visible{outline:3px solid #102820;outline-offset:3px}
+.eco-page-grid{position:relative;isolation:isolate;padding:22px;border-radius:32px;background:#e7efea;overflow:hidden}
+.eco-page-grid::before{content:"";position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background:
+ radial-gradient(42% 55% at 8% 28%,#144b3c 0%,transparent 72%),
+ radial-gradient(38% 50% at 90% 12%,#6356a5 0%,transparent 70%),
+ radial-gradient(40% 55% at 94% 88%,#2067b0 0%,transparent 72%),
+ radial-gradient(36% 48% at 18% 92%,#8a4b2f 0%,transparent 70%),
+ radial-gradient(34% 46% at 50% 50%,#0f6b5c 0%,transparent 70%),
+ radial-gradient(38% 50% at 70% 18%,#1d4e89 0%,transparent 72%);
+ background-color:#e7efea;background-size:180% 180%;animation:eco-shift 18s ease-in-out infinite;opacity:.85}
+.eco-page-grid>.brand-product-card{position:relative;z-index:1}
+.eco-rich-card{height:100%;border:1px solid #e3ebe6;border-radius:24px;padding:12px;background:#fff;transition:border-color .35s ease,box-shadow .35s ease}
+.eco-rich-card:hover,.eco-rich-card:focus-within{border-color:var(--eco);box-shadow:0 16px 36px color-mix(in srgb,var(--eco) 22%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--eco) 10%,#fff),#fff 48%)}
+.eco-rich-card .brand-button{margin-top:auto;background:var(--eco);color:#fff}
+.eco-rich-card .brand-button:hover{background:color-mix(in srgb,var(--eco) 84%,#000);color:#fff}
+.eco-rich-card .brand-button:focus-visible{outline:3px solid #102820;outline-offset:3px}
+.brand-card-points{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.brand-card-points li{position:relative;padding-left:16px;font-size:14px;line-height:1.45;color:#243832}
+.brand-card-points li::before{content:"";position:absolute;left:0;top:.5em;width:7px;height:7px;border-radius:99px;background:var(--eco,#144b3c)}
+.brand-public-link{font-size:14px;font-weight:700;color:var(--eco,#144b3c);text-decoration:underline;text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center;border-radius:8px}
+.brand-public-link:hover{color:color-mix(in srgb,var(--eco,#144b3c) 80%,#000)}
+.brand-public-link:focus-visible{outline:3px solid #102820;outline-offset:3px}
+@keyframes eco-shift{0%{background-position:0% 40%}50%{background-position:100% 60%}100%{background-position:0% 40%}}
+@media(max-width:900px){.eco-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.eco-grid,.eco-page-grid{grid-template-columns:1fr}.eco-stage,.eco-page-grid{border-radius:22px;padding:12px}.eco-visual{height:184px;min-height:184px}.eco-logo{height:92px;flex-basis:92px}.eco-name{font-size:22px}.eco-band-head{margin-bottom:24px}}
+@media(prefers-reduced-motion:reduce){
+ .eco-stage::before,.eco-page-grid::before,.eco-card,.eco-visual,.eco-cta,.eco-rich-card{animation:none!important;transition:none}
+ .eco-card:hover,.eco-card:focus-within .eco-visual,.eco-card:hover .eco-visual{transform:none;background-position:0% 40%}
+}
