@@ -27,6 +27,7 @@ python3 -m http.server 8000 --directory dist
 
 - `scripts/educalab-docentes.js`: página Sigma Docente basada en el manual, con Registrar, Planear y Crear.
 - `scripts/educalab-pages.js`: páginas interiores y Maletín de profe.
+- `scripts/educalab-relay.css` y `scripts/educalab-relay-card.svg`: diseño y visual ilustrativo de la ficha de Relay en `/relay/`.
 - `scripts/educalab-brand.css`: estilos de la marca y adaptación a móvil.
 - `scripts/educalab-runtime.js`: ajustes dinámicos y fondo ASCII con cambios cada segundo.
 - `scripts/educalab-original-logo.py`: composición de los originales de `design/original-logos/`.

@@ -249,7 +249,7 @@ def main():
                         break
             s=re.sub(r'<section\b(?=[^>]*\bid="blog")[^>]*>.*?</section>', '', s, count=1, flags=re.S)
         page.write_text(s)
-    css=(DIST/'assets/root-CS2DxC5N.css');css.write_text(original('assets/root-CS2DxC5N.css')+'\n'+(ROOT/'scripts/educalab-brand.css').read_text())
+    css=(DIST/'assets/root-CS2DxC5N.css');css.write_text(original('assets/root-CS2DxC5N.css')+'\n'+(ROOT/'scripts/educalab-brand.css').read_text()+'\n'+(ROOT/'scripts/educalab-relay.css').read_text())
     runtime=original('replica-runtime.js')+'\n'+(ROOT/'scripts/educalab-runtime.js').read_text()
     (DIST/'replica-runtime.js').write_text(runtime)
     (DIST/'assets/educalab-pages.js').write_text((ROOT/'scripts/educalab-pages.js').read_text())
@@ -333,6 +333,7 @@ def publish_product_routes():
     manifest_path.write_text(prefix+'='+json.dumps(data,ensure_ascii=False,separators=(',',':'))+(';' if semicolon else ''))
     brand=DIST/'brand'
     brand.mkdir(exist_ok=True)
+    (brand/'educalab-relay-card.svg').write_text((ROOT/'scripts'/'educalab-relay-card.svg').read_text())
     for src in (ROOT/'design'/'relay').glob('*'):
         if src.suffix.lower() in {'.webp','.png','.svg'}:
             (brand/src.name).write_bytes(src.read_bytes())
