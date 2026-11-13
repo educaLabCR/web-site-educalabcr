@@ -2,12 +2,13 @@
 from pathlib import Path
 from html import escape, unescape
 from html.parser import HTMLParser
-import json, re, subprocess, hashlib
+import json, os, re, subprocess, hashlib
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / 'dist'
 REFERENCE = ROOT / 'reference'
-SITE = 'https://causal-motion-replica.laboratorio-2471.chatgpt.site'
+PREVIEW_SITE = 'https://causal-motion-replica.laboratorio-2471.chatgpt.site'
+SITE = os.environ.get('SITE_URL', 'https://www.educalabcr.com').rstrip('/')
 PATHS = {'/founders':'/docentes','/designers':'/instituciones','/content-creators':'/equipos','/templates':'/productos','/pricing':'/asesoria','/widgets':'/herramientas','/mcp':'/ecosistema','/blog':'/guias','/roadmap':'/novedades','/terms':'/informacion','/privacy':'/privacidad'}
 SLUGS={'how-we-built-our-website-with-claude':'ensenar-con-ia','canvas-ai':'ideas-en-materiales','product-design':'tecnologia-educativa'}
 COPY = {}
@@ -179,7 +180,7 @@ def main():
         elif p.suffix=='.html' and (not relative.startswith('widgets/') or relative=='widgets/index.html'):
             s=original(relative).replace('<html lang="en">','<html lang="es">')
             parser=SpanishHTML();parser.feed(s);s=''.join(parser.out)
-            s=s.replace('<head>','<head><meta name="robots" content="noindex,nofollow"/>',1).replace('href="/favicon.svg"','href="/favicon.svg?v=original"').replace('href="/apple-touch-icon.png"','href="/apple-touch-icon.png?v=original"')
+            s=s.replace('href="/favicon.svg"','href="/favicon.svg?v=original"').replace('href="/apple-touch-icon.png"','href="/apple-touch-icon.png?v=original"')
             # Keep the server document as a bootstrap; the client builds branded
             # content from the translated route modules without hydration mismatch.
             s=urls(s)
@@ -208,7 +209,7 @@ def main():
     # Valid brand metadata without the reference site's prices or platform claims.
     seo_path=DIST/'assets/seo-CEuDsIHT.js'
     faq=seo_path.read_text().split(',t=`https://')[0]
-    seo=faq+';\n'+(ROOT/'scripts/educalab-seo.js').read_text()
+    seo=faq+';\n'+(ROOT/'scripts/educalab-seo.js').read_text().replace('__SITE_URL__', SITE)
     seo_path.write_text(seo)
     for page in DIST.rglob('*.html'):
         if page.parent.name=='widgets':continue
@@ -245,6 +246,25 @@ def main():
     redirects.update({p:'/guias/'+SLUGS[p.parent.name] if p.parent.name in SLUGS else '/guias' for p in (DIST/'blog').glob('*/index.html')})
     for p,destination in redirects.items():
         p.write_text('<!doctype html><html lang="es"><meta charset="utf-8"><title>EducaLabCR</title><meta http-equiv="refresh" content="0;url='+destination+'"><link rel="canonical" href="'+SITE+destination+'"><p><a href="'+destination+'">Continuar a EducaLabCR</a></p></html>')
+    # Remove preview-only indexing metadata and point static crawlers to the
+    # public domain before packaging this build for a production host.
+    for page in DIST.rglob('*'):
+        if not page.is_file() or page.suffix not in {'.html', '.js', '.webmanifest'}:
+            continue
+        content = page.read_text()
+        content = content.replace(PREVIEW_SITE, SITE)
+        if page.suffix == '.html':
+            content = re.sub(r'<meta\b[^>]*name=["\']robots["\'][^>]*>', '', content, flags=re.I)
+            relative = page.relative_to(DIST).parent.as_posix()
+            route = '/' if relative == '.' else '/' + relative.strip('/') + '/'
+            redirect = re.search(r'<meta http-equiv="refresh" content="0;url=([^"]+)"', content, flags=re.I)
+            if redirect:
+                route = redirect.group(1)
+                if route != '/' and not route.endswith('/'):
+                    route += '/'
+            content = re.sub(r'(<meta\b[^>]*property="og:url"[^>]*content=")[^"]*(")', lambda m: m.group(1) + SITE + route + m.group(2), content, flags=re.I)
+            content = re.sub(r'(<link\b[^>]*rel="canonical"[^>]*href=")[^"]*(")', lambda m: m.group(1) + SITE + route + m.group(2), content, flags=re.I)
+        page.write_text(content)
     subprocess.run(['python3',str(ROOT/'scripts/educalab-ideas.py')],check=True)
     subprocess.run(['python3',str(ROOT/'scripts/educalab-original-logo.py')],check=True)
     print('EducaLabCR adaptation built: Spanish navigation, content, imagery and routes.')

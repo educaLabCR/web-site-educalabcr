@@ -6,6 +6,12 @@ Versión actual del sitio de EducaLabCR: Sigma Docente, Luma, Relay, productos, 
 
 `dist/` contiene el sitio estático completo, listo para servir desde la raíz de un dominio. No necesita base de datos ni claves de API. Configure su hosting para servir los archivos `index.html` de cada directorio y el respaldo `dist/index.html` para rutas del cliente.
 
+### Dokploy con Dockerfile
+
+El repositorio incluye un `Dockerfile` que sirve `dist/` con Nginx en el puerto `80`; en Dokploy, seleccione el método **Dockerfile** y configure el puerto del contenedor como `80`. El `.dockerignore` limita el contexto de construcción al sitio compilado y a la configuración de Nginx.
+
+Los metadatos canónicos del sitio se generan con `SITE_URL`, cuyo valor predeterminado es `https://www.educalabcr.com`. Si el dominio público es distinto, establezca `SITE_URL` al ejecutar `npm run build` y publique el `dist/` resultante.
+
 ## Desarrollo
 
 Requisitos: Node.js 20 o superior y Python 3.10 o superior.

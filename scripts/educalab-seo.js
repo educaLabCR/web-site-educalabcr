@@ -1,4 +1,4 @@
-var t='https://causal-motion-replica.laboratorio-2471.chatgpt.site',n=t+'/og.png';
+var t='__SITE_URL__',n=t+'/og.png';
 function r(path){return /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(path)?path:t+path;}
 function i({title,description,path,image=n}){return [{title},{name:'description',content:description},{property:'og:type',content:'website'},{property:'og:site_name',content:'EducaLabCR'},{property:'og:title',content:title},{property:'og:description',content:description},{property:'og:url',content:t+path},{property:'og:image',content:r(image)},{property:'og:image:alt',content:'EducaLabCR · Sigma, Luma y Relay'},{name:'twitter:card',content:'summary_large_image'},{tagName:'link',rel:'canonical',href:t+path}];}
 var a='EducaLabCR · Tecnología, formación e innovación',o='Explorá Sigma, Luma, Relay y la formación de EducaLabCR. Tecnología con propósito para docentes, instituciones y equipos.';
