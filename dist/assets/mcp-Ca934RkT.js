@@ -1,1 +1,1 @@
-import {page,meta} from "./educalab-pages.js";export default page("ecosistema");export {meta};
+import {page,metaFor} from "./educalab-pages.js";export default page("ecosistema");export function meta(a){return metaFor("ecosistema",undefined,a);}

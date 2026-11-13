@@ -25,7 +25,7 @@
 
 /* Brand adaptation for dynamic demonstration fragments and accessible labels. */
 (()=>{
-const legacy={'/founders':'/docentes','/designers':'/instituciones','/content-creators':'/equipos','/templates':'/productos','/pricing':'/asesoria','/widgets':'/herramientas','/mcp':'/ecosistema','/blog':'/guias','/roadmap':'/novedades','/terms':'/informacion','/privacy':'/privacidad'};
+const legacy={'/founders':'/docentes','/designers':'/instituciones','/content-creators':'/equipos','/templates':'/productos','/pricing':'/asesoria','/widgets':'/herramientas','/mcp':'/ecosistema','/blog':'/guias','/roadmap':'/novedades','/terms':'/informacion','/privacy':'/privacidad','/sigma':'/docentes'};
 const path=location.pathname.replace(/\/$/,'');
 if(legacy[path]){location.replace(legacy[path]+location.search+location.hash);return;}
 const fragments={'Show ':'Mostrar ','Save to Causal':'Guardar recurso','Save to EducaLabCR':'Guardar recurso','Link copied':'Enlace copiado','Assistant is ready':'Asistente preparado','Copied':'Copiado','Copy':'Copiar','Open menu':'Abrir menú','Close menu':'Cerrar menú','Close sidebar':'Cerrar panel','Open assistant':'Abrir asistente','Pause':'Pausar','Play':'Reproducir','Replace':'Reemplazar','Start typing...':'Escribí tu idea…','Highlight':'Resaltar','Bold':'Negrita','Italic':'Cursiva','Underline':'Subrayado','Strikethrough':'Tachado','Bullet list':'Lista con viñetas','Numbered list':'Lista numerada','To-do list':'Lista de tareas','Caption':'Descripción','Regular text':'Texto normal','Center':'Centrar','template preview':'vista del producto','Close page':'Cerrar documento','Open page':'Abrir documento','New chat':'Nueva conversación'};
@@ -46,7 +46,7 @@ function enhancements(){
  const productivity=document.querySelector('#productivity > div > div');
  if(productivity)for(const index of [1,3])productivity.children[index]?.classList.add('brand-glass-tile');
  const heading=[...document.querySelectorAll('h2')].find(x=>x.textContent==='Ecosistema EducaLabCR');
- if(heading){const section=heading.closest('section');const stage=section?.querySelector('a.group');if(stage&&!stage.querySelector('.brand-ecosystem-stage')){for(const child of [...stage.children])child.style.display='none';const el=document.createElement('div');el.className='brand-ecosystem-stage';el.innerHTML='<span>Sigma</span><span>Luma</span><span>Relay</span>';stage.appendChild(el);}}
+ if(heading){const section=heading.closest('section');const stage=section?.querySelector('a.group');if(stage&&!stage.querySelector('.brand-ecosystem-stage')){for(const child of [...stage.children])child.style.display='none';const el=document.createElement('div');el.className='brand-ecosystem-stage';el.innerHTML='<span>Sigma</span><span>TEKU</span><span>LUMA</span><span>Relay</span><span>Idoneidad</span><span>taskOs</span>';stage.appendChild(el);}}
 }
 let queued=false;
 const observer=new MutationObserver(records=>{for(const record of records){if(record.type==='characterData')update(record.target);else if(record.type==='attributes')update(record.target);else for(const node of record.addedNodes)update(node);}if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;enhancements();});}});

@@ -24,11 +24,21 @@ manifest = json.loads((root / '.openai' / 'hosting.json').read_text())
 assert manifest.get('project_id'), 'Site identity is required'
 assert manifest['static']['directory'] == 'dist'
 assert (dist / 'replica-runtime.js').is_file()
-for route in ['docentes','instituciones','equipos','productos','asesoria','herramientas','ecosistema','guias','novedades','informacion','privacidad','guias/ensenar-con-ia','guias/ideas-en-materiales','guias/tecnologia-educativa','guias/maletin-de-profe']:
+spanish=['docentes','instituciones','equipos','productos','asesoria','herramientas','ecosistema','guias','novedades','informacion','privacidad','guias/ensenar-con-ia','guias/ideas-en-materiales','guias/tecnologia-educativa','guias/maletin-de-profe','contacto','oferta-asincronica','teku','luma','relay','idoneidad','taskos']
+for route in spanish:
     page=dist/route/'index.html'
     assert page.is_file(),route
     assert '<html lang="es"' in page.read_text(),route
     assert 'http-equiv="refresh"' not in page.read_text(),f'{route}: Spanish routes must render directly'
+sigma=dist/'sigma'/'index.html'
+assert sigma.is_file() and 'url=/docentes' in sigma.read_text(),'sigma alias'
+catalog=(dist/'assets'/'educalab-catalog.js').read_text()
+for url in ['https://demo.educalabcr.tech/','https://teku.educalabcr.tech/','https://relay.educalabagentes.tech/','https://taskos.educalabcr.tech/','https://wa.me/50670147031']:
+    assert url in catalog,url
+for blocked in ['relay2.educalabagentes.tech','educalab.cr','github.io/Sigma-Model','DIRECTUS','traefik.me']:
+    assert blocked not in catalog,blocked
+home=(dist/'assets'/'home-D0NzNBsQ.js').read_text()
+assert 'EL_HOME' in home and 'Conozca los productos.' in home
 for name in ['sigma.webp','luma.webp','relay.webp','lapiz.webp','idea-ensenar-ia.webp','idea-materiales.webp','idea-tecnologia.webp','educalab-mark.svg','educalab-wordmark.svg']:
     assert (dist/'brand'/name).stat().st_size>100,name
 assert (dist/'og.png').is_file()
@@ -39,5 +49,5 @@ for module in modules:
 seo=(dist/'assets/seo-CEuDsIHT.js').read_text()
 assert 'priceCurrency' not in seo and 'EducaLabCR' in seo
 assert not (dist/'_qa-mobile.html').exists(),'Remove the temporary QA page before packaging'
-print(json.dumps({'files': len([p for p in dist.rglob('*') if p.is_file()]), 'javascript_modules_checked':len(modules),'spanish_routes':15,'missing': missing}, indent=2))
+print(json.dumps({'files': len([p for p in dist.rglob('*') if p.is_file()]), 'javascript_modules_checked':len(modules),'spanish_routes':len(spanish),'missing': missing}, indent=2))
 raise SystemExit(bool(missing))
