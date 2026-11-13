@@ -1,0 +1,1 @@
+import {page,meta} from "./educalab-pages.js";export default page("guias");export {meta};

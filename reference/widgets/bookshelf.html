@@ -1,0 +1,1895 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data: blob:; connect-src 'none'; form-action 'none'; frame-src 'none'; base-uri 'none'" /><meta charset="utf-8" /><style data-widget-shell>:root {
+  color-scheme: var(--widget-color-scheme, light);
+  --widget-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --widget-background: #fff4ce;
+  --widget-color-scheme: light;
+  --widget-canvas: #f2f2f2;
+  --widget-surface: #fff4ce;
+  --widget-border: rgba(89,85,71,0.12);
+  --widget-text: #595547;
+  --widget-text-muted: #807240;
+  --widget-accent: #2988C1;
+  --widget-gap: 12px;
+  --widget-font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Source Code Pro', monospace;
+  --widget-font-size: 14px;
+  --widget-line-height: 1.6;
+  --widget-title-size: 16px;
+  --widget-title-weight: 500;
+  --widget-title-line-height: 1.4;
+  --widget-radius: 12px;
+}
+html {
+  height: 100%;
+  background: var(--widget-background, transparent);
+  overflow: clip;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M14.185 13.14l5.644 -2.202c1.625 -.634 1.538 -2.962 -.13 -3.473l-14.319 -4.382c-1.41 -.431 -2.73 .888 -2.298 2.298l4.382 14.318c.51 1.668 2.84 1.755 3.473 .13l2.202 -5.644a1.84 1.84 0 0 1 1.045 -1.045z' fill='%231A1A1A' stroke='%23FFFFFF' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E") 1 1, default;
+}
+/* Back to the browser's own where the browser's own is the honest answer: the
+   I-beam over text the user can select, the arrow over a checkbox. Inherited
+   from html, the app pointer would sit over a focused input and say nothing.
+   Zero-specificity so a widget that wants its own cursor still wins. */
+:where(input, textarea, select, [contenteditable=''], [contenteditable='true']) {
+  cursor: auto;
+}
+body {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  color: var(--widget-text);
+  font-family: var(--widget-font);
+  font-size: var(--widget-font-size);
+  line-height: var(--widget-line-height);
+  display: flex;
+  justify-content: center;
+}
+*, *::before, *::after { box-sizing: border-box; }
+:where(#root) { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: flex-start; }</style><style data-widget-style>
+/* === STYLE === */
+:root {
+  /* Same padding, gaps, tint and control size as the other widgets on this board. */
+  --bs-pad: 20px;
+  --bs-section-gap: 16px;
+  --bs-group-gap: 24px;
+  --bs-gap-m: 10px;
+  --bs-gap-s: 6px;
+  --bs-gap-xs: 2px;
+  --bs-control: 28px;
+  --bs-tint: color-mix(in srgb, var(--widget-text) 6%, transparent);
+  --bs-tint-inset: 6px;
+  /* Shelf. Each spine takes its own width and height from its book. */
+  --bs-spine-gap: 3px;
+  --bs-spine-radius: 4px;
+  --bs-slab-radius: 3px;
+  --bs-shelf-inset: 8px;
+  --bs-shelf-min: 248px;
+  --bs-stack-min: 96px;
+  --bs-plank: 8px;
+  --bs-plank-fill: color-mix(in srgb, var(--widget-text) 12%, var(--widget-surface));
+  --bs-lift: 6px;
+  --bs-pull: 4px;
+  --bs-editor-w: 224px;
+  --bs-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+#root {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  padding: var(--bs-pad);
+  background: var(--widget-surface);
+  color: var(--widget-text);
+  font-family: var(--widget-font);
+  font-size: var(--widget-font-size);
+  line-height: var(--widget-line-height);
+  display: flex;
+  flex-direction: column;
+  gap: var(--bs-section-gap);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bs-section-gap);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--widget-title-size);
+  font-weight: var(--widget-title-weight);
+  line-height: var(--widget-title-line-height);
+  text-wrap: balance;
+}
+
+.add, .ghost {
+  display: grid;
+  place-items: center;
+  color: var(--widget-text-muted);
+  transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease, transform 120ms var(--bs-ease-out);
+}
+.add {
+  width: var(--bs-control);
+  height: var(--bs-control);
+  margin: -6px 0;
+  border-radius: var(--widget-radius);
+}
+.add svg, .ghost svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.add:disabled { opacity: 0.35; cursor: default; }
+.add:not(:disabled):active, .ghost:active { transform: scale(0.96); }
+.add:focus-visible, .ghost:focus-visible { background: var(--bs-tint); color: var(--widget-text); }
+
+/* Room for six spines and the stack is kept, so adding a book never rescales the shelf. */
+.stage { position: relative; flex: none; }
+.scene {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--bs-group-gap);
+  width: 100%;
+  min-width: max-content;
+  padding: 0 var(--bs-shelf-inset) var(--bs-plank);
+  transform-origin: 0 0;
+}
+.plank {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--bs-plank);
+  border-radius: calc(var(--bs-plank) / 2);
+  background: var(--bs-plank-fill);
+}
+.books, .empty {
+  flex: none;
+  min-width: var(--bs-shelf-min);
+  display: flex;
+  align-items: flex-end;
+  gap: var(--bs-spine-gap);
+}
+.books:empty, .empty[hidden] { display: none; }
+.ghost {
+  width: 36px;
+  height: 144px;
+  border: 1.5px dashed color-mix(in srgb, var(--widget-text) 30%, transparent);
+  border-radius: var(--bs-spine-radius);
+}
+
+/* The button is the still hit area and the spine inside it lifts, so hovering its foot never flickers. */
+.book {
+  --pale: color-mix(in oklch, var(--c) 42%, #fff);
+  --ink: color-mix(in oklch, var(--c) 34%, #000);
+  position: relative;
+  flex: none;
+  width: var(--w);
+  height: var(--h);
+  transform-origin: 0 100%;
+  transition: transform 250ms var(--bs-ease-out);
+}
+/* The last book leans back onto its neighbour, pivoting on its front corner. */
+.book.leans { transform: rotate(-3deg); }
+.spine {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0 12px;
+  border-radius: var(--bs-spine-radius);
+  background: var(--pale);
+  color: var(--ink);
+  overflow: hidden;
+  transform-origin: 50% 100%;
+  transform: translateY(var(--y, 0px));
+  transition: transform 200ms var(--bs-ease-out);
+}
+.book.is-open .spine, .book:focus-visible .spine { --y: calc(var(--bs-lift) * -1); }
+.book:focus-visible .spine { outline: 2px solid var(--widget-text); outline-offset: 2px; }
+.book:active .spine { transform: translateY(var(--y, 0px)) scale(0.98); transition-duration: 100ms; }
+.fill {
+  position: absolute;
+  inset: 0;
+  background: var(--c);
+  transform-origin: 50% 100%;
+  transform: scaleY(var(--p, 0));
+  transition: transform 250ms var(--bs-ease-out);
+}
+.book[data-band="1"] .spine::before,
+.book[data-band="1"] .spine::after,
+.book[data-band="2"] .spine::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: color-mix(in srgb, var(--ink) 22%, transparent);
+}
+.book[data-band="1"] .spine::before { top: 6px; }
+.book[data-band="1"] .spine::after { bottom: 6px; }
+.book[data-band="2"] .spine::before { top: 7px; height: 4px; }
+.spine-title {
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+  max-height: 100%;
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: calc(var(--widget-font-size) - 3px);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.stack {
+  flex: none;
+  min-width: var(--bs-stack-min);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--bs-gap-s);
+}
+.stack.is-empty { visibility: hidden; }
+.stack-label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--bs-gap-s);
+  color: var(--widget-text-muted);
+  font-size: calc(var(--widget-font-size) - 2px);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.stack-count { color: var(--widget-text); font-weight: 600; }
+.slabs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--bs-gap-xs);
+}
+.slab {
+  position: relative;
+  flex: none;
+  width: var(--len);
+  height: var(--thick);
+  margin-left: calc(3px + var(--dx));
+  transform: rotate(var(--tilt));
+}
+.slab:last-child { transform: none; }
+.slab-body {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--bs-slab-radius);
+  background: var(--c);
+  transform: translateX(var(--x, 0px));
+  transition: transform 200ms var(--bs-ease-out);
+}
+.slab.is-open .slab-body, .slab:focus-visible .slab-body { --x: calc(var(--bs-pull) * -1); }
+.slab:focus-visible .slab-body { outline: 2px solid var(--widget-text); outline-offset: 2px; }
+
+.tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  max-width: min(220px, calc(100% - var(--bs-pad) * 2));
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--bs-gap-xs);
+  border-radius: 8px;
+  background: var(--widget-text);
+  color: var(--widget-surface);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 120ms ease, transform 150ms var(--bs-ease-out);
+}
+.tip.is-shown { opacity: 1; transform: none; }
+.tip-title { font-weight: 600; text-wrap: pretty; overflow-wrap: anywhere; }
+.tip-meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--bs-gap-m);
+  font-size: calc(var(--widget-font-size) - 2px);
+  color: color-mix(in srgb, var(--widget-surface) 72%, var(--widget-text));
+}
+.tip-author { min-width: 0; overflow-wrap: anywhere; }
+.tip-pct { flex: none; margin-left: auto; font-variant-numeric: tabular-nums; }
+
+.editor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 4;
+  width: var(--bs-editor-w);
+  max-width: calc(100% - var(--bs-pad) * 2);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--bs-gap-xs);
+  border-radius: var(--widget-radius);
+  background: var(--widget-surface);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 10px 30px -8px rgb(0 0 0 / 0.26);
+  outline: none;
+  -webkit-user-select: text;
+  user-select: text;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.96);
+  transition: opacity 120ms ease, transform 120ms var(--bs-ease-out), visibility 0s linear 120ms;
+}
+.editor.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 160ms ease, transform 200ms var(--bs-ease-out), visibility 0s;
+}
+.field {
+  min-width: 0;
+  margin-inline: calc(var(--bs-tint-inset) * -1);
+  padding: 2px var(--bs-tint-inset);
+  border-radius: 6px;
+  outline: none;
+  cursor: text;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.field:focus { background: var(--bs-tint); }
+.field:empty::before { content: attr(data-placeholder); color: var(--widget-text-muted); }
+.ed-title { font-weight: 600; }
+.ed-author { color: var(--widget-text-muted); }
+.ed-author:focus { color: var(--widget-text); }
+.ed-pages {
+  display: flex;
+  align-items: baseline;
+  margin-top: var(--bs-gap-s);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.ed-pages .field { margin-inline: 0; white-space: nowrap; }
+.ed-pages .field:first-child { margin-left: calc(var(--bs-tint-inset) * -1); }
+.ed-muted, .ed-pct { color: var(--widget-text-muted); }
+.ed-pct { margin-left: auto; padding-left: var(--bs-gap-m); }
+
+@media (hover: hover) and (pointer: fine) {
+  .add:not(:disabled):hover, .ghost:hover { background: var(--bs-tint); color: var(--widget-text); }
+  .book:hover .spine { --y: calc(var(--bs-lift) * -1); }
+  .slab:hover .slab-body { --x: calc(var(--bs-pull) * -1); }
+  .field:hover { background: var(--bs-tint); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --bs-lift: 0px; --bs-pull: 0px; }
+  .book, .spine, .fill, .slab-body, .add, .ghost { transition: none; }
+  .book:active .spine, .add:not(:disabled):active, .ghost:active, .tip, .editor { transform: none; }
+}
+
+</style></head><body><div id="root">
+<!-- === MARKUP === -->
+<div class="header">
+  <h3 class="title">Bookshelf</h3>
+  <button class="add" type="button" aria-label="Add a book">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.25v9.5M3.25 8h9.5"/></svg>
+  </button>
+</div>
+<div class="stage">
+  <div class="scene">
+    <div class="plank" aria-hidden="true"></div>
+    <div class="books" role="group" aria-label="Reading now"></div>
+    <div class="empty" hidden>
+      <button class="ghost" type="button" aria-label="Add a book">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.25v9.5M3.25 8h9.5"/></svg>
+      </button>
+    </div>
+    <div class="stack is-empty">
+      <div class="stack-label"><span>Read</span><span class="stack-count">0</span></div>
+      <div class="slabs" role="group" aria-label="Finished books"></div>
+    </div>
+  </div>
+</div>
+<div class="tip" aria-hidden="true">
+  <div class="tip-title"></div>
+  <div class="tip-meta"><span class="tip-author"></span><span class="tip-pct"></span></div>
+</div>
+<div class="editor" role="dialog" aria-label="Edit book" tabindex="-1">
+  <div class="field ed-title" data-key="title" data-placeholder="Title" role="textbox" aria-label="Title"></div>
+  <div class="field ed-author" data-key="author" data-placeholder="Author" role="textbox" aria-label="Author"></div>
+  <div class="ed-pages">
+    <span class="field ed-num" data-key="read" data-placeholder="0" role="textbox" aria-label="Pages read" inputmode="numeric"></span>
+    <span class="ed-muted">of</span>
+    <span class="field ed-num" data-key="total" data-placeholder="0" role="textbox" aria-label="Total pages" inputmode="numeric"></span>
+    <span class="ed-muted">pages</span>
+    <span class="ed-pct"></span>
+  </div>
+</div>
+
+</div><script data-widget-bridge>window.__widgetBoot = {"source":"widget-shell","protocol":1,"nodeId":"widget-1546c275-69e7-4a0b-918b-de45cc0ff8d8","storage":{"bookshelf":"{\"books\":[{\"id\":\"muo4maat9i0xt\",\"title\":\"The Left Hand of Darkness\",\"author\":\"Ursula K. Le Guin\",\"read\":212,\"total\":304,\"doneAt\":null,\"color\":5,\"w\":36,\"h\":158,\"band\":1},{\"id\":\"muo4maatn5qa4\",\"title\":\"Piranesi\",\"author\":\"Susanna Clarke\",\"read\":88,\"total\":272,\"doneAt\":null,\"color\":1,\"w\":30,\"h\":138,\"band\":0},{\"id\":\"muo4maatllz5n\",\"title\":\"The Overstory\",\"author\":\"Richard Powers\",\"read\":140,\"total\":502,\"doneAt\":null,\"color\":3,\"w\":42,\"h\":166,\"band\":2},{\"id\":\"muo4maat4ct6g\",\"title\":\"Tomorrow, and Tomorrow, and Tomorrow\",\"author\":\"Gabrielle Zevin\",\"read\":300,\"total\":416,\"doneAt\":null,\"color\":6,\"w\":38,\"h\":150,\"band\":0},{\"id\":\"muo4maatugv0y\",\"title\":\"Braiding Sweetgrass\",\"author\":\"Robin Wall Kimmerer\",\"read\":408,\"total\":408,\"doneAt\":1,\"color\":0,\"w\":36,\"h\":152,\"band\":1},{\"id\":\"muo4maatk0m6r\",\"title\":\"Klara and the Sun\",\"author\":\"Kazuo Ishiguro\",\"read\":303,\"total\":303,\"doneAt\":2,\"color\":4,\"w\":32,\"h\":144,\"band\":0}]}"},"lifecycle":"running","stateMaxBytes":262144,"heartbeatMs":1000,"capturePixelRatio":3,"readOnly":true};
+(function () {
+  var boot = window.__widgetBoot;
+  try { delete window.__widgetBoot; } catch (error) { /* non-configurable is harmless */ }
+  if (!boot) { return; }
+
+  var SOURCE = boot.source;
+  var PROTOCOL = boot.protocol;
+  var NODE_ID = boot.nodeId;
+  var STATE_MAX_BYTES = boot.stateMaxBytes;
+  var READ_ONLY = boot.readOnly === true;
+  var CAPTURE_PIXEL_RATIO = boot.capturePixelRatio || 1;
+  // The renderer is inlined immediately before this bridge only in Dev Mode.
+  // Hold the function in the shell closure, then remove its global so widget
+  // source cannot accidentally treat it as part of the authoring API.
+  var captureToBlob =
+    window.htmlToImage && typeof window.htmlToImage.toBlob === "function"
+      ? window.htmlToImage.toBlob
+      : null;
+  try { delete window.htmlToImage; } catch (error) { /* an exposed helper is harmless */ }
+
+  // Captured BEFORE the lifecycle gate replaces them on the window.
+  var rawSetTimeout = window.setTimeout.bind(window);
+  var rawClearTimeout = window.clearTimeout.bind(window);
+  var rawSetInterval = window.setInterval.bind(window);
+  var rawClearInterval = window.clearInterval.bind(window);
+  var rawRequestAnimationFrame =
+    typeof window.requestAnimationFrame === "function"
+      ? window.requestAnimationFrame.bind(window)
+      : null;
+  var rawCancelAnimationFrame =
+    typeof window.cancelAnimationFrame === "function"
+      ? window.cancelAnimationFrame.bind(window)
+      : null;
+
+  function now() {
+    return window.performance && typeof window.performance.now === "function"
+      ? window.performance.now()
+      : Date.now();
+  }
+
+  function post(payload) {
+    payload.source = SOURCE;
+    payload.protocol = PROTOCOL;
+    payload.nodeId = NODE_ID;
+    window.parent.postMessage(payload, "*");
+  }
+
+  // ---- did the widget's own script run? -----------------------------------
+  // The one widget failure with no other reporter. A top-level throw leaves a
+  // document that parsed, heartbeats, and shows whatever markup preceded the
+  // throw — indistinguishable, from out here, from a widget that draws very
+  // little. So the boot reports itself: ONE message, on load, carrying the
+  // first failure the widget's own code produced — a throw or a rejected
+  // promise — or null when it ran clean. The host writes it onto the node and
+  // the model reads it in its canvas context next turn; see
+  // widget-script-error.ts.
+  //
+  // ⚠️ Only failures BEFORE load count, and the listeners are installed here —
+  // at the top of the bridge, which runs before the widget's script — because a
+  // listener added later cannot hear the throw it exists for. An error after
+  // load belongs to an interaction, and a widget on screen and working must not
+  // be condemned by one throwing click handler.
+  //
+  // No truncation here: the host clamps, where the cap is a named constant it
+  // can import. Numbers are never interpolated into this script, so any number
+  // written into it is a twin that has to be kept in step by hand.
+  var firstError = null;
+  function recordBootError(message) {
+    if (firstError !== null) { return; }
+    firstError = message;
+  }
+
+  window.addEventListener("error", function (event) {
+    var message = event && event.message ? String(event.message) : "Uncaught error";
+    if (event && typeof event.lineno === "number" && event.lineno > 0) {
+      message += " (line " + event.lineno + ")";
+    }
+    recordBootError(message);
+  });
+
+  // ⚠️ A REJECTED PROMISE IS A FAILURE THE error LISTENER CANNOT HEAR, and in
+  // this frame it is the shape a blocked capability takes. The CSP is default-src
+  // none with connect-src none, so the fetch a model reaches for does not throw —
+  // it REJECTS, the then that was going to draw never runs, and the boot reported
+  // itself clean over an empty frame. Same slot as a throw, so whichever failure
+  // comes first is the one the model reads next turn.
+  //
+  // A failed RESOURCE load is deliberately NOT routed here. A capture-phase
+  // listener would see it — those events fire on the element and never bubble to
+  // window — but this slot is worded at the host end as the widget's own script
+  // having thrown and built nothing (describeWidgetScriptError), and it marks the
+  // node BROKEN WIDGET in every model-facing surface. A widget that runs
+  // perfectly except for one image the CSP refused is not that, and saying so
+  // would be worse than the silence. Reporting it wants a field of its own.
+  window.addEventListener("unhandledrejection", function (event) {
+    recordBootError("Unhandled promise rejection: " + describeRejection(event && event.reason));
+  });
+
+  // ⚠️ A rejection carries ANY value: an Error, a string, a DOM exception, an
+  // object whose message getter throws. Every read of it is inside the try,
+  // because the reporter must never become the failure it exists to describe.
+  function describeRejection(reason) {
+    try {
+      if (reason && typeof reason.message === "string" && reason.message) {
+        return reason.message;
+      }
+      return String(reason);
+    } catch (error) {
+      return "an unreadable reason";
+    }
+  }
+
+  window.addEventListener("load", function () {
+    post({ type: "booted", error: firstError });
+  });
+
+  // ---- dialogs: the blocked call that used to be silent -------------------
+  //
+  // The frame is sandboxed without allow-modals, so the browser DROPS a dialog
+  // call: nothing appears, prompt returns null, execution runs straight on
+  // through the guard written under it, and the control the user clicked is
+  // simply dead — with nothing thrown and nothing logged on either side of the
+  // frame. It is the most common way a finished widget reaches the canvas
+  // broken; widget-blocked-apis.ts records the incident.
+  //
+  // So the shell makes it LOUD instead. Each name is replaced with a function
+  // that throws, which turns a dead button into a console error the user can
+  // point at and — when the call sits on the boot path — into the booted error
+  // the model reads in its canvas context next turn.
+  //
+  // ⚠️ **This does NOT replace the write-time scan, and neither replaces the
+  // other.** write_widget refuses source containing these calls, and refusing
+  // before anything reaches the canvas is strictly the better failure. But that
+  // scan is a regular expression over source, so it only sees the spellings it
+  // was written for: a bare call and a window-qualified one. An alias, a
+  // computed member, globalThis and self all walk past it and are all ordinary
+  // JavaScript. They are also all the SAME PROPERTY — window, globalThis and
+  // self are one object in here, and a bare name resolves to it — so one shim
+  // is the backstop for every spelling the scan cannot see.
+  //
+  // Installed at the top of the bridge, beside the boot listeners, for the same
+  // reason they are: the widget's own script runs after this, and a shim
+  // installed later cannot intercept the call it exists for.
+  function installBlockedDialog(name) {
+    try {
+      window[name] = function () {
+        throw new Error(
+          name +
+            "() is blocked: a widget frame has no dialogs. Ask in the widget " +
+            "instead - the placeholder row becomes an input in place, Enter " +
+            "commits it and Escape cancels."
+        );
+      };
+    } catch (error) { /* non-configurable is harmless: the call was dead anyway */ }
+  }
+  var BLOCKED_DIALOGS = ["alert","confirm","prompt"];
+  for (var dialogIndex = 0; dialogIndex < BLOCKED_DIALOGS.length; dialogIndex += 1) {
+    installBlockedDialog(BLOCKED_DIALOGS[dialogIndex]);
+  }
+
+  // ---- lifecycle: the timer gate -----------------------------------------
+  var paused = boot.lifecycle === "paused";
+  var deferred = [];
+
+  function queueDeferred(key, run) {
+    for (var i = 0; i < deferred.length; i += 1) {
+      if (deferred[i].key === key) { return; }
+    }
+    deferred.push({ key: key, run: run });
+  }
+
+  function dropDeferred(key) {
+    for (var i = deferred.length - 1; i >= 0; i -= 1) {
+      if (deferred[i].key === key) { deferred.splice(i, 1); }
+    }
+  }
+
+  function setLifecycle(state) {
+    var next = state === "paused";
+    if (next === paused) { return; }
+    paused = next;
+    if (paused) { return; }
+
+    var pending = deferred;
+    deferred = [];
+    for (var i = 0; i < pending.length; i += 1) {
+      try { pending[i].run(); } catch (error) { /* one bad callback must not strand the rest */ }
+    }
+    // Whatever changed while frozen was measured as nothing; fit it now.
+    scheduleFit();
+  }
+
+  window.setTimeout = function (callback, delay) {
+    if (typeof callback !== "function") { return rawSetTimeout.apply(null, arguments); }
+    var args = Array.prototype.slice.call(arguments, 2);
+    var handle = rawSetTimeout(function () {
+      var run = function () { callback.apply(undefined, args); };
+      if (paused) { queueDeferred("timeout:" + handle, run); return; }
+      run();
+    }, delay);
+    return handle;
+  };
+
+  window.clearTimeout = function (handle) {
+    dropDeferred("timeout:" + handle);
+    return rawClearTimeout(handle);
+  };
+
+  window.setInterval = function (callback, delay) {
+    if (typeof callback !== "function") { return rawSetInterval.apply(null, arguments); }
+    var args = Array.prototype.slice.call(arguments, 2);
+    var handle = rawSetInterval(function () {
+      var run = function () { callback.apply(undefined, args); };
+      // Coalesced on purpose: one catch-up firing, never the N that were missed.
+      if (paused) { queueDeferred("interval:" + handle, run); return; }
+      run();
+    }, delay);
+    return handle;
+  };
+
+  window.clearInterval = function (handle) {
+    dropDeferred("interval:" + handle);
+    return rawClearInterval(handle);
+  };
+
+  if (rawRequestAnimationFrame) {
+    window.requestAnimationFrame = function (callback) {
+      if (typeof callback !== "function") { return rawRequestAnimationFrame(callback); }
+      var handle = rawRequestAnimationFrame(function () {
+        var run = function () { callback(now()); };
+        if (paused) { queueDeferred("frame:" + handle, run); return; }
+        run();
+      });
+      return handle;
+    };
+  }
+
+  if (rawCancelAnimationFrame) {
+    window.cancelAnimationFrame = function (handle) {
+      dropDeferred("frame:" + handle);
+      return rawCancelAnimationFrame(handle);
+    };
+  }
+
+  // ---- heartbeat ----------------------------------------------------------
+  rawSetInterval(function () { post({ type: "alive" }); }, boot.heartbeatMs);
+
+  // ---- storage ------------------------------------------------------------
+  var storageState = {};
+  if (boot.storage && typeof boot.storage === "object") {
+    for (var bootKey in boot.storage) {
+      if (Object.prototype.hasOwnProperty.call(boot.storage, bootKey)) {
+        storageState[bootKey] = String(boot.storage[bootKey]);
+      }
+    }
+  }
+
+  function cloneStorage() {
+    var copy = {};
+    for (var key in storageState) {
+      if (Object.prototype.hasOwnProperty.call(storageState, key)) { copy[key] = storageState[key]; }
+    }
+    return copy;
+  }
+
+  function byteSize(text) {
+    if (typeof TextEncoder === "function") { return new TextEncoder().encode(text).length; }
+    return text.length;
+  }
+
+  // COALESCED to one post per task -- the pending flag is what does it. The
+  // host does real work per message: a structured-clone deserialize of the
+  // WHOLE map plus a JSON.stringify of it, on the app's own main thread, which
+  // is the one thread this sandbox exists to protect (performance review P-5).
+  // A widget that persists several keys inside one render() posted one message
+  // per key for a state that only settles once. The RAW timer, never the gated
+  // one: a sync is host bookkeeping, and deferring it behind a pause would hold
+  // the user's last write hostage to the widget being off screen.
+  //
+  // A task boundary is the furthest this can safely go. Anything longer (an
+  // interval, a throttle) risks an eviction landing inside the window, and the
+  // host's write-through to the content cache is what a re-boot reads -- so a
+  // dropped sync is silently the user's data (W-08).
+  var syncPending = false;
+  function syncStorage() {
+    if (syncPending) { return; }
+    syncPending = true;
+    rawSetTimeout(function () {
+      syncPending = false;
+      post({ type: "storage-sync", storage: cloneStorage() });
+    }, 0);
+  }
+
+  var widgetLocalStorage = {
+    get length() { return Object.keys(storageState).length; },
+    key: function (index) {
+      var keys = Object.keys(storageState);
+      return index in keys ? keys[index] : null;
+    },
+    getItem: function (key) {
+      var name = String(key);
+      return Object.prototype.hasOwnProperty.call(storageState, name) ? storageState[name] : null;
+    },
+    setItem: function (key, value) {
+      var name = String(key);
+      var had = Object.prototype.hasOwnProperty.call(storageState, name);
+      var previous = storageState[name];
+      storageState[name] = String(value);
+
+      if (byteSize(JSON.stringify(storageState)) > STATE_MAX_BYTES) {
+        // Real localStorage throws at quota, so this is the failure shape the
+        // widget was written against. Dropping the write would show the user
+        // data that is not saved.
+        if (had) { storageState[name] = previous; } else { delete storageState[name]; }
+        var error = new Error("Widget storage is full.");
+        error.name = "QuotaExceededError";
+        throw error;
+      }
+
+      syncStorage();
+    },
+    removeItem: function (key) {
+      var name = String(key);
+      if (!Object.prototype.hasOwnProperty.call(storageState, name)) { return; }
+      delete storageState[name];
+      syncStorage();
+    },
+    clear: function () {
+      storageState = {};
+      syncStorage();
+    },
+  };
+
+  try {
+    Object.defineProperty(window, "localStorage", {
+      value: widgetLocalStorage,
+      configurable: true,
+      enumerable: false,
+      writable: false,
+    });
+  } catch (error) { /* leave the realm's own (throwing) localStorage in place */ }
+
+  // ---- shared predicates --------------------------------------------------
+  function isEditable(node) {
+    if (!node || typeof node.closest !== "function") { return false; }
+    return !!node.closest(
+      "input, textarea, select, [contenteditable=''], [contenteditable='true']"
+    );
+  }
+
+  // ══ THE LINE BETWEEN THE WIDGET'S GESTURE AND THE CANVAS'S ══
+  //
+  // Something the user OPERATES, as opposed to the widget's own scenery. Only
+  // the child can answer this — the host cannot see into a sandboxed document —
+  // and the whole pointer rule turns on it:
+  //
+  //   scenery      → the canvas gets it: the press selects the node and can
+  //                  become a drag, exactly like a press on any other node.
+  //   interactive  → the widget keeps it, whole. No selection, no drag handoff,
+  //                  and nothing after the press is relayed, so a slider slides,
+  //                  a list item reorders and a drag across a field selects its
+  //                  text instead of towing the node across the canvas.
+  //
+  // Text fields are in here on purpose and without regard to focus. Dragging
+  // across a field IS a text selection at every point in its life, and needing
+  // to click into it first to get that was the original complaint.
+  //
+  // The cost is real and accepted: a widget whose entire surface is controls has
+  // no drag handle left. Scenery is the drag handle, and almost every widget has
+  // some — padding, a heading, a background. The reverse default was worse: it
+  // made the widget's own interactions unusable, which is the whole point of a
+  // widget.
+  var INTERACTIVE_SELECTOR =
+    "[data-widget-interactive], a[href], button, input, textarea, select, option, label, summary, details, " +
+    "[role='button'], [role='link'], [role='checkbox'], [role='radio'], " +
+    "[role='switch'], [role='tab'], [role='menuitem'], [role='option'], " +
+    "[role='slider'], [role='spinbutton'], [role='textbox'], " +
+    "[contenteditable=''], [contenteditable='true'], [draggable='true'], " +
+    "[tabindex]:not([tabindex='-1'])";
+
+  function isInteractive(node) {
+    if (!node || typeof node.closest !== "function") { return false; }
+    if (node.closest(INTERACTIVE_SELECTOR)) { return true; }
+    // A widget builds many controls and drag handles out of plain divs, so no
+    // tag list is complete. A control/drag cursor is the author's own statement
+    // that this surface owns pointer interaction; the shell's inherited custom
+    // default cursor deliberately does not match any of these values.
+    try {
+      var cursor = window.getComputedStyle(node).cursor;
+      return (
+        cursor === "pointer" ||
+        cursor === "text" ||
+        cursor === "vertical-text" ||
+        cursor === "crosshair" ||
+        cursor === "cell" ||
+        cursor === "move" ||
+        cursor === "all-scroll" ||
+        cursor === "grab" ||
+        cursor === "grabbing" ||
+        cursor === "copy" ||
+        cursor === "alias" ||
+        cursor === "zoom-in" ||
+        cursor === "zoom-out" ||
+        cursor.indexOf("resize") !== -1
+      );
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function hasTextSelection() {
+    var selection =
+      typeof document.getSelection === "function" ? document.getSelection() : null;
+    return !!selection && selection.isCollapsed === false;
+  }
+
+  // ---- pointer ------------------------------------------------------------
+  var pointerActive = false;
+  var activePointerTarget = null;
+  var activePointerId = null;
+  var lastPointerSnapshot = null;
+
+  function pointerPayload(event) {
+    return {
+      clientX: event.clientX,
+      clientY: event.clientY,
+      screenX: event.screenX,
+      screenY: event.screenY,
+      button: event.button,
+      ctrlKey: !!event.ctrlKey,
+      metaKey: !!event.metaKey,
+      shiftKey: !!event.shiftKey,
+      altKey: !!event.altKey,
+    };
+  }
+
+  function relayPointer(type, event) {
+    lastPointerSnapshot = pointerPayload(event);
+    var payload = pointerPayload(event);
+    payload.type = type;
+    post(payload);
+  }
+
+  function releaseCapture() {
+    if (activePointerTarget && typeof activePointerTarget.releasePointerCapture === "function") {
+      try { activePointerTarget.releasePointerCapture(activePointerId); } catch (error) {}
+    }
+    activePointerTarget = null;
+    activePointerId = null;
+  }
+
+  window.addEventListener("pointerdown", function (event) {
+    if (event.button !== 0) { return; }
+
+    // Only one pointer is bridged. If a release went missing, a new press ends
+    // that stale session before deciding whether the new gesture belongs to
+    // the widget or the canvas.
+    if (pointerActive) { endPointer(lastPointerSnapshot || event); }
+
+    // A press on something the user operates belongs to the WIDGET, whole. It
+    // never crosses the iframe boundary: no press means the host cannot select
+    // the node or arm its drag handoff, and no move can start a canvas drag.
+    // A slider slides, a list item reorders and a drag across a field selects
+    // its text without towing or selecting the widget.
+    if (isInteractive(event.target)) {
+      return;
+    }
+
+    pointerActive = true;
+    activePointerId = event.pointerId;
+    activePointerTarget =
+      event.target && typeof event.target.setPointerCapture === "function" ? event.target : null;
+
+    if (activePointerTarget) {
+      try { activePointerTarget.setPointerCapture(event.pointerId); } catch (error) {}
+    }
+
+    relayPointer("pointerdown", event);
+  }, true);
+
+  window.addEventListener("pointermove", function (event) {
+    if (!pointerActive) { return; }
+
+    // ⚠️ A MOVE WITH NO BUTTON DOWN IS NOT PART OF A DRAG.
+    //
+    // pointerActive is set on the press and cleared on the release, and the
+    // release can go missing: it lands outside the frame, or the widget rebuilt
+    // the element the pointer was captured on while the user worked in it. The
+    // stale press then outlives its gesture, and the next HOVER over the widget
+    // relays as a drag — the host crosses its threshold and dispatches a real
+    // node drag from a mouse move with nothing held down. The widget follows
+    // the cursor around the canvas and only lets go when the user clicks.
+    //
+    // event.buttons is the only honest answer to "is this still a press", so a
+    // move that reports none ENDS the gesture rather than being ignored: the
+    // host is holding an armed press and needs the release to disarm it.
+    // Strictly zero, so a browser that omits the field cannot silently cancel
+    // every real drag.
+    if (event.buttons === 0) { endPointer(event); return; }
+
+    relayPointer("pointermove", event);
+  }, true);
+
+  function endPointer(event) {
+    if (!pointerActive) { return; }
+    pointerActive = false;
+    releaseCapture();
+    relayPointer("pointerup", event);
+  }
+
+  window.addEventListener("pointerup", endPointer, true);
+  window.addEventListener("pointercancel", endPointer, true);
+
+  // Drag recovery: the frame losing focus mid-press means the gesture ended
+  // somewhere we cannot see. Synthesise the release from the last position
+  // rather than leaving the widget stuck to the cursor. The snapshot carries
+  // exactly the fields a real event is read for, so it relays as one.
+  //
+  // Deliberately not endPointer: the capture is dropped by forgetting it rather
+  // than by releasePointerCapture, because the element it was taken on may be
+  // gone by the time focus comes back and the call would throw for nothing.
+  window.addEventListener("blur", function () {
+    if (pointerActive && lastPointerSnapshot) {
+      relayPointer("pointerup", lastPointerSnapshot);
+    }
+    pointerActive = false;
+    activePointerTarget = null;
+    activePointerId = null;
+  });
+
+  // ---- wheel --------------------------------------------------------------
+  function findScrollRegion(event) {
+    var path = typeof event.composedPath === "function" ? event.composedPath() : [];
+    for (var i = 0; i < path.length; i += 1) {
+      var node = path[i];
+      if (node && typeof node.matches === "function" && node.matches("[data-widget-scroll]")) {
+        return node;
+      }
+    }
+    return null;
+  }
+
+  function canScroll(element, deltaX, deltaY) {
+    if (deltaY !== 0) {
+      var maxY = element.scrollHeight - element.clientHeight;
+      if (maxY > 1 && ((deltaY < 0 && element.scrollTop > 0) || (deltaY > 0 && element.scrollTop < maxY - 1))) {
+        return true;
+      }
+    }
+    if (deltaX !== 0) {
+      var maxX = element.scrollWidth - element.clientWidth;
+      if (maxX > 1 && ((deltaX < 0 && element.scrollLeft > 0) || (deltaX > 0 && element.scrollLeft < maxX - 1))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  window.addEventListener("wheel", function (event) {
+    // The canvas wins unless the widget explicitly marked a scroll region that
+    // can still move in this direction — and Ctrl/Cmd+wheel is always a canvas
+    // zoom. Content taller than a 300px frame is the NORMAL case, so an
+    // automatic "something under the cursor can scroll" rule would hand the
+    // wheel to the widget almost always and the canvas would be dead over it.
+    if (!event.ctrlKey && !event.metaKey) {
+      var region = findScrollRegion(event);
+      if (region && canScroll(region, event.deltaX, event.deltaY)) { return; }
+    }
+
+    event.preventDefault();
+    post({
+      type: "wheel",
+      clientX: event.clientX,
+      clientY: event.clientY,
+      deltaX: event.deltaX,
+      deltaY: event.deltaY,
+      deltaMode: event.deltaMode,
+      ctrlKey: !!event.ctrlKey,
+      shiftKey: !!event.shiftKey,
+    });
+  }, { capture: true, passive: false });
+
+  // ---- context menu -------------------------------------------------------
+  window.addEventListener("contextmenu", function (event) {
+    // A right-click on the widget's own text field keeps the browser's
+    // spell-check menu.
+    if (isEditable(event.target)) { return; }
+
+    // ONLY the child can answer this one (F-27). The preventDefault below is
+    // what lets the host open the CANVAS menu instead of the browser's -- but
+    // the share view deliberately never attaches that listener (Canvas.tsx
+    // skips it when readOnly, leaving the native menu intact), so on
+    // /s/[token] the relay landed on nothing and a visitor right-clicking a
+    // widget got no menu at all, where right-clicking a card beside it gave
+    // them Chrome's. The host cannot fix it: by the time the message arrives
+    // the default is already prevented, in a document it cannot reach into.
+    if (READ_ONLY) { return; }
+
+    event.preventDefault();
+    post({ type: "contextmenu", clientX: event.clientX, clientY: event.clientY });
+  }, true);
+
+  // ---- keyboard -----------------------------------------------------------
+  function isRelayableKey(event) {
+    var mod = event.metaKey || event.ctrlKey;
+    var key = event.key;
+
+    if (key === "Escape") { return !mod; }
+    if (key === "Backspace" || key === "Delete") {
+      // A user with text selected inside a widget is deleting TEXT, not a node.
+      return !mod && !hasTextSelection();
+    }
+    if (mod && (key === "z" || key === "Z")) { return true; }
+
+    // Never a bare letter (it would arm a canvas placement behind the widget),
+    // and never Cmd+A / Cmd+C / Cmd+X — see rule 3 in this file's header.
+    return false;
+  }
+
+  window.addEventListener("keydown", function (event) {
+    if (isEditable(event.target) || isEditable(document.activeElement)) { return; }
+    if (!isRelayableKey(event)) { return; }
+
+    post({
+      type: "key",
+      key: event.key,
+      code: event.code,
+      ctrlKey: !!event.ctrlKey,
+      metaKey: !!event.metaKey,
+      shiftKey: !!event.shiftKey,
+      altKey: !!event.altKey,
+    });
+  }, true);
+
+  // ---- clipboard ----------------------------------------------------------
+  // Native events never cross an iframe boundary, and a relayed keydown cannot
+  // synthesize one. Write the copy marker HERE, synchronously on the real event;
+  // the host records the selected nodes against that exact marker. This needs
+  // neither async Clipboard API permissions nor access to the frame's DOM.
+  // Cut writes the same marker; the host also takes the copied selection off
+  // the board.
+  function publishCopyMarker(type) {
+    return function (event) {
+      if (READ_ONLY || isEditable(event.target) || isEditable(document.activeElement) || hasTextSelection()) { return; }
+      if (!event.clipboardData) { return; }
+      var bytes = window.crypto.getRandomValues(new Uint8Array(16));
+      var id = Array.from(bytes, function (byte) { return byte.toString(16).padStart(2, "0"); }).join("");
+      var text = "causal:nodes:" + id;
+      event.clipboardData.setData("text/plain", text);
+      event.preventDefault();
+      post({ type: type, text: text });
+    };
+  }
+  window.addEventListener("copy", publishCopyMarker("copy"));
+  window.addEventListener("cut", publishCopyMarker("cut"));
+
+  window.addEventListener("paste", function (event) {
+    if (READ_ONLY || isEditable(event.target) || isEditable(document.activeElement)) { return; }
+    if (!event.clipboardData) { return; }
+    var text = event.clipboardData.getData("text/plain").trim();
+    // A copy of one picture carries its marker on the HTML, not as text.
+    if (!text) {
+      var onHtml = event.clipboardData.getData("text/html").match(/data-causal-nodes="([^"]+)"/);
+      if (onHtml) { text = onHtml[1]; }
+    }
+    if (text.indexOf("causal:nodes:") !== 0 && text.indexOf("causal-widget:v1:") !== 0) { return; }
+    event.preventDefault();
+    post({ type: "paste", text: text });
+  });
+
+  // ---- host → child -------------------------------------------------------
+  function applyTheme(vars) {
+    if (!vars || typeof vars !== "object") { return; }
+    var root = document.documentElement;
+    if (!root || !root.style || typeof root.style.setProperty !== "function") { return; }
+
+    for (var name in vars) {
+      if (!Object.prototype.hasOwnProperty.call(vars, name)) { continue; }
+      // The host owns this namespace and nothing else: a theme message must
+      // never be able to set an arbitrary property on the widget's root.
+      if (name.indexOf("--widget-") !== 0) { continue; }
+      root.style.setProperty(name, String(vars[name]));
+    }
+  }
+
+  // ---- measurement: the box this widget's content actually wants ----------
+  //
+  // The no-opinion answer, shared so every early-out reports it identically. A
+  // caller cannot tell a missing DOM API from a widget with genuinely no
+  // intrinsic size, and does not need to: both mean leave the frame alone.
+  var NO_SIZE = { width: null, height: null };
+  //
+  // ⚠️ **Probe, read and restore all inside ONE task.** The browser paints at
+  // the end of a task, so nothing below is ever visible; split it across an
+  // await or a frame and the probe geometry flashes on the user's canvas.
+  //
+  // What makes this cheap is that the SHELL owns the whole height chain
+  // (html and body are 100%, :where(#root) is zero-specificity). A
+  // widget's own #root { height: 100% } is a PERCENTAGE against that chain,
+  // so releasing html/body to auto makes CSS resolve it to auto on its own.
+  // There is nothing to override, so the shell needs no forced rule here --
+  // which is what keeps the no-forced-override invariant intact.
+  //
+  // The axis is the standing fit's (below); the host's measure passes none and
+  // gets both. A height fit keeps the frame's width, so its height has to be
+  // read AT that width — a height measured at a narrower fit-content width
+  // belongs to a layout the frame will never have.
+  function measureContent(axis) {
+    if (typeof document.getElementById !== "function") { return NO_SIZE; }
+    var root = document.getElementById("root");
+    var html = document.documentElement;
+    var body = document.body;
+    if (!root || !root.style || !html || !html.style || !body || !body.style) { return NO_SIZE; }
+    if (typeof root.getBoundingClientRect !== "function") { return NO_SIZE; }
+
+    // A pane that opted into its own scrollbar is deliberately unbounded —
+    // fitting to its content turns a hundred-row list into a hundred-row
+    // widget. Each is pinned at the height it occupies right now and measured
+    // as furniture, so the fit accounts for everything around it.
+    var panes =
+      typeof document.querySelectorAll === "function"
+        ? document.querySelectorAll("[data-widget-scroll]")
+        : [];
+    var pinned = [];
+    for (var i = 0; i < panes.length; i += 1) {
+      pinned.push({ node: panes[i], height: panes[i].style.height });
+      panes[i].style.height = panes[i].getBoundingClientRect().height + "px";
+    }
+
+    var saved = {
+      htmlHeight: html.style.height,
+      bodyHeight: body.style.height,
+      bodyDisplay: body.style.display,
+      rootWidth: root.style.width,
+      rootHeight: root.style.height,
+      rootFlex: root.style.flex,
+    };
+
+    var measured = NO_SIZE;
+    try {
+      // The frame's own width, read before anything moves. clientWidth is the
+      // viewport, and overflow: clip means no scrollbar is ever subtracted
+      // from it.
+      var frameWidth = html.clientWidth;
+
+      html.style.height = "auto";
+      body.style.height = "auto";
+      // Out of the shell's centring flex row. A flex item is shrunk back onto
+      // the line, so max-content below would just read the frame width back
+      // and every widget would measure exactly as wide as it already is.
+      body.style.display = "block";
+      root.style.height = "auto";
+      root.style.flex = "none";
+
+      // The two intrinsic widths, which between them say everything about what
+      // this content can do horizontally.
+      root.style.width = "max-content";
+      var natural = root.getBoundingClientRect().width;
+      root.style.width = "min-content";
+      var floor = root.getBoundingClientRect().width;
+
+      // CSS already has a name for the answer: this is fit-content against the
+      // frame as the available width, and each branch earns its place.
+      //
+      //  - Content that ENDS before the frame does: close the frame up to it.
+      //  - Content that cannot fit at all: the frame is over-compressed and is
+      //    clipping, so grow to the narrowest width that stops that. Without
+      //    this branch a squashed widget could only ever be fitted TALLER, and
+      //    a fit that leaves content clipped is not a fit.
+      //  - Anything else is wrapping happily inside the frame. The frame width
+      //    is the user's own choice there, and max-content for a paragraph is
+      //    one absurd unbroken line — so only the height is fitted.
+      var width =
+        axis === "height"
+          ? frameWidth
+          : natural > 0 && natural < frameWidth
+            ? natural
+            : floor > frameWidth
+              ? floor
+              : frameWidth;
+      root.style.width = width + "px";
+      var height = root.getBoundingClientRect().height;
+
+      // A widget with nothing in flow — an absolutely-positioned layout, a
+      // full-bleed background — measures as nothing. Fitting to that would
+      // collapse the frame, so it reports no opinion and the caller leaves the
+      // widget alone.
+      if (width > 0 && height > 0) {
+        measured = { width: width, height: height };
+      }
+    } catch (error) {
+      // A widget can throw from its own CSSOM. It must not take the fit with
+      // it, and measured already holds the no-opinion answer.
+    }
+
+    html.style.height = saved.htmlHeight;
+    body.style.height = saved.bodyHeight;
+    body.style.display = saved.bodyDisplay;
+    root.style.width = saved.rootWidth;
+    root.style.height = saved.rootHeight;
+    root.style.flex = saved.rootFlex;
+    for (var j = 0; j < pinned.length; j += 1) {
+      pinned[j].node.style.height = pinned[j].height;
+    }
+
+    return measured;
+  }
+
+  // ---- standing fit: the axis a widget names on its root ------------------
+  //
+  // A widget that sets the fit attribute on its root owns that axis of its
+  // frame: the shell refits it after any change to what is drawn, and after
+  // any change to the frame itself, because a width change rewraps text and
+  // moves a height fit. Coalesced to one measurement per task, like
+  // storage-sync, so a render that rebuilds fifty rows measures once. The RAW
+  // timer: a frozen frame measures as nothing anyway, and its resume refits.
+  //
+  // No dedupe in here. The host compares the reply with the frame the store
+  // holds, which is the only way a hand resize of an owned axis is put back.
+  //
+  // ⚠️ The observer watches structure, text and the attributes that show or
+  // hide things, NEVER style. measureContent writes style on the root and on
+  // every scroll pane, so watching style would make each fit schedule the next
+  // one for ever — and a widget animating through inline style would be
+  // measured every frame.
+  var FIT_ATTRIBUTE = "data-widget-fit";
+  var fitPending = false;
+
+  function readFitAxis() {
+    if (typeof document.getElementById !== "function") { return null; }
+    var root = document.getElementById("root");
+    var value = root && typeof root.getAttribute === "function" ? root.getAttribute(FIT_ATTRIBUTE) : null;
+    return value === "height" || value === "width" || value === "both" ? value : null;
+  }
+
+  function scheduleFit() {
+    // A share view cannot write the size, so it never measures for one.
+    if (READ_ONLY || fitPending || !readFitAxis()) { return; }
+    fitPending = true;
+    rawSetTimeout(function () {
+      fitPending = false;
+      var axis = readFitAxis();
+      if (!axis) { return; }
+      var box = measureContent(axis);
+      if (box.width === null || box.height === null) { return; }
+      post({ type: "fit", axis: axis, width: box.width, height: box.height });
+    }, 0);
+  }
+
+  if (!READ_ONLY) {
+    var fitRoot =
+      typeof document.getElementById === "function"
+        ? document.getElementById("root")
+        : null;
+    if (fitRoot && typeof MutationObserver === "function") {
+      new MutationObserver(scheduleFit).observe(fitRoot, {
+        subtree: true,
+        childList: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: [FIT_ATTRIBUTE, "class", "hidden", "open"],
+      });
+    }
+    window.addEventListener("resize", scheduleFit);
+    window.addEventListener("load", scheduleFit);
+  }
+
+  // ---- PNG capture: the pixels inside the current frame -------------------
+  //
+  // The host cannot read this DOM: the iframe deliberately has an opaque
+  // origin. Rasterize here and structured-clone the Blob back. Width and
+  // height come from the document viewport, not the content's scroll box, so
+  // this is a literal snapshot of the visible frame rather than a full-page
+  // export of whatever may be clipped below it.
+  function capturePng(requestId) {
+    var html = document.documentElement;
+    var body = document.body;
+    var width = html && html.clientWidth;
+    var height = html && html.clientHeight;
+    if (!captureToBlob || !body || !(width > 0) || !(height > 0)) {
+      post({ type: "captured-png", requestId: requestId, blob: null });
+      return;
+    }
+
+    try {
+      Promise.resolve(captureToBlob(body, {
+        width: width,
+        height: height,
+        canvasWidth: width,
+        canvasHeight: height,
+        pixelRatio: CAPTURE_PIXEL_RATIO,
+        // Widget fonts are the shell's system stacks or data URLs. Skipping the
+        // downloader keeps capture inside the CSP's no-network boundary.
+        skipFonts: true,
+      })).then(function (blob) {
+        post({ type: "captured-png", requestId: requestId, blob: blob || null });
+      }, function () {
+        post({ type: "captured-png", requestId: requestId, blob: null });
+      });
+    } catch (error) {
+      post({ type: "captured-png", requestId: requestId, blob: null });
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    // A widget may host its own iframes; only the parent drives this bridge.
+    // There is no origin to check — this document has an opaque origin.
+    if (event.source !== window.parent) { return; }
+
+    var data = event.data;
+    if (!data || typeof data !== "object") { return; }
+    if (data.source !== SOURCE || data.protocol !== PROTOCOL || data.nodeId !== NODE_ID) { return; }
+
+    if (data.type === "lifecycle") { setLifecycle(data.state); return; }
+    if (data.type === "theme") { applyTheme(data.vars); return; }
+    if (data.type === "measure") {
+      var requestId = data.requestId;
+      // One task later, and rawSetTimeout so the lifecycle gate cannot defer
+      // it. This bridge runs BEFORE the widget's own script, so a widget that
+      // builds its UI from a zero-delay timer would otherwise be measured empty.
+      rawSetTimeout(function () {
+        var box = measureContent();
+        post({
+          type: "measured",
+          requestId: requestId,
+          width: box.width,
+          height: box.height,
+        });
+      }, 0);
+      return;
+    }
+    if (data.type === "capture-png") {
+      capturePng(data.requestId);
+      return;
+    }
+    if (data.type === "gesture-taken") {
+      // The host took the gesture: stop relaying and let go, so the drag runs
+      // as a real parent-document drag from here.
+      releaseCapture();
+      pointerActive = false;
+    }
+  });
+
+  // LAST STATEMENT. Everything the host sent before this was queued.
+  post({ type: "ready" });
+})();</script><script data-widget-source>
+// === STATE ===
+const BS_KEY = "bookshelf";
+const BS_MAX_SHELF = 6;
+const BS_STACK_SHOWN = 6;
+// One soft palette: matched lightness and chroma, so any two spines sit well together.
+const BS_COLORS = [
+  "oklch(0.78 0.06 25)",
+  "oklch(0.8 0.065 60)",
+  "oklch(0.83 0.065 95)",
+  "oklch(0.79 0.055 145)",
+  "oklch(0.79 0.045 195)",
+  "oklch(0.76 0.05 245)",
+  "oklch(0.76 0.05 295)",
+  "oklch(0.8 0.03 75)",
+];
+const BS_WIDTHS = [30, 32, 34, 36, 38, 40, 42];
+
+function bsId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function bsPick(list) {
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function bsBook(fields) {
+  return Object.assign(
+    { id: bsId(), title: "", author: "", read: 0, total: 0, doneAt: null, color: 0, w: 36, h: 150, band: 0 },
+    fields
+  );
+}
+
+function bsSeed() {
+  return [
+    bsBook({ title: "The Left Hand of Darkness", author: "Ursula K. Le Guin", read: 212, total: 304, color: 5, w: 36, h: 158, band: 1 }),
+    bsBook({ title: "Piranesi", author: "Susanna Clarke", read: 88, total: 272, color: 1, w: 30, h: 138 }),
+    bsBook({ title: "The Overstory", author: "Richard Powers", read: 140, total: 502, color: 3, w: 42, h: 166, band: 2 }),
+    bsBook({ title: "Tomorrow, and Tomorrow, and Tomorrow", author: "Gabrielle Zevin", read: 300, total: 416, color: 6, w: 38, h: 150 }),
+    bsBook({ title: "Braiding Sweetgrass", author: "Robin Wall Kimmerer", read: 408, total: 408, color: 0, w: 36, h: 152, band: 1, doneAt: 1 }),
+    bsBook({ title: "Klara and the Sun", author: "Kazuo Ishiguro", read: 303, total: 303, color: 4, w: 32, h: 144, doneAt: 2 }),
+  ];
+}
+
+const state = (() => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(BS_KEY) || "null");
+    if (saved && Array.isArray(saved.books)) {
+      return { books: saved.books.filter((b) => b && b.id).map((b) => bsBook(b)) };
+    }
+  } catch (e) {}
+  return { books: bsSeed() };
+})();
+
+function bsSave() {
+  try {
+    localStorage.setItem(BS_KEY, JSON.stringify({ books: state.books }));
+  } catch (e) {}
+}
+
+function bsFind(id) {
+  return state.books.find((b) => b.id === id);
+}
+
+function bsDone(b) {
+  return b.total > 0 && b.read >= b.total;
+}
+
+function bsPct(b) {
+  return b.total > 0 ? Math.min(1, b.read / b.total) : 0;
+}
+
+function bsShelf() {
+  return state.books.filter((b) => !bsDone(b));
+}
+
+// Oldest at the bottom of the stack, newest on top.
+function bsStack() {
+  return state.books.filter(bsDone).sort((a, b) => (a.doneAt || 0) - (b.doneAt || 0));
+}
+
+function bsNewBook() {
+  // Size, colour and band are chosen once, so the shelf keeps its look between visits.
+  const used = new Set(bsShelf().map((b) => b.color));
+  const free = BS_COLORS.map((_, i) => i).filter((i) => !used.has(i));
+  return bsBook({
+    color: free.length ? bsPick(free) : 0,
+    w: bsPick(BS_WIDTHS),
+    h: 132 + 2 * Math.floor(Math.random() * 19),
+    band: bsPick([0, 0, 1, 2]),
+  });
+}
+
+// === RENDER ===
+// Kept in step with the style: --bs-pad, --bs-lift and --bs-spine-gap.
+const BS_PAD = 20;
+const BS_LIFT = 6;
+const BS_SPINE_GAP = 3;
+const BS_EDGE = 4;
+const BS_TIP_GAP = 8;
+const BS_EDITOR_GAP = 10;
+const BS_LEAN_TAN = Math.tan((3 * Math.PI) / 180);
+const BS_EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
+const BS_EASE_IN_OUT = "cubic-bezier(0.77, 0, 0.175, 1)";
+const bsReduce = matchMedia("(prefers-reduced-motion: reduce)");
+const bsPercent = new Intl.NumberFormat(undefined, { style: "percent", maximumFractionDigits: 0 });
+const bsCount = new Intl.NumberFormat();
+// Transient interaction state; nothing here is saved.
+const bsUi = { openId: null, snapshot: null, isNew: false, tipId: null, enterId: null, down: false, scale: 1 };
+
+const bsEl = (() => {
+  const q = (s) => document.querySelector(s);
+  const fields = {};
+  for (const node of document.querySelectorAll(".editor .field")) fields[node.dataset.key] = node;
+  return {
+    root: document.getElementById("root"),
+    add: q(".add"),
+    stage: q(".stage"),
+    scene: q(".scene"),
+    books: q(".books"),
+    empty: q(".empty"),
+    stack: q(".stack"),
+    count: q(".stack-count"),
+    slabs: q(".slabs"),
+    tip: q(".tip"),
+    tipTitle: q(".tip-title"),
+    tipAuthor: q(".tip-author"),
+    tipPct: q(".tip-pct"),
+    editor: q(".editor"),
+    edPct: q(".ed-pct"),
+    fields,
+  };
+})();
+
+function bsHash(s) {
+  let h = 7;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+function bsName(b) {
+  const title = b.title || "Untitled";
+  return b.author ? `${title} by ${b.author}` : title;
+}
+
+// Floored, so a book one page from the end never reads 100%.
+function bsPercentText(b) {
+  return bsPercent.format(Math.floor(bsPct(b) * 100) / 100);
+}
+
+function bsNode(id) {
+  return id ? bsEl.scene.querySelector(`[data-id="${id}"]`) : null;
+}
+
+function bsBookNode(b) {
+  const node = document.createElement("button");
+  node.type = "button";
+  node.className = "book";
+  node.dataset.id = b.id;
+  node.dataset.band = String(b.band);
+  node.style.setProperty("--c", BS_COLORS[b.color % BS_COLORS.length]);
+  node.style.setProperty("--w", `${b.w}px`);
+  node.style.setProperty("--h", `${b.h}px`);
+  node.innerHTML = '<span class="spine"><span class="fill"></span><span class="spine-title"></span></span>';
+  return node;
+}
+
+function bsPaintBook(node, b) {
+  node.style.setProperty("--p", bsPct(b).toFixed(4));
+  node.querySelector(".spine-title").textContent = b.title;
+  node.setAttribute("aria-label", `${bsName(b)}, ${bsPercentText(b)} read`);
+}
+
+function bsSlabNode(b) {
+  const node = document.createElement("button");
+  node.type = "button";
+  node.className = "slab";
+  node.dataset.id = b.id;
+  // Offset and tilt come from the id, so the stack keeps the same untidy look on every visit.
+  const h = bsHash(b.id);
+  node.style.setProperty("--c", BS_COLORS[b.color % BS_COLORS.length]);
+  node.style.setProperty("--len", `${Math.round(b.h * 0.5)}px`);
+  node.style.setProperty("--thick", `${Math.round(b.w * 0.36)}px`);
+  node.style.setProperty("--dx", `${(h % 7) - 3}px`);
+  node.style.setProperty("--tilt", `${(((h >>> 4) % 5) - 2) * 0.5}deg`);
+  node.innerHTML = '<span class="slab-body"></span>';
+  return node;
+}
+
+function bsPaintSlab(node, b) {
+  node.setAttribute("aria-label", `${bsName(b)}, finished`);
+}
+
+// Keyed update: surviving nodes stay where they are, so their transitions (a lean, a fill) play out.
+function bsSync(list, items, make, paint) {
+  const keep = new Set(items.map((b) => b.id));
+  for (const node of [...list.children]) if (!keep.has(node.dataset.id)) node.remove();
+  const byId = new Map([...list.children].map((node) => [node.dataset.id, node]));
+  items.forEach((b, i) => {
+    const node = byId.get(b.id) || make(b);
+    paint(node, b);
+    if (list.children[i] !== node) list.insertBefore(node, list.children[i] || null);
+  });
+}
+
+function bsCenters() {
+  const map = new Map();
+  for (const node of bsEl.scene.querySelectorAll("[data-id]")) {
+    const r = node.getBoundingClientRect();
+    map.set(node.dataset.id, [r.left + r.width / 2, r.top + r.height / 2]);
+  }
+  return map;
+}
+
+// Books that moved glide from where they were; a finished book travels across to the stack.
+function bsGlide(before) {
+  const enter = bsUi.enterId;
+  bsUi.enterId = null;
+  for (const node of bsEl.scene.querySelectorAll("[data-id]")) {
+    const was = before.get(node.dataset.id);
+    if (!was) {
+      if (node.dataset.id !== enter) continue;
+      node.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: "ease-out" });
+      if (!bsReduce.matches) {
+        node.animate([{ transform: "translateY(-8px)" }, { transform: "translateY(0)" }], { duration: 220, easing: BS_EASE_OUT, composite: "add" });
+      }
+      continue;
+    }
+    if (bsReduce.matches) continue;
+    const r = node.getBoundingClientRect();
+    const dx = (was[0] - (r.left + r.width / 2)) / bsUi.scale;
+    const dy = (was[1] - (r.top + r.height / 2)) / bsUi.scale;
+    if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) continue;
+    node.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "translate(0, 0)" }], { duration: 280, easing: BS_EASE_IN_OUT, composite: "add" });
+  }
+}
+
+// On a narrow tile the whole shelf scales down as one picture rather than wrapping.
+function bsFit() {
+  const { stage, scene } = bsEl;
+  scene.style.width = "";
+  scene.style.transform = "";
+  stage.style.height = "";
+  const avail = stage.clientWidth;
+  const natural = scene.offsetWidth;
+  bsUi.scale = 1;
+  if (avail > 0 && natural > avail + 0.5) {
+    bsUi.scale = avail / natural;
+    scene.style.width = `${natural}px`;
+    scene.style.transform = `scale(${bsUi.scale})`;
+    stage.style.height = `${scene.offsetHeight * bsUi.scale}px`;
+  }
+}
+
+function bsRect(node) {
+  const r = node.getBoundingClientRect();
+  const o = bsEl.root.getBoundingClientRect();
+  return { left: r.left - o.left, top: r.top - o.top, right: r.right - o.left, width: r.width, height: r.height };
+}
+
+function bsShowTip(id) {
+  const b = bsFind(id);
+  const node = bsNode(id);
+  if (!b || !node || bsUi.openId) return;
+  bsUi.tipId = id;
+  bsEl.tipTitle.textContent = b.title || "Untitled";
+  bsEl.tipAuthor.textContent = b.author;
+  bsEl.tipPct.textContent = bsDone(b) ? "Finished" : bsPercentText(b);
+  const r = bsRect(node);
+  const top = r.top - (node.classList.contains("book") ? BS_LIFT : 0);
+  const W = bsEl.root.clientWidth;
+  const tw = bsEl.tip.offsetWidth;
+  const th = bsEl.tip.offsetHeight;
+  let x = r.left + r.width / 2 - tw / 2;
+  let y = Math.max(BS_EDGE, top - BS_TIP_GAP - th);
+  if (y + th > top + BS_TIP_GAP) {
+    // No room above a tall spine: sit beside it, level with its top.
+    x = r.right + BS_TIP_GAP + tw <= W - BS_PAD ? r.right + BS_TIP_GAP : r.left - BS_TIP_GAP - tw;
+    y = Math.max(BS_EDGE, top);
+  }
+  bsEl.tip.style.left = `${Math.max(BS_PAD, Math.min(x, W - BS_PAD - tw))}px`;
+  bsEl.tip.style.top = `${y}px`;
+  bsEl.tip.classList.add("is-shown");
+}
+
+function bsHideTip() {
+  bsUi.tipId = null;
+  bsEl.tip.classList.remove("is-shown");
+}
+
+// The editor opens beside the book it edits, and grows out of it.
+function bsPlace() {
+  const node = bsNode(bsUi.openId);
+  if (!node) return;
+  const ed = bsEl.editor;
+  const r = bsRect(node);
+  const top = r.top - (node.classList.contains("book") ? BS_LIFT : 0);
+  const W = bsEl.root.clientWidth;
+  const H = bsEl.root.clientHeight;
+  const ew = ed.offsetWidth;
+  const eh = ed.offsetHeight;
+  let x = r.right + BS_EDITOR_GAP;
+  let side = "left";
+  if (x + ew > W - BS_PAD) {
+    x = r.left - BS_EDITOR_GAP - ew;
+    side = "right";
+    if (x < BS_PAD) {
+      x = Math.max(BS_PAD, Math.min(r.left + r.width / 2 - ew / 2, W - BS_PAD - ew));
+      side = "center";
+    }
+  }
+  const y = Math.max(BS_PAD, Math.min(top, H - BS_PAD - eh));
+  ed.style.left = `${x}px`;
+  ed.style.top = `${y}px`;
+  ed.style.transformOrigin = `${side} ${Math.round(Math.min(eh, Math.max(0, r.top + r.height / 2 - y)))}px`;
+}
+
+function render() {
+  const before = bsCenters();
+  const shelf = bsShelf();
+  const stack = bsStack();
+
+  bsSync(bsEl.books, shelf, bsBookNode, bsPaintBook);
+  shelf.forEach((b, i) => {
+    const node = bsEl.books.children[i];
+    const leans = shelf.length > 1 && i === shelf.length - 1;
+    // Its top rests on the neighbour, so its foot sits a little way out from it.
+    const foot = leans ? Math.round(Math.min(b.h, shelf[i - 1].h) * BS_LEAN_TAN - BS_SPINE_GAP) : 0;
+    node.classList.toggle("leans", leans);
+    node.classList.toggle("is-open", b.id === bsUi.openId);
+    node.style.marginLeft = foot > 0 ? `${foot}px` : "";
+  });
+  bsEl.empty.hidden = shelf.length > 0;
+
+  const shown = stack.slice(-BS_STACK_SHOWN).reverse();
+  bsSync(bsEl.slabs, shown, bsSlabNode, bsPaintSlab);
+  shown.forEach((b, i) => bsEl.slabs.children[i].classList.toggle("is-open", b.id === bsUi.openId));
+  bsEl.stack.classList.toggle("is-empty", !stack.length);
+  bsEl.count.textContent = bsCount.format(stack.length);
+
+  bsEl.add.disabled = shelf.length >= BS_MAX_SHELF;
+  bsFit();
+  bsGlide(before);
+}
+
+// === EVENTS ===
+function bsValue(key) {
+  const text = bsEl.fields[key].textContent.replace(/\s+/g, " ").trim();
+  if (key === "title" || key === "author") return text;
+  const n = parseInt(text.replace(/\D/g, ""), 10);
+  return Number.isFinite(n) ? Math.min(n, 99999) : 0;
+}
+
+function bsOpen(id, key, isNew) {
+  const b = bsFind(id);
+  const node = bsNode(id);
+  if (!b || !node) return;
+  bsHideTip();
+  Object.assign(bsUi, { openId: id, isNew: Boolean(isNew), snapshot: Object.assign({}, b) });
+  const f = bsEl.fields;
+  f.title.textContent = b.title;
+  f.author.textContent = b.author;
+  f.read.textContent = b.read ? String(b.read) : "";
+  f.total.textContent = b.total ? String(b.total) : "";
+  bsEl.edPct.textContent = bsPercentText(b);
+  node.classList.add("is-open");
+  bsPlace();
+  bsEl.editor.classList.add("is-open");
+  // Pages read opens selected, since moving the bookmark is the usual edit.
+  const field = f[key];
+  field.focus({ preventScroll: true });
+  getSelection().selectAllChildren(field);
+  if (key !== "read") getSelection().collapseToEnd();
+}
+
+function bsClose(cancel) {
+  const id = bsUi.openId;
+  if (!id) return;
+  const was = bsUi.snapshot;
+  const isNew = bsUi.isNew;
+  Object.assign(bsUi, { openId: null, snapshot: null, isNew: false });
+  bsEl.editor.classList.remove("is-open");
+  if (bsEl.editor.contains(document.activeElement)) document.activeElement.blur();
+  const i = state.books.findIndex((b) => b.id === id);
+  const b = state.books[i];
+  if (b && cancel) {
+    if (isNew) state.books.splice(i, 1);
+    else Object.assign(b, was);
+  } else if (b) {
+    for (const key of ["title", "author", "read", "total"]) b[key] = bsValue(key);
+    if (!b.title) {
+      // Clearing the title takes the book away, like clearing a name elsewhere on this board.
+      state.books.splice(i, 1);
+    } else {
+      if (b.total > 0) b.read = Math.min(b.read, b.total);
+      b.doneAt = bsDone(b) ? (bsDone(was) ? was.doneAt : Date.now()) : null;
+    }
+  }
+  bsSave();
+  render();
+}
+
+function bsAdd() {
+  bsClose(false);
+  if (bsShelf().length >= BS_MAX_SHELF) return;
+  const b = bsNewBook();
+  state.books.push(b);
+  bsUi.enterId = b.id;
+  render();
+  bsOpen(b.id, "title", true);
+}
+
+for (const field of Object.values(bsEl.fields)) {
+  try {
+    field.contentEditable = "plaintext-only";
+  } catch (e) {}
+  if (field.contentEditable !== "plaintext-only") field.contentEditable = "true";
+}
+
+bsEl.root.addEventListener("click", (event) => {
+  if (event.target.closest(".add, .ghost")) {
+    bsAdd();
+    return;
+  }
+  const item = event.target.closest(".book[data-id], .slab[data-id]");
+  if (!item) return;
+  const id = item.dataset.id;
+  const again = bsUi.openId === id;
+  bsClose(false);
+  // A second click on the open book just closes it.
+  if (!again && bsFind(id)) bsOpen(id, "read");
+});
+
+// A press anywhere but the editor or a book closes the editor, keeping what was typed.
+document.addEventListener("pointerdown", (event) => {
+  bsUi.down = true;
+  if (!bsUi.openId || bsEl.editor.contains(event.target)) return;
+  if (event.target.closest && event.target.closest(".book[data-id], .slab[data-id]")) return;
+  bsClose(false);
+}, true);
+const bsRelease = () => { bsUi.down = false; };
+document.addEventListener("pointerup", bsRelease, true);
+document.addEventListener("pointercancel", bsRelease, true);
+window.addEventListener("blur", () => {
+  bsRelease();
+  bsHideTip();
+});
+
+// Focus leaving for somewhere else entirely: Tab out, or a click on the canvas outside the tile.
+bsEl.editor.addEventListener("focusout", (event) => {
+  if (bsUi.down || bsEl.editor.contains(event.relatedTarget)) return;
+  bsClose(false);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (!bsUi.openId || event.isComposing) return;
+  const inField = Boolean(event.target.closest && event.target.closest(".editor .field"));
+  if (event.key !== "Escape" && !(event.key === "Enter" && inField)) return;
+  event.preventDefault();
+  const id = bsUi.openId;
+  bsClose(event.key === "Escape");
+  const back = bsNode(id);
+  if (back) back.focus({ preventScroll: true });
+});
+
+// Tabbing into a field selects its value, as a text box would; a click keeps its own caret.
+bsEl.editor.addEventListener("focusin", (event) => {
+  const field = event.target.closest(".field");
+  if (field && !bsUi.down) getSelection().selectAllChildren(field);
+});
+
+bsEl.editor.addEventListener("beforeinput", (event) => {
+  if (event.inputType === "insertParagraph" || event.inputType === "insertLineBreak") {
+    event.preventDefault();
+    return;
+  }
+  if (event.target.closest(".ed-num") && event.data && /\D/.test(event.data)) event.preventDefault();
+});
+
+// Typing updates the spine in place, so its fill rises and falls with the page count.
+bsEl.editor.addEventListener("input", (event) => {
+  const field = event.target.closest(".field");
+  const b = bsUi.openId && bsFind(bsUi.openId);
+  if (!field || !b) return;
+  b[field.dataset.key] = bsValue(field.dataset.key);
+  const node = bsNode(b.id);
+  if (node && node.classList.contains("book")) bsPaintBook(node, b);
+  bsEl.edPct.textContent = bsPercentText(b);
+});
+
+bsEl.scene.addEventListener("pointerover", (event) => {
+  if (event.pointerType === "touch") return;
+  const node = event.target.closest("[data-id]");
+  if (node && bsUi.tipId !== node.dataset.id) bsShowTip(node.dataset.id);
+});
+bsEl.scene.addEventListener("pointerout", (event) => {
+  const node = event.target.closest("[data-id]");
+  if (node && !node.contains(event.relatedTarget)) bsHideTip();
+});
+bsEl.scene.addEventListener("focusin", (event) => {
+  const node = event.target.closest("[data-id]");
+  if (node && node.matches(":focus-visible")) bsShowTip(node.dataset.id);
+});
+bsEl.scene.addEventListener("focusout", (event) => {
+  const node = event.target.closest("[data-id]");
+  if (node && node.dataset.id === bsUi.tipId && !node.matches(":hover")) bsHideTip();
+});
+
+if ("ResizeObserver" in window) {
+  const bsResize = new ResizeObserver(() => {
+    bsFit();
+    if (bsUi.openId) bsPlace();
+  });
+  for (const node of [bsEl.stage, bsEl.books, bsEl.stack]) bsResize.observe(node);
+}
+// The shell calls render() once. Do not call it again here.
+
+if (typeof render === "function") { render(); }
+</script></body></html>

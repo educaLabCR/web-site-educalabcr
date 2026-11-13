@@ -1,0 +1,1575 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data: blob:; connect-src 'none'; form-action 'none'; frame-src 'none'; base-uri 'none'" /><meta charset="utf-8" /><style data-widget-shell>:root {
+  color-scheme: var(--widget-color-scheme, light);
+  --widget-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --widget-background: transparent;
+  --widget-color-scheme: light;
+  --widget-canvas: #f2f2f2;
+  --widget-surface: #FCFCFC;
+  --widget-border: #e4e4e4;
+  --widget-text: #1A1A1A;
+  --widget-text-muted: #555555;
+  --widget-accent: #2988C1;
+  --widget-gap: 12px;
+  --widget-font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Source Code Pro', monospace;
+  --widget-font-size: 14px;
+  --widget-line-height: 1.6;
+  --widget-title-size: 16px;
+  --widget-title-weight: 500;
+  --widget-title-line-height: 1.4;
+  --widget-radius: 12px;
+}
+html {
+  height: 100%;
+  background: var(--widget-background, transparent);
+  overflow: clip;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M14.185 13.14l5.644 -2.202c1.625 -.634 1.538 -2.962 -.13 -3.473l-14.319 -4.382c-1.41 -.431 -2.73 .888 -2.298 2.298l4.382 14.318c.51 1.668 2.84 1.755 3.473 .13l2.202 -5.644a1.84 1.84 0 0 1 1.045 -1.045z' fill='%231A1A1A' stroke='%23FFFFFF' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E") 1 1, default;
+}
+/* Back to the browser's own where the browser's own is the honest answer: the
+   I-beam over text the user can select, the arrow over a checkbox. Inherited
+   from html, the app pointer would sit over a focused input and say nothing.
+   Zero-specificity so a widget that wants its own cursor still wins. */
+:where(input, textarea, select, [contenteditable=''], [contenteditable='true']) {
+  cursor: auto;
+}
+body {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  color: var(--widget-text);
+  font-family: var(--widget-font);
+  font-size: var(--widget-font-size);
+  line-height: var(--widget-line-height);
+  display: flex;
+  justify-content: center;
+}
+*, *::before, *::after { box-sizing: border-box; }
+:where(#root) { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: flex-start; }</style><style data-widget-style>
+/* === STYLE === */
+:root {
+  --pc-inset: 12px;
+  --pc-gap: 8px;
+  --pc-control: 28px;
+  --pc-dock-control: 32px;
+  --pc-dock-pad: 4px;
+  --pc-dock-offset: 14px;
+  --pc-glyph: 16px;
+  /* The row under the pointer takes this share of the height against 1 for each neighbour. */
+  --pc-expand: 1.7;
+  --pc-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --pc-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --pc-swap: 280ms;
+  --pc-grow: 360ms;
+  --pc-tint: color-mix(in srgb, var(--widget-text) 7%, transparent);
+  /* Fit to content lands on a 4:3 picture. */
+  --pc-fit-width: 400px;
+  --pc-fit-height: 300px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* No padding and no title: the colours are the whole picture, edge to edge. */
+#root {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--widget-radius);
+  color: var(--widget-text);
+  font-family: var(--widget-font);
+  font-size: var(--widget-font-size);
+  line-height: var(--widget-line-height);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  outline: none;
+}
+svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.strip {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  container-type: size;
+  contain-intrinsic-size: var(--pc-fit-width) var(--pc-fit-height);
+}
+
+.col {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--ink);
+  transition:
+    flex-grow var(--pc-grow) var(--pc-out),
+    color var(--pc-swap) var(--pc-out) var(--d, 0ms);
+}
+.fill {
+  position: absolute;
+  inset: 0;
+  transition: opacity var(--pc-swap) var(--pc-out) var(--d, 0ms);
+}
+.fill.entering { opacity: 0; }
+
+/* Only the hex copies. The colour field around it stays inert so the canvas can drag the widget by it. */
+.pick {
+  pointer-events: auto;
+  height: var(--pc-control);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pc-gap);
+  margin-inline: -6px;
+  padding: 0 6px;
+  border-radius: 6px;
+  transition: background-color 120ms ease;
+}
+.pick:focus-visible { box-shadow: inset 0 0 0 1.5px var(--ink); }
+.glyphs {
+  display: grid;
+  place-items: center;
+  transition: transform 160ms var(--pc-out);
+}
+.glyphs > * {
+  grid-area: 1 / 1;
+  transition: opacity 200ms var(--pc-out), transform 200ms var(--pc-out), filter 200ms var(--pc-out);
+}
+.glyphs svg { width: var(--pc-glyph); height: var(--pc-glyph); }
+.glyph-copy { opacity: 0; transform: scale(0.9); }
+.glyph-done {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  transform: scale(0.9);
+  filter: blur(3px);
+}
+.pick:active .glyphs { transform: scale(0.95); }
+.col.is-copied .glyph-done {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: opacity 200ms var(--pc-out), transform 360ms var(--pc-spring), filter 200ms var(--pc-out);
+}
+.col.is-blocked .glyph-done svg { display: none; }
+.pick:focus-visible .glyph-copy { opacity: 0.8; transform: none; }
+.col.is-copied .glyph-copy { opacity: 0; }
+
+/* Hex and its copy glyph on the leading edge, lock on the trailing edge, both centred on the row. */
+.meta {
+  position: absolute;
+  inset: 0 var(--pc-inset);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pc-gap);
+  pointer-events: none;
+}
+.label {
+  display: grid;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.val {
+  grid-area: 1 / 1;
+  transition: opacity 220ms var(--pc-out), transform 220ms var(--pc-out), filter 220ms var(--pc-out);
+  transition-delay: var(--d, 0ms);
+}
+.val.in { opacity: 0; transform: translateY(8px); filter: blur(3px); }
+.val.out { opacity: 0; transform: translateY(-8px); filter: blur(3px); }
+
+.lock {
+  pointer-events: auto;
+  width: var(--pc-control);
+  height: var(--pc-control);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 150ms ease, background-color 120ms ease, transform 160ms var(--pc-out);
+}
+.lock > svg {
+  grid-area: 1 / 1;
+  transition: opacity 180ms var(--pc-out), transform 180ms var(--pc-out), filter 180ms var(--pc-out);
+}
+.lock .closed { opacity: 0; transform: scale(0.8); filter: blur(2px); }
+.lock[aria-pressed="true"] { opacity: 1; }
+.lock[aria-pressed="true"] .closed { opacity: 1; transform: none; filter: none; }
+.lock[aria-pressed="true"] .open { opacity: 0; transform: scale(0.8); filter: blur(2px); }
+.lock:active { transform: scale(0.95); }
+.lock:focus-visible { opacity: 1; box-shadow: inset 0 0 0 1.5px var(--ink); }
+
+/* A small floating dock: the one piece of chrome, and only while the pointer is here. */
+.dock {
+  position: absolute;
+  left: 50%;
+  bottom: var(--pc-dock-offset);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: var(--pc-dock-pad);
+  border-radius: calc(var(--pc-dock-control) / 2 + var(--pc-dock-pad));
+  background: var(--widget-surface);
+  color: var(--widget-text);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 8px 24px rgb(0 0 0 / 0.16);
+  transform: translateX(-50%);
+  transition: opacity 200ms var(--pc-out), transform 200ms var(--pc-out);
+}
+.dock button {
+  height: var(--pc-dock-control);
+  border-radius: calc(var(--pc-dock-control) / 2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 120ms ease, opacity 120ms ease, transform 160ms var(--pc-out);
+}
+.dock .step { width: var(--pc-dock-control); color: var(--widget-text-muted); }
+/* Icon-only so the dock stays narrow enough to clear the bottom row's hex. */
+.dock .generate {
+  width: var(--pc-dock-control);
+  background: var(--widget-text);
+  color: var(--widget-surface);
+}
+.dock button:not(:disabled):active { transform: scale(0.95); }
+.dock button:disabled { opacity: 0.3; cursor: default; }
+.dock button:focus-visible { box-shadow: inset 0 0 0 1.5px var(--widget-text); }
+.dock .generate:focus-visible { box-shadow: 0 0 0 2px var(--widget-surface), 0 0 0 3.5px var(--widget-text); }
+
+@media (hover: hover) and (pointer: fine) {
+  .col:hover { flex-grow: var(--pc-expand); }
+  .pick { cursor: copy; }
+  .pick:hover { background: color-mix(in srgb, var(--ink) 16%, transparent); }
+  .col:hover:not(.is-copied) .glyph-copy { opacity: 0.8; transform: none; }
+  .col:hover .lock { opacity: 1; }
+  .lock:hover { background: color-mix(in srgb, var(--ink) 16%, transparent); }
+  .dock .step:not(:disabled):hover { background: var(--pc-tint); }
+  .dock .generate:hover { background: color-mix(in srgb, var(--widget-text) 86%, var(--widget-surface)); }
+  .dock .step:not(:disabled):hover { color: var(--widget-text); }
+  #root:not(:hover) .dock:not(:focus-within) {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+    pointer-events: none;
+  }
+}
+
+/* Touch has no hover, so the lock and dock stay put. */
+@media (hover: none) {
+  .lock { opacity: 0.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .col { transition: color var(--pc-swap) var(--pc-out); }
+  .val.in, .val.out, .glyph-copy, .glyph-done, .col.is-copied .glyph-done,
+  .lock .open, .lock .closed, .lock[aria-pressed="true"] .open { transform: none; filter: none; }
+  .pick:active .glyphs, .lock:active, .dock button:not(:disabled):active { transform: none; }
+  #root:not(:hover) .dock:not(:focus-within) { transform: translateX(-50%); }
+}
+
+</style></head><body><div id="root">
+<!-- === MARKUP === -->
+<!-- render() owns the interface -->
+</div><script data-widget-bridge>window.__widgetBoot = {"source":"widget-shell","protocol":1,"nodeId":"widget-a5a27145-13ae-46d5-92e9-50da61885953","storage":{"palette":"{\"colors\":[{\"l\":0.9378724016888359,\"c\":0.027237953076825732,\"h\":341.88726365742025},{\"l\":0.7511679307017578,\"c\":0.057717505089050006,\"h\":352.17014336953883},{\"l\":0.5565618231706996,\"c\":0.06816770725662674,\"h\":11.007979680021492},{\"l\":0.4111544053687736,\"c\":0.05281302514231932,\"h\":20.4464407790324},{\"l\":0.2565423814175486,\"c\":0.031354123813325155,\"h\":32.12408196476093}],\"locked\":[false,false,false,false,false],\"back\":[[{\"l\":0.9070601338602555,\"c\":0.021972195514283546,\"h\":82.97944254179322},{\"l\":0.7581582528037971,\"c\":0.03452143594405786,\"h\":205.68889524647307},{\"l\":0.6074691625708495,\"c\":0.0426357691052162,\"h\":314.9007146777483},{\"l\":0.49234645680433825,\"c\":0.04352820931388612,\"h\":94.01202356618438},{\"l\":0.36246035052897857,\"c\":0.028082584100163545,\"h\":216.38728671240472}],[{\"l\":0.9217753547819666,\"c\":0.024529076903196556,\"h\":139.18727593352844},{\"l\":0.724924075198253,\"c\":0.03609515289431277,\"h\":256.9448544181191},{\"l\":0.5571430536473316,\"c\":0.0441196052731071,\"h\":12.89247805631453},{\"l\":0.42645620844818755,\"c\":0.03871032401308678,\"h\":152.8516000631846},{\"l\":0.28009897255061383,\"c\":0.022153541608733177,\"h\":264.4057940712204}],[{\"l\":0.9642824873762532,\"c\":0.05054162908472177,\"h\":189.74080794305678},{\"l\":0.7334618183298754,\"c\":0.09812099534164154,\"h\":191.73926463783891},{\"l\":0.6132683963733266,\"c\":0.10179397105850986,\"h\":195.54034789813227},{\"l\":0.48149484375682167,\"c\":0.08163839248636713,\"h\":199.86344664453532},{\"l\":0.34734572266857644,\"c\":0.05579373016325484,\"h\":197.6637946357614}],[{\"l\":0.27010975073790217,\"c\":0.030084731948801565,\"h\":162.74495143477588},{\"l\":0.49939777124912554,\"c\":0.060865343816627004,\"h\":170.4185710656177},{\"l\":0.6532115650617975,\"c\":0.06534016353663287,\"h\":188.2005800903388},{\"l\":0.832701996276503,\"c\":0.04465524438468169,\"h\":348.8038474055538},{\"l\":0.9441543963735454,\"c\":0.020983199180468797,\"h\":2.320110925164329}],[{\"l\":0.2431492591732483,\"c\":0.04590077181083361,\"h\":294.85464633706556},{\"l\":0.377447778357082,\"c\":0.08738470031410817,\"h\":300.878024586323},{\"l\":0.5246639597723809,\"c\":0.12747473995038247,\"h\":308.9561726870829},{\"l\":0.6817797320565949,\"c\":0.12685657917338033,\"h\":306.4311239575279},{\"l\":0.9101238337422304,\"c\":0.05157350144533245,\"h\":311.4455442182202}],[{\"l\":0.3078687337545492,\"c\":0.025946386357772855,\"h\":358.6321661446471},{\"l\":0.4557047629179224,\"c\":0.04500375122579565,\"h\":144.56966815246028},{\"l\":0.6175078931095227,\"c\":0.04961178071304924,\"h\":12.107798017857021},{\"l\":0.7689144265843887,\"c\":0.0382059155618235,\"h\":207.0075498821932},{\"l\":0.918511545632442,\"c\":0.02148541749229274,\"h\":159.1638280546157}],[{\"l\":0.9744483954045102,\"c\":0.010317783208608662,\"h\":266.6075437376561},{\"l\":0.3767996247040251,\"c\":0.07327788751887775,\"h\":265.27434659552364},{\"l\":0.5441491849971339,\"c\":0.08501781261810533,\"h\":277.5087043906344},{\"l\":0.2600554117118727,\"c\":0.030684287013517525,\"h\":279.8855661207583},{\"l\":0.7102992604066566,\"c\":0.08700081354088708,\"h\":282.5456796310898}],[{\"l\":0.330301594172584,\"c\":0.054298874573669345,\"h\":190.19538969547204},{\"l\":0.4970645251663395,\"c\":0.18912932330875926,\"h\":341.69774645635493},{\"l\":0.6618872986634964,\"c\":0.11218502889217483,\"h\":203.37576954094777},{\"l\":0.8075304181336052,\"c\":0.11454530177378264,\"h\":44.134931948485416},{\"l\":0.922316730445643,\"c\":0.04310582310577313,\"h\":353.34397426423675}],[{\"l\":0.8417780290572852,\"c\":0.036764440057391795,\"h\":258.58449173075655},{\"l\":0.38513313949998423,\"c\":0.042985366919162715,\"h\":266.03080195452605},{\"l\":0.688528658709329,\"c\":0.05154537716080054,\"h\":282.4565299754487},{\"l\":0.9500626235331926,\"c\":0.01920028446985817,\"h\":87.99975670154441},{\"l\":0.5260196780644577,\"c\":0.05148872590768565,\"h\":96.10888895373148}],[{\"l\":0.9757329629200827,\"c\":0.015578834500876992,\"h\":330.1178067246676},{\"l\":0.8926679296125317,\"c\":0.06877447706034744,\"h\":339.49738580442977},{\"l\":0.730792011675692,\"c\":0.1259758795746703,\"h\":354.5451689371812},{\"l\":0.5903084636014347,\"c\":0.12097998754966863,\"h\":165.30270716947336},{\"l\":0.3962094831950771,\"c\":0.07273054277300492,\"h\":175.42651487106787}],[{\"l\":0.9016838325565145,\"c\":0.05248057755479654,\"h\":303.5660776179932},{\"l\":0.7315623430693607,\"c\":0.11328958507415944,\"h\":98.62791153664551},{\"l\":0.5496878245387906,\"c\":0.11263989393061605,\"h\":314.29352570627793},{\"l\":0.4129374163592346,\"c\":0.09360947706021899,\"h\":159.22909202432402},{\"l\":0.284560344750722,\"c\":0.060289495682268,\"h\":112.15163349890128}],[{\"l\":0.9304373241998639,\"c\":0.052569979574164996,\"h\":332.7097933539894},{\"l\":0.7805567139207754,\"c\":0.1208585599320309,\"h\":343.47537474696855},{\"l\":0.6155775107600688,\"c\":0.13750510034310143,\"h\":352.99575500429546},{\"l\":0.43353121844494646,\"c\":0.09852088940611012,\"h\":159.67794090444386},{\"l\":0.2494314552846092,\"c\":0.04353851510233078,\"h\":174.67931134104492}],[{\"l\":0.9110120235163082,\"c\":0.04888021287853439,\"h\":43.77441455360332},{\"l\":0.8097151408967425,\"c\":0.11259642307828838,\"h\":53.88017688767047},{\"l\":0.6859481755707061,\"c\":0.1194828926331695,\"h\":68.21715351941862},{\"l\":0.49007466941792843,\"c\":0.0990829053544711,\"h\":88.58283632949326},{\"l\":0.27806098843087207,\"c\":0.056268186841846396,\"h\":103.06655533952687}],[{\"l\":0.938009635911893,\"c\":0.034169962772197,\"h\":356.51786706738665},{\"l\":0.7195000823785345,\"c\":0.12519485671336045,\"h\":11.625593731360595},{\"l\":0.5697405907838746,\"c\":0.15429387631791744,\"h\":30.88562232724513},{\"l\":0.41515842147929005,\"c\":0.11991248394563103,\"h\":44.0029788915877},{\"l\":0.26530581100564327,\"c\":0.06106273240648051,\"h\":50.65439923086859}],[{\"l\":0.24690603274536327,\"c\":0.018171296790809786,\"h\":303.653862626996},{\"l\":0.4396093720811814,\"c\":0.040865838282184985,\"h\":334.4308144295487},{\"l\":0.6116861737688443,\"c\":0.05499063144536964,\"h\":346.72587939598975},{\"l\":0.765010546385753,\"c\":0.04119503364998189,\"h\":8.970554682531372},{\"l\":0.9120908772508493,\"c\":0.02591454238229861,\"h\":35.222743563001075}],[{\"l\":0.2419601228655274,\"c\":0.014124760388598081,\"h\":211.96098597075786},{\"l\":0.42917211246138576,\"c\":0.03424215366319541,\"h\":216.1891842236614},{\"l\":0.5991251270380026,\"c\":0.04543265205046082,\"h\":213.5017858710446},{\"l\":0.7499579818046946,\"c\":0.03281345292671741,\"h\":223.3970115495058},{\"l\":0.9161925882696683,\"c\":0.02490348752846091,\"h\":218.96036699191427}],[{\"l\":0.3540537430656001,\"c\":0.09237545691114148,\"h\":352.61833887295336},{\"l\":0.5176605378742711,\"c\":0.14474892021141,\"h\":8.61979168536243},{\"l\":0.6462214673365481,\"c\":0.14401788399818774,\"h\":16.5025582984307},{\"l\":0.784732444078007,\"c\":0.12164335863963023,\"h\":190.20181926839132},{\"l\":0.9306558410612235,\"c\":0.05489296634770361,\"h\":203.81800363474417}],[{\"l\":0.8116994413452567,\"c\":0.06746154017165806,\"h\":203.9614239406974},{\"l\":0.49890024166392727,\"c\":0.08417812787951624,\"h\":212.87172348480874},{\"l\":0.6477484171955691,\"c\":0.09170374972081485,\"h\":214.8509626601533},{\"l\":0.964204224704088,\"c\":0.031596161623252655,\"h\":207.97505618720766},{\"l\":0.3718599493676138,\"c\":0.0639596616521142,\"h\":211.60845540066407}],[{\"l\":0.3195132565187897,\"c\":0.07110975222213818,\"h\":46.89407970634272},{\"l\":0.5124915065077512,\"c\":0.11096076760794243,\"h\":40.255380405539825},{\"l\":0.7032123120031917,\"c\":0.10527973329315586,\"h\":51.09922310453226},{\"l\":0.8192432384872874,\"c\":0.08268749567635117,\"h\":51.201235658463474},{\"l\":0.9788427435194234,\"c\":0.009631877391611553,\"h\":57.80046043423289}],[{\"l\":0.9068583216738583,\"c\":0.03105490393441876,\"h\":317.88024175794385},{\"l\":0.7423110208438026,\"c\":0.05264976357679858,\"h\":327.08951089314075},{\"l\":0.6195401596067951,\"c\":0.06067896279315561,\"h\":327.51782729558226},{\"l\":0.5174760654395731,\"c\":0.06926000101430717,\"h\":325.83745312450435},{\"l\":0.37735051457291136,\"c\":0.04457447628639544,\"h\":338.9879148359954}],[{\"l\":0.9067569537020262,\"c\":0.04577763393186565,\"h\":26.167448184158502},{\"l\":0.7830781829203046,\"c\":0.11712689091002966,\"h\":37.13332747480007},{\"l\":0.62351514076602,\"c\":0.14835207379681803,\"h\":36.91897480263464},{\"l\":0.48583596347166647,\"c\":0.11608003647201948,\"h\":42.06886094245374},{\"l\":0.2991618513225785,\"c\":0.06899665117212189,\"h\":43.22207578720759}],[{\"l\":0.9432765966754283,\"c\":0.024399894812271776,\"h\":277.1550103678462},{\"l\":0.80350150731546,\"c\":0.10395380325724274,\"h\":291.28347144419104},{\"l\":0.6655320853757457,\"c\":0.1780763624169977,\"h\":309.5374191419073},{\"l\":0.5210070397134036,\"c\":0.14382685524164984,\"h\":331.68110882862334},{\"l\":0.3269973768144856,\"c\":0.11227236319848823,\"h\":342.37159494106845}],[{\"l\":0.5498347380175265,\"c\":0.15808814481095718,\"h\":2.530795346820355},{\"l\":0.9198081073381169,\"c\":0.039039993768033965,\"h\":13.368771859746744},{\"l\":0.38864802313083413,\"c\":0.14269482825090113,\"h\":29.385726333535615},{\"l\":0.675520385672223,\"c\":0.18876897634979858,\"h\":44.3228957775313},{\"l\":0.8101670032895121,\"c\":0.12963818453126943,\"h\":60.408475978599824}],[{\"l\":0.5498347380175265,\"c\":0.15808814481095718,\"h\":2.530795346820355},{\"l\":0.8133558934093205,\"c\":0.12230004117889051,\"h\":153.45253725337363},{\"l\":0.6509341139673483,\"c\":0.159285756581751,\"h\":15.143406095615205},{\"l\":0.47673356616803825,\"c\":0.08141360725285693,\"h\":214.24075897117973},{\"l\":0.3495011907476332,\"c\":0.07468724192624465,\"h\":162.52155978074165}],[{\"l\":0.5498347380175265,\"c\":0.15808814481095718,\"h\":2.530795346820355},{\"l\":0.42849983300280187,\"c\":0.1377623237823053,\"h\":13.468402360406913},{\"l\":0.6231593369732784,\"c\":0.17379289439922058,\"h\":20.56754305404729},{\"l\":0.7670209085943783,\"c\":0.131119020151985,\"h\":191.6949073351932},{\"l\":0.9371607654531116,\"c\":0.07197954317594571,\"h\":200.79512974120053}],[{\"l\":0.5498347380175265,\"c\":0.15808814481095718,\"h\":2.530795346820355},{\"l\":0.4010966815003577,\"c\":0.15541616672384126,\"h\":14.32563518069827},{\"l\":0.5688113770069713,\"c\":0.18899670611442046,\"h\":29.531744088087464},{\"l\":0.7183404919246887,\"c\":0.17440720380284075,\"h\":48.632973476865516},{\"l\":0.926774621268451,\"c\":0.047954132611883,\"h\":63.83963077742351}],[{\"l\":0.9071882844228086,\"c\":0.08921285918684384,\"h\":193.18221041663037},{\"l\":0.768657194124102,\"c\":0.12970847923595763,\"h\":320.83683358253893},{\"l\":0.6054794812591888,\"c\":0.12234434876217523,\"h\":82.69274044174114},{\"l\":0.4674807389871919,\"c\":0.0797793415797805,\"h\":209.9165447442807},{\"l\":0.2951813811283269,\"c\":0.09405212008688861,\"h\":327.5217466707836}],[{\"l\":0.9415606568648189,\"c\":0.049959142190033265,\"h\":78.48514247581204},{\"l\":0.7910531560872269,\"c\":0.14194206653868544,\"h\":221.74824658224156},{\"l\":0.6557189225755627,\"c\":0.13172437957149183,\"h\":82.00734390093976},{\"l\":0.4922730997275629,\"c\":0.1747646724487552,\"h\":282.41872573993135},{\"l\":0.39417356058796216,\"c\":0.08734077833877786,\"h\":238.28237241903696}],[{\"l\":0.9582032113531358,\"c\":0.05118755670987496,\"h\":89.35527437663092},{\"l\":0.8054848113890253,\"c\":0.11101196481938312,\"h\":101.52386831305068},{\"l\":0.6615269183224497,\"c\":0.15217732560809089,\"h\":117.20738186645076},{\"l\":0.5054424331506073,\"c\":0.13581352294942423,\"h\":287.4847072781429},{\"l\":0.3404370775848203,\"c\":0.11366225554511697,\"h\":301.16999347147976}],[{\"l\":0.9256334837737421,\"c\":0.022575912674550884,\"h\":229.97402912062307},{\"l\":0.25367257744645233,\"c\":0.019829966553359012,\"h\":346.4156143060136},{\"l\":0.597062858563962,\"c\":0.04300622894484133,\"h\":111.38177648945145},{\"l\":0.74454776809159,\"c\":0.04036875453042358,\"h\":233.967179240434},{\"l\":0.43796539727029465,\"c\":0.03577369766963126,\"h\":4.307042319267055}],[{\"l\":0.917252320897903,\"c\":0.05789853036335765,\"h\":131.30564873368155},{\"l\":0.8085515229456076,\"c\":0.10113310893179667,\"h\":139.92192802262537},{\"l\":0.6796148098466334,\"c\":0.12073406644794996,\"h\":155.56213081610235},{\"l\":0.31182578038439634,\"c\":0.08792057379559723,\"h\":326.41539542400824},{\"l\":0.5128587246113577,\"c\":0.13364689439525973,\"h\":334.14870573096573}],[{\"l\":0.3453572052188858,\"c\":0.07824131279049497,\"h\":116.53145023604907},{\"l\":0.4910467813095325,\"c\":0.11154613720818232,\"h\":136.79025293639734},{\"l\":0.6467894351297081,\"c\":0.11394431265544522,\"h\":148.5536746840064},{\"l\":0.7880917428818001,\"c\":0.09026459270181095,\"h\":315.677625573275},{\"l\":0.9079661010611633,\"c\":0.059379277430528864,\"h\":325.71536419247946}]],\"forward\":[]}"},"lifecycle":"running","stateMaxBytes":262144,"heartbeatMs":1000,"capturePixelRatio":3,"readOnly":true};
+(function () {
+  var boot = window.__widgetBoot;
+  try { delete window.__widgetBoot; } catch (error) { /* non-configurable is harmless */ }
+  if (!boot) { return; }
+
+  var SOURCE = boot.source;
+  var PROTOCOL = boot.protocol;
+  var NODE_ID = boot.nodeId;
+  var STATE_MAX_BYTES = boot.stateMaxBytes;
+  var READ_ONLY = boot.readOnly === true;
+  var CAPTURE_PIXEL_RATIO = boot.capturePixelRatio || 1;
+  // The renderer is inlined immediately before this bridge only in Dev Mode.
+  // Hold the function in the shell closure, then remove its global so widget
+  // source cannot accidentally treat it as part of the authoring API.
+  var captureToBlob =
+    window.htmlToImage && typeof window.htmlToImage.toBlob === "function"
+      ? window.htmlToImage.toBlob
+      : null;
+  try { delete window.htmlToImage; } catch (error) { /* an exposed helper is harmless */ }
+
+  // Captured BEFORE the lifecycle gate replaces them on the window.
+  var rawSetTimeout = window.setTimeout.bind(window);
+  var rawClearTimeout = window.clearTimeout.bind(window);
+  var rawSetInterval = window.setInterval.bind(window);
+  var rawClearInterval = window.clearInterval.bind(window);
+  var rawRequestAnimationFrame =
+    typeof window.requestAnimationFrame === "function"
+      ? window.requestAnimationFrame.bind(window)
+      : null;
+  var rawCancelAnimationFrame =
+    typeof window.cancelAnimationFrame === "function"
+      ? window.cancelAnimationFrame.bind(window)
+      : null;
+
+  function now() {
+    return window.performance && typeof window.performance.now === "function"
+      ? window.performance.now()
+      : Date.now();
+  }
+
+  function post(payload) {
+    payload.source = SOURCE;
+    payload.protocol = PROTOCOL;
+    payload.nodeId = NODE_ID;
+    window.parent.postMessage(payload, "*");
+  }
+
+  // ---- did the widget's own script run? -----------------------------------
+  // The one widget failure with no other reporter. A top-level throw leaves a
+  // document that parsed, heartbeats, and shows whatever markup preceded the
+  // throw — indistinguishable, from out here, from a widget that draws very
+  // little. So the boot reports itself: ONE message, on load, carrying the
+  // first failure the widget's own code produced — a throw or a rejected
+  // promise — or null when it ran clean. The host writes it onto the node and
+  // the model reads it in its canvas context next turn; see
+  // widget-script-error.ts.
+  //
+  // ⚠️ Only failures BEFORE load count, and the listeners are installed here —
+  // at the top of the bridge, which runs before the widget's script — because a
+  // listener added later cannot hear the throw it exists for. An error after
+  // load belongs to an interaction, and a widget on screen and working must not
+  // be condemned by one throwing click handler.
+  //
+  // No truncation here: the host clamps, where the cap is a named constant it
+  // can import. Numbers are never interpolated into this script, so any number
+  // written into it is a twin that has to be kept in step by hand.
+  var firstError = null;
+  function recordBootError(message) {
+    if (firstError !== null) { return; }
+    firstError = message;
+  }
+
+  window.addEventListener("error", function (event) {
+    var message = event && event.message ? String(event.message) : "Uncaught error";
+    if (event && typeof event.lineno === "number" && event.lineno > 0) {
+      message += " (line " + event.lineno + ")";
+    }
+    recordBootError(message);
+  });
+
+  // ⚠️ A REJECTED PROMISE IS A FAILURE THE error LISTENER CANNOT HEAR, and in
+  // this frame it is the shape a blocked capability takes. The CSP is default-src
+  // none with connect-src none, so the fetch a model reaches for does not throw —
+  // it REJECTS, the then that was going to draw never runs, and the boot reported
+  // itself clean over an empty frame. Same slot as a throw, so whichever failure
+  // comes first is the one the model reads next turn.
+  //
+  // A failed RESOURCE load is deliberately NOT routed here. A capture-phase
+  // listener would see it — those events fire on the element and never bubble to
+  // window — but this slot is worded at the host end as the widget's own script
+  // having thrown and built nothing (describeWidgetScriptError), and it marks the
+  // node BROKEN WIDGET in every model-facing surface. A widget that runs
+  // perfectly except for one image the CSP refused is not that, and saying so
+  // would be worse than the silence. Reporting it wants a field of its own.
+  window.addEventListener("unhandledrejection", function (event) {
+    recordBootError("Unhandled promise rejection: " + describeRejection(event && event.reason));
+  });
+
+  // ⚠️ A rejection carries ANY value: an Error, a string, a DOM exception, an
+  // object whose message getter throws. Every read of it is inside the try,
+  // because the reporter must never become the failure it exists to describe.
+  function describeRejection(reason) {
+    try {
+      if (reason && typeof reason.message === "string" && reason.message) {
+        return reason.message;
+      }
+      return String(reason);
+    } catch (error) {
+      return "an unreadable reason";
+    }
+  }
+
+  window.addEventListener("load", function () {
+    post({ type: "booted", error: firstError });
+  });
+
+  // ---- dialogs: the blocked call that used to be silent -------------------
+  //
+  // The frame is sandboxed without allow-modals, so the browser DROPS a dialog
+  // call: nothing appears, prompt returns null, execution runs straight on
+  // through the guard written under it, and the control the user clicked is
+  // simply dead — with nothing thrown and nothing logged on either side of the
+  // frame. It is the most common way a finished widget reaches the canvas
+  // broken; widget-blocked-apis.ts records the incident.
+  //
+  // So the shell makes it LOUD instead. Each name is replaced with a function
+  // that throws, which turns a dead button into a console error the user can
+  // point at and — when the call sits on the boot path — into the booted error
+  // the model reads in its canvas context next turn.
+  //
+  // ⚠️ **This does NOT replace the write-time scan, and neither replaces the
+  // other.** write_widget refuses source containing these calls, and refusing
+  // before anything reaches the canvas is strictly the better failure. But that
+  // scan is a regular expression over source, so it only sees the spellings it
+  // was written for: a bare call and a window-qualified one. An alias, a
+  // computed member, globalThis and self all walk past it and are all ordinary
+  // JavaScript. They are also all the SAME PROPERTY — window, globalThis and
+  // self are one object in here, and a bare name resolves to it — so one shim
+  // is the backstop for every spelling the scan cannot see.
+  //
+  // Installed at the top of the bridge, beside the boot listeners, for the same
+  // reason they are: the widget's own script runs after this, and a shim
+  // installed later cannot intercept the call it exists for.
+  function installBlockedDialog(name) {
+    try {
+      window[name] = function () {
+        throw new Error(
+          name +
+            "() is blocked: a widget frame has no dialogs. Ask in the widget " +
+            "instead - the placeholder row becomes an input in place, Enter " +
+            "commits it and Escape cancels."
+        );
+      };
+    } catch (error) { /* non-configurable is harmless: the call was dead anyway */ }
+  }
+  var BLOCKED_DIALOGS = ["alert","confirm","prompt"];
+  for (var dialogIndex = 0; dialogIndex < BLOCKED_DIALOGS.length; dialogIndex += 1) {
+    installBlockedDialog(BLOCKED_DIALOGS[dialogIndex]);
+  }
+
+  // ---- lifecycle: the timer gate -----------------------------------------
+  var paused = boot.lifecycle === "paused";
+  var deferred = [];
+
+  function queueDeferred(key, run) {
+    for (var i = 0; i < deferred.length; i += 1) {
+      if (deferred[i].key === key) { return; }
+    }
+    deferred.push({ key: key, run: run });
+  }
+
+  function dropDeferred(key) {
+    for (var i = deferred.length - 1; i >= 0; i -= 1) {
+      if (deferred[i].key === key) { deferred.splice(i, 1); }
+    }
+  }
+
+  function setLifecycle(state) {
+    var next = state === "paused";
+    if (next === paused) { return; }
+    paused = next;
+    if (paused) { return; }
+
+    var pending = deferred;
+    deferred = [];
+    for (var i = 0; i < pending.length; i += 1) {
+      try { pending[i].run(); } catch (error) { /* one bad callback must not strand the rest */ }
+    }
+    // Whatever changed while frozen was measured as nothing; fit it now.
+    scheduleFit();
+  }
+
+  window.setTimeout = function (callback, delay) {
+    if (typeof callback !== "function") { return rawSetTimeout.apply(null, arguments); }
+    var args = Array.prototype.slice.call(arguments, 2);
+    var handle = rawSetTimeout(function () {
+      var run = function () { callback.apply(undefined, args); };
+      if (paused) { queueDeferred("timeout:" + handle, run); return; }
+      run();
+    }, delay);
+    return handle;
+  };
+
+  window.clearTimeout = function (handle) {
+    dropDeferred("timeout:" + handle);
+    return rawClearTimeout(handle);
+  };
+
+  window.setInterval = function (callback, delay) {
+    if (typeof callback !== "function") { return rawSetInterval.apply(null, arguments); }
+    var args = Array.prototype.slice.call(arguments, 2);
+    var handle = rawSetInterval(function () {
+      var run = function () { callback.apply(undefined, args); };
+      // Coalesced on purpose: one catch-up firing, never the N that were missed.
+      if (paused) { queueDeferred("interval:" + handle, run); return; }
+      run();
+    }, delay);
+    return handle;
+  };
+
+  window.clearInterval = function (handle) {
+    dropDeferred("interval:" + handle);
+    return rawClearInterval(handle);
+  };
+
+  if (rawRequestAnimationFrame) {
+    window.requestAnimationFrame = function (callback) {
+      if (typeof callback !== "function") { return rawRequestAnimationFrame(callback); }
+      var handle = rawRequestAnimationFrame(function () {
+        var run = function () { callback(now()); };
+        if (paused) { queueDeferred("frame:" + handle, run); return; }
+        run();
+      });
+      return handle;
+    };
+  }
+
+  if (rawCancelAnimationFrame) {
+    window.cancelAnimationFrame = function (handle) {
+      dropDeferred("frame:" + handle);
+      return rawCancelAnimationFrame(handle);
+    };
+  }
+
+  // ---- heartbeat ----------------------------------------------------------
+  rawSetInterval(function () { post({ type: "alive" }); }, boot.heartbeatMs);
+
+  // ---- storage ------------------------------------------------------------
+  var storageState = {};
+  if (boot.storage && typeof boot.storage === "object") {
+    for (var bootKey in boot.storage) {
+      if (Object.prototype.hasOwnProperty.call(boot.storage, bootKey)) {
+        storageState[bootKey] = String(boot.storage[bootKey]);
+      }
+    }
+  }
+
+  function cloneStorage() {
+    var copy = {};
+    for (var key in storageState) {
+      if (Object.prototype.hasOwnProperty.call(storageState, key)) { copy[key] = storageState[key]; }
+    }
+    return copy;
+  }
+
+  function byteSize(text) {
+    if (typeof TextEncoder === "function") { return new TextEncoder().encode(text).length; }
+    return text.length;
+  }
+
+  // COALESCED to one post per task -- the pending flag is what does it. The
+  // host does real work per message: a structured-clone deserialize of the
+  // WHOLE map plus a JSON.stringify of it, on the app's own main thread, which
+  // is the one thread this sandbox exists to protect (performance review P-5).
+  // A widget that persists several keys inside one render() posted one message
+  // per key for a state that only settles once. The RAW timer, never the gated
+  // one: a sync is host bookkeeping, and deferring it behind a pause would hold
+  // the user's last write hostage to the widget being off screen.
+  //
+  // A task boundary is the furthest this can safely go. Anything longer (an
+  // interval, a throttle) risks an eviction landing inside the window, and the
+  // host's write-through to the content cache is what a re-boot reads -- so a
+  // dropped sync is silently the user's data (W-08).
+  var syncPending = false;
+  function syncStorage() {
+    if (syncPending) { return; }
+    syncPending = true;
+    rawSetTimeout(function () {
+      syncPending = false;
+      post({ type: "storage-sync", storage: cloneStorage() });
+    }, 0);
+  }
+
+  var widgetLocalStorage = {
+    get length() { return Object.keys(storageState).length; },
+    key: function (index) {
+      var keys = Object.keys(storageState);
+      return index in keys ? keys[index] : null;
+    },
+    getItem: function (key) {
+      var name = String(key);
+      return Object.prototype.hasOwnProperty.call(storageState, name) ? storageState[name] : null;
+    },
+    setItem: function (key, value) {
+      var name = String(key);
+      var had = Object.prototype.hasOwnProperty.call(storageState, name);
+      var previous = storageState[name];
+      storageState[name] = String(value);
+
+      if (byteSize(JSON.stringify(storageState)) > STATE_MAX_BYTES) {
+        // Real localStorage throws at quota, so this is the failure shape the
+        // widget was written against. Dropping the write would show the user
+        // data that is not saved.
+        if (had) { storageState[name] = previous; } else { delete storageState[name]; }
+        var error = new Error("Widget storage is full.");
+        error.name = "QuotaExceededError";
+        throw error;
+      }
+
+      syncStorage();
+    },
+    removeItem: function (key) {
+      var name = String(key);
+      if (!Object.prototype.hasOwnProperty.call(storageState, name)) { return; }
+      delete storageState[name];
+      syncStorage();
+    },
+    clear: function () {
+      storageState = {};
+      syncStorage();
+    },
+  };
+
+  try {
+    Object.defineProperty(window, "localStorage", {
+      value: widgetLocalStorage,
+      configurable: true,
+      enumerable: false,
+      writable: false,
+    });
+  } catch (error) { /* leave the realm's own (throwing) localStorage in place */ }
+
+  // ---- shared predicates --------------------------------------------------
+  function isEditable(node) {
+    if (!node || typeof node.closest !== "function") { return false; }
+    return !!node.closest(
+      "input, textarea, select, [contenteditable=''], [contenteditable='true']"
+    );
+  }
+
+  // ══ THE LINE BETWEEN THE WIDGET'S GESTURE AND THE CANVAS'S ══
+  //
+  // Something the user OPERATES, as opposed to the widget's own scenery. Only
+  // the child can answer this — the host cannot see into a sandboxed document —
+  // and the whole pointer rule turns on it:
+  //
+  //   scenery      → the canvas gets it: the press selects the node and can
+  //                  become a drag, exactly like a press on any other node.
+  //   interactive  → the widget keeps it, whole. No selection, no drag handoff,
+  //                  and nothing after the press is relayed, so a slider slides,
+  //                  a list item reorders and a drag across a field selects its
+  //                  text instead of towing the node across the canvas.
+  //
+  // Text fields are in here on purpose and without regard to focus. Dragging
+  // across a field IS a text selection at every point in its life, and needing
+  // to click into it first to get that was the original complaint.
+  //
+  // The cost is real and accepted: a widget whose entire surface is controls has
+  // no drag handle left. Scenery is the drag handle, and almost every widget has
+  // some — padding, a heading, a background. The reverse default was worse: it
+  // made the widget's own interactions unusable, which is the whole point of a
+  // widget.
+  var INTERACTIVE_SELECTOR =
+    "[data-widget-interactive], a[href], button, input, textarea, select, option, label, summary, details, " +
+    "[role='button'], [role='link'], [role='checkbox'], [role='radio'], " +
+    "[role='switch'], [role='tab'], [role='menuitem'], [role='option'], " +
+    "[role='slider'], [role='spinbutton'], [role='textbox'], " +
+    "[contenteditable=''], [contenteditable='true'], [draggable='true'], " +
+    "[tabindex]:not([tabindex='-1'])";
+
+  function isInteractive(node) {
+    if (!node || typeof node.closest !== "function") { return false; }
+    if (node.closest(INTERACTIVE_SELECTOR)) { return true; }
+    // A widget builds many controls and drag handles out of plain divs, so no
+    // tag list is complete. A control/drag cursor is the author's own statement
+    // that this surface owns pointer interaction; the shell's inherited custom
+    // default cursor deliberately does not match any of these values.
+    try {
+      var cursor = window.getComputedStyle(node).cursor;
+      return (
+        cursor === "pointer" ||
+        cursor === "text" ||
+        cursor === "vertical-text" ||
+        cursor === "crosshair" ||
+        cursor === "cell" ||
+        cursor === "move" ||
+        cursor === "all-scroll" ||
+        cursor === "grab" ||
+        cursor === "grabbing" ||
+        cursor === "copy" ||
+        cursor === "alias" ||
+        cursor === "zoom-in" ||
+        cursor === "zoom-out" ||
+        cursor.indexOf("resize") !== -1
+      );
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function hasTextSelection() {
+    var selection =
+      typeof document.getSelection === "function" ? document.getSelection() : null;
+    return !!selection && selection.isCollapsed === false;
+  }
+
+  // ---- pointer ------------------------------------------------------------
+  var pointerActive = false;
+  var activePointerTarget = null;
+  var activePointerId = null;
+  var lastPointerSnapshot = null;
+
+  function pointerPayload(event) {
+    return {
+      clientX: event.clientX,
+      clientY: event.clientY,
+      screenX: event.screenX,
+      screenY: event.screenY,
+      button: event.button,
+      ctrlKey: !!event.ctrlKey,
+      metaKey: !!event.metaKey,
+      shiftKey: !!event.shiftKey,
+      altKey: !!event.altKey,
+    };
+  }
+
+  function relayPointer(type, event) {
+    lastPointerSnapshot = pointerPayload(event);
+    var payload = pointerPayload(event);
+    payload.type = type;
+    post(payload);
+  }
+
+  function releaseCapture() {
+    if (activePointerTarget && typeof activePointerTarget.releasePointerCapture === "function") {
+      try { activePointerTarget.releasePointerCapture(activePointerId); } catch (error) {}
+    }
+    activePointerTarget = null;
+    activePointerId = null;
+  }
+
+  window.addEventListener("pointerdown", function (event) {
+    if (event.button !== 0) { return; }
+
+    // Only one pointer is bridged. If a release went missing, a new press ends
+    // that stale session before deciding whether the new gesture belongs to
+    // the widget or the canvas.
+    if (pointerActive) { endPointer(lastPointerSnapshot || event); }
+
+    // A press on something the user operates belongs to the WIDGET, whole. It
+    // never crosses the iframe boundary: no press means the host cannot select
+    // the node or arm its drag handoff, and no move can start a canvas drag.
+    // A slider slides, a list item reorders and a drag across a field selects
+    // its text without towing or selecting the widget.
+    if (isInteractive(event.target)) {
+      return;
+    }
+
+    pointerActive = true;
+    activePointerId = event.pointerId;
+    activePointerTarget =
+      event.target && typeof event.target.setPointerCapture === "function" ? event.target : null;
+
+    if (activePointerTarget) {
+      try { activePointerTarget.setPointerCapture(event.pointerId); } catch (error) {}
+    }
+
+    relayPointer("pointerdown", event);
+  }, true);
+
+  window.addEventListener("pointermove", function (event) {
+    if (!pointerActive) { return; }
+
+    // ⚠️ A MOVE WITH NO BUTTON DOWN IS NOT PART OF A DRAG.
+    //
+    // pointerActive is set on the press and cleared on the release, and the
+    // release can go missing: it lands outside the frame, or the widget rebuilt
+    // the element the pointer was captured on while the user worked in it. The
+    // stale press then outlives its gesture, and the next HOVER over the widget
+    // relays as a drag — the host crosses its threshold and dispatches a real
+    // node drag from a mouse move with nothing held down. The widget follows
+    // the cursor around the canvas and only lets go when the user clicks.
+    //
+    // event.buttons is the only honest answer to "is this still a press", so a
+    // move that reports none ENDS the gesture rather than being ignored: the
+    // host is holding an armed press and needs the release to disarm it.
+    // Strictly zero, so a browser that omits the field cannot silently cancel
+    // every real drag.
+    if (event.buttons === 0) { endPointer(event); return; }
+
+    relayPointer("pointermove", event);
+  }, true);
+
+  function endPointer(event) {
+    if (!pointerActive) { return; }
+    pointerActive = false;
+    releaseCapture();
+    relayPointer("pointerup", event);
+  }
+
+  window.addEventListener("pointerup", endPointer, true);
+  window.addEventListener("pointercancel", endPointer, true);
+
+  // Drag recovery: the frame losing focus mid-press means the gesture ended
+  // somewhere we cannot see. Synthesise the release from the last position
+  // rather than leaving the widget stuck to the cursor. The snapshot carries
+  // exactly the fields a real event is read for, so it relays as one.
+  //
+  // Deliberately not endPointer: the capture is dropped by forgetting it rather
+  // than by releasePointerCapture, because the element it was taken on may be
+  // gone by the time focus comes back and the call would throw for nothing.
+  window.addEventListener("blur", function () {
+    if (pointerActive && lastPointerSnapshot) {
+      relayPointer("pointerup", lastPointerSnapshot);
+    }
+    pointerActive = false;
+    activePointerTarget = null;
+    activePointerId = null;
+  });
+
+  // ---- wheel --------------------------------------------------------------
+  function findScrollRegion(event) {
+    var path = typeof event.composedPath === "function" ? event.composedPath() : [];
+    for (var i = 0; i < path.length; i += 1) {
+      var node = path[i];
+      if (node && typeof node.matches === "function" && node.matches("[data-widget-scroll]")) {
+        return node;
+      }
+    }
+    return null;
+  }
+
+  function canScroll(element, deltaX, deltaY) {
+    if (deltaY !== 0) {
+      var maxY = element.scrollHeight - element.clientHeight;
+      if (maxY > 1 && ((deltaY < 0 && element.scrollTop > 0) || (deltaY > 0 && element.scrollTop < maxY - 1))) {
+        return true;
+      }
+    }
+    if (deltaX !== 0) {
+      var maxX = element.scrollWidth - element.clientWidth;
+      if (maxX > 1 && ((deltaX < 0 && element.scrollLeft > 0) || (deltaX > 0 && element.scrollLeft < maxX - 1))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  window.addEventListener("wheel", function (event) {
+    // The canvas wins unless the widget explicitly marked a scroll region that
+    // can still move in this direction — and Ctrl/Cmd+wheel is always a canvas
+    // zoom. Content taller than a 300px frame is the NORMAL case, so an
+    // automatic "something under the cursor can scroll" rule would hand the
+    // wheel to the widget almost always and the canvas would be dead over it.
+    if (!event.ctrlKey && !event.metaKey) {
+      var region = findScrollRegion(event);
+      if (region && canScroll(region, event.deltaX, event.deltaY)) { return; }
+    }
+
+    event.preventDefault();
+    post({
+      type: "wheel",
+      clientX: event.clientX,
+      clientY: event.clientY,
+      deltaX: event.deltaX,
+      deltaY: event.deltaY,
+      deltaMode: event.deltaMode,
+      ctrlKey: !!event.ctrlKey,
+      shiftKey: !!event.shiftKey,
+    });
+  }, { capture: true, passive: false });
+
+  // ---- context menu -------------------------------------------------------
+  window.addEventListener("contextmenu", function (event) {
+    // A right-click on the widget's own text field keeps the browser's
+    // spell-check menu.
+    if (isEditable(event.target)) { return; }
+
+    // ONLY the child can answer this one (F-27). The preventDefault below is
+    // what lets the host open the CANVAS menu instead of the browser's -- but
+    // the share view deliberately never attaches that listener (Canvas.tsx
+    // skips it when readOnly, leaving the native menu intact), so on
+    // /s/[token] the relay landed on nothing and a visitor right-clicking a
+    // widget got no menu at all, where right-clicking a card beside it gave
+    // them Chrome's. The host cannot fix it: by the time the message arrives
+    // the default is already prevented, in a document it cannot reach into.
+    if (READ_ONLY) { return; }
+
+    event.preventDefault();
+    post({ type: "contextmenu", clientX: event.clientX, clientY: event.clientY });
+  }, true);
+
+  // ---- keyboard -----------------------------------------------------------
+  function isRelayableKey(event) {
+    var mod = event.metaKey || event.ctrlKey;
+    var key = event.key;
+
+    if (key === "Escape") { return !mod; }
+    if (key === "Backspace" || key === "Delete") {
+      // A user with text selected inside a widget is deleting TEXT, not a node.
+      return !mod && !hasTextSelection();
+    }
+    if (mod && (key === "z" || key === "Z")) { return true; }
+
+    // Never a bare letter (it would arm a canvas placement behind the widget),
+    // and never Cmd+A / Cmd+C / Cmd+X — see rule 3 in this file's header.
+    return false;
+  }
+
+  window.addEventListener("keydown", function (event) {
+    if (isEditable(event.target) || isEditable(document.activeElement)) { return; }
+    if (!isRelayableKey(event)) { return; }
+
+    post({
+      type: "key",
+      key: event.key,
+      code: event.code,
+      ctrlKey: !!event.ctrlKey,
+      metaKey: !!event.metaKey,
+      shiftKey: !!event.shiftKey,
+      altKey: !!event.altKey,
+    });
+  }, true);
+
+  // ---- clipboard ----------------------------------------------------------
+  // Native events never cross an iframe boundary, and a relayed keydown cannot
+  // synthesize one. Write the copy marker HERE, synchronously on the real event;
+  // the host records the selected nodes against that exact marker. This needs
+  // neither async Clipboard API permissions nor access to the frame's DOM.
+  // Cut writes the same marker; the host also takes the copied selection off
+  // the board.
+  function publishCopyMarker(type) {
+    return function (event) {
+      if (READ_ONLY || isEditable(event.target) || isEditable(document.activeElement) || hasTextSelection()) { return; }
+      if (!event.clipboardData) { return; }
+      var bytes = window.crypto.getRandomValues(new Uint8Array(16));
+      var id = Array.from(bytes, function (byte) { return byte.toString(16).padStart(2, "0"); }).join("");
+      var text = "causal:nodes:" + id;
+      event.clipboardData.setData("text/plain", text);
+      event.preventDefault();
+      post({ type: type, text: text });
+    };
+  }
+  window.addEventListener("copy", publishCopyMarker("copy"));
+  window.addEventListener("cut", publishCopyMarker("cut"));
+
+  window.addEventListener("paste", function (event) {
+    if (READ_ONLY || isEditable(event.target) || isEditable(document.activeElement)) { return; }
+    if (!event.clipboardData) { return; }
+    var text = event.clipboardData.getData("text/plain").trim();
+    // A copy of one picture carries its marker on the HTML, not as text.
+    if (!text) {
+      var onHtml = event.clipboardData.getData("text/html").match(/data-causal-nodes="([^"]+)"/);
+      if (onHtml) { text = onHtml[1]; }
+    }
+    if (text.indexOf("causal:nodes:") !== 0 && text.indexOf("causal-widget:v1:") !== 0) { return; }
+    event.preventDefault();
+    post({ type: "paste", text: text });
+  });
+
+  // ---- host → child -------------------------------------------------------
+  function applyTheme(vars) {
+    if (!vars || typeof vars !== "object") { return; }
+    var root = document.documentElement;
+    if (!root || !root.style || typeof root.style.setProperty !== "function") { return; }
+
+    for (var name in vars) {
+      if (!Object.prototype.hasOwnProperty.call(vars, name)) { continue; }
+      // The host owns this namespace and nothing else: a theme message must
+      // never be able to set an arbitrary property on the widget's root.
+      if (name.indexOf("--widget-") !== 0) { continue; }
+      root.style.setProperty(name, String(vars[name]));
+    }
+  }
+
+  // ---- measurement: the box this widget's content actually wants ----------
+  //
+  // The no-opinion answer, shared so every early-out reports it identically. A
+  // caller cannot tell a missing DOM API from a widget with genuinely no
+  // intrinsic size, and does not need to: both mean leave the frame alone.
+  var NO_SIZE = { width: null, height: null };
+  //
+  // ⚠️ **Probe, read and restore all inside ONE task.** The browser paints at
+  // the end of a task, so nothing below is ever visible; split it across an
+  // await or a frame and the probe geometry flashes on the user's canvas.
+  //
+  // What makes this cheap is that the SHELL owns the whole height chain
+  // (html and body are 100%, :where(#root) is zero-specificity). A
+  // widget's own #root { height: 100% } is a PERCENTAGE against that chain,
+  // so releasing html/body to auto makes CSS resolve it to auto on its own.
+  // There is nothing to override, so the shell needs no forced rule here --
+  // which is what keeps the no-forced-override invariant intact.
+  //
+  // The axis is the standing fit's (below); the host's measure passes none and
+  // gets both. A height fit keeps the frame's width, so its height has to be
+  // read AT that width — a height measured at a narrower fit-content width
+  // belongs to a layout the frame will never have.
+  function measureContent(axis) {
+    if (typeof document.getElementById !== "function") { return NO_SIZE; }
+    var root = document.getElementById("root");
+    var html = document.documentElement;
+    var body = document.body;
+    if (!root || !root.style || !html || !html.style || !body || !body.style) { return NO_SIZE; }
+    if (typeof root.getBoundingClientRect !== "function") { return NO_SIZE; }
+
+    // A pane that opted into its own scrollbar is deliberately unbounded —
+    // fitting to its content turns a hundred-row list into a hundred-row
+    // widget. Each is pinned at the height it occupies right now and measured
+    // as furniture, so the fit accounts for everything around it.
+    var panes =
+      typeof document.querySelectorAll === "function"
+        ? document.querySelectorAll("[data-widget-scroll]")
+        : [];
+    var pinned = [];
+    for (var i = 0; i < panes.length; i += 1) {
+      pinned.push({ node: panes[i], height: panes[i].style.height });
+      panes[i].style.height = panes[i].getBoundingClientRect().height + "px";
+    }
+
+    var saved = {
+      htmlHeight: html.style.height,
+      bodyHeight: body.style.height,
+      bodyDisplay: body.style.display,
+      rootWidth: root.style.width,
+      rootHeight: root.style.height,
+      rootFlex: root.style.flex,
+    };
+
+    var measured = NO_SIZE;
+    try {
+      // The frame's own width, read before anything moves. clientWidth is the
+      // viewport, and overflow: clip means no scrollbar is ever subtracted
+      // from it.
+      var frameWidth = html.clientWidth;
+
+      html.style.height = "auto";
+      body.style.height = "auto";
+      // Out of the shell's centring flex row. A flex item is shrunk back onto
+      // the line, so max-content below would just read the frame width back
+      // and every widget would measure exactly as wide as it already is.
+      body.style.display = "block";
+      root.style.height = "auto";
+      root.style.flex = "none";
+
+      // The two intrinsic widths, which between them say everything about what
+      // this content can do horizontally.
+      root.style.width = "max-content";
+      var natural = root.getBoundingClientRect().width;
+      root.style.width = "min-content";
+      var floor = root.getBoundingClientRect().width;
+
+      // CSS already has a name for the answer: this is fit-content against the
+      // frame as the available width, and each branch earns its place.
+      //
+      //  - Content that ENDS before the frame does: close the frame up to it.
+      //  - Content that cannot fit at all: the frame is over-compressed and is
+      //    clipping, so grow to the narrowest width that stops that. Without
+      //    this branch a squashed widget could only ever be fitted TALLER, and
+      //    a fit that leaves content clipped is not a fit.
+      //  - Anything else is wrapping happily inside the frame. The frame width
+      //    is the user's own choice there, and max-content for a paragraph is
+      //    one absurd unbroken line — so only the height is fitted.
+      var width =
+        axis === "height"
+          ? frameWidth
+          : natural > 0 && natural < frameWidth
+            ? natural
+            : floor > frameWidth
+              ? floor
+              : frameWidth;
+      root.style.width = width + "px";
+      var height = root.getBoundingClientRect().height;
+
+      // A widget with nothing in flow — an absolutely-positioned layout, a
+      // full-bleed background — measures as nothing. Fitting to that would
+      // collapse the frame, so it reports no opinion and the caller leaves the
+      // widget alone.
+      if (width > 0 && height > 0) {
+        measured = { width: width, height: height };
+      }
+    } catch (error) {
+      // A widget can throw from its own CSSOM. It must not take the fit with
+      // it, and measured already holds the no-opinion answer.
+    }
+
+    html.style.height = saved.htmlHeight;
+    body.style.height = saved.bodyHeight;
+    body.style.display = saved.bodyDisplay;
+    root.style.width = saved.rootWidth;
+    root.style.height = saved.rootHeight;
+    root.style.flex = saved.rootFlex;
+    for (var j = 0; j < pinned.length; j += 1) {
+      pinned[j].node.style.height = pinned[j].height;
+    }
+
+    return measured;
+  }
+
+  // ---- standing fit: the axis a widget names on its root ------------------
+  //
+  // A widget that sets the fit attribute on its root owns that axis of its
+  // frame: the shell refits it after any change to what is drawn, and after
+  // any change to the frame itself, because a width change rewraps text and
+  // moves a height fit. Coalesced to one measurement per task, like
+  // storage-sync, so a render that rebuilds fifty rows measures once. The RAW
+  // timer: a frozen frame measures as nothing anyway, and its resume refits.
+  //
+  // No dedupe in here. The host compares the reply with the frame the store
+  // holds, which is the only way a hand resize of an owned axis is put back.
+  //
+  // ⚠️ The observer watches structure, text and the attributes that show or
+  // hide things, NEVER style. measureContent writes style on the root and on
+  // every scroll pane, so watching style would make each fit schedule the next
+  // one for ever — and a widget animating through inline style would be
+  // measured every frame.
+  var FIT_ATTRIBUTE = "data-widget-fit";
+  var fitPending = false;
+
+  function readFitAxis() {
+    if (typeof document.getElementById !== "function") { return null; }
+    var root = document.getElementById("root");
+    var value = root && typeof root.getAttribute === "function" ? root.getAttribute(FIT_ATTRIBUTE) : null;
+    return value === "height" || value === "width" || value === "both" ? value : null;
+  }
+
+  function scheduleFit() {
+    // A share view cannot write the size, so it never measures for one.
+    if (READ_ONLY || fitPending || !readFitAxis()) { return; }
+    fitPending = true;
+    rawSetTimeout(function () {
+      fitPending = false;
+      var axis = readFitAxis();
+      if (!axis) { return; }
+      var box = measureContent(axis);
+      if (box.width === null || box.height === null) { return; }
+      post({ type: "fit", axis: axis, width: box.width, height: box.height });
+    }, 0);
+  }
+
+  if (!READ_ONLY) {
+    var fitRoot =
+      typeof document.getElementById === "function"
+        ? document.getElementById("root")
+        : null;
+    if (fitRoot && typeof MutationObserver === "function") {
+      new MutationObserver(scheduleFit).observe(fitRoot, {
+        subtree: true,
+        childList: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: [FIT_ATTRIBUTE, "class", "hidden", "open"],
+      });
+    }
+    window.addEventListener("resize", scheduleFit);
+    window.addEventListener("load", scheduleFit);
+  }
+
+  // ---- PNG capture: the pixels inside the current frame -------------------
+  //
+  // The host cannot read this DOM: the iframe deliberately has an opaque
+  // origin. Rasterize here and structured-clone the Blob back. Width and
+  // height come from the document viewport, not the content's scroll box, so
+  // this is a literal snapshot of the visible frame rather than a full-page
+  // export of whatever may be clipped below it.
+  function capturePng(requestId) {
+    var html = document.documentElement;
+    var body = document.body;
+    var width = html && html.clientWidth;
+    var height = html && html.clientHeight;
+    if (!captureToBlob || !body || !(width > 0) || !(height > 0)) {
+      post({ type: "captured-png", requestId: requestId, blob: null });
+      return;
+    }
+
+    try {
+      Promise.resolve(captureToBlob(body, {
+        width: width,
+        height: height,
+        canvasWidth: width,
+        canvasHeight: height,
+        pixelRatio: CAPTURE_PIXEL_RATIO,
+        // Widget fonts are the shell's system stacks or data URLs. Skipping the
+        // downloader keeps capture inside the CSP's no-network boundary.
+        skipFonts: true,
+      })).then(function (blob) {
+        post({ type: "captured-png", requestId: requestId, blob: blob || null });
+      }, function () {
+        post({ type: "captured-png", requestId: requestId, blob: null });
+      });
+    } catch (error) {
+      post({ type: "captured-png", requestId: requestId, blob: null });
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    // A widget may host its own iframes; only the parent drives this bridge.
+    // There is no origin to check — this document has an opaque origin.
+    if (event.source !== window.parent) { return; }
+
+    var data = event.data;
+    if (!data || typeof data !== "object") { return; }
+    if (data.source !== SOURCE || data.protocol !== PROTOCOL || data.nodeId !== NODE_ID) { return; }
+
+    if (data.type === "lifecycle") { setLifecycle(data.state); return; }
+    if (data.type === "theme") { applyTheme(data.vars); return; }
+    if (data.type === "measure") {
+      var requestId = data.requestId;
+      // One task later, and rawSetTimeout so the lifecycle gate cannot defer
+      // it. This bridge runs BEFORE the widget's own script, so a widget that
+      // builds its UI from a zero-delay timer would otherwise be measured empty.
+      rawSetTimeout(function () {
+        var box = measureContent();
+        post({
+          type: "measured",
+          requestId: requestId,
+          width: box.width,
+          height: box.height,
+        });
+      }, 0);
+      return;
+    }
+    if (data.type === "capture-png") {
+      capturePng(data.requestId);
+      return;
+    }
+    if (data.type === "gesture-taken") {
+      // The host took the gesture: stop relaying and let go, so the drag runs
+      // as a real parent-document drag from here.
+      releaseCapture();
+      pointerActive = false;
+    }
+  });
+
+  // LAST STATEMENT. Everything the host sent before this was queued.
+  post({ type: "ready" });
+})();</script><script data-widget-source>
+// === STATE ===
+const STORE_KEY = "palette";
+const COUNT = 5;
+const HISTORY = 40;
+const STAGGER = 32;
+const SETTLE = 600;
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const rand = (a, b) => a + Math.random() * (b - a);
+const pick = (list) => list[Math.floor(Math.random() * list.length)];
+const wrap = (h) => ((h % 360) + 360) % 360;
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+function shuffled(list) {
+  const out = list.slice();
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+// Colours live in OKLCH so lightness and chroma step evenly to the eye.
+function toLinear({ l, c, h }) {
+  const a = c * Math.cos((h * Math.PI) / 180);
+  const b = c * Math.sin((h * Math.PI) / 180);
+  const L = (l + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const M = (l - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const S = (l - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  return [
+    4.0767416621 * L - 3.3077115913 * M + 0.2309699292 * S,
+    -1.2684380046 * L + 2.6097574011 * M - 0.3413193965 * S,
+    -0.0041960863 * L - 0.7034186147 * M + 1.707614701 * S,
+  ];
+}
+const inGamut = (rgb) => rgb.every((v) => v >= -1e-4 && v <= 1 + 1e-4);
+// Pull chroma in until the colour exists on screen, keeping its lightness and hue.
+function fit({ l, c, h }) {
+  let chroma = c;
+  while (chroma > 0 && !inGamut(toLinear({ l, c: chroma, h }))) chroma -= 0.004;
+  return { l, c: Math.max(0, chroma), h };
+}
+const encode = (v) => {
+  v = clamp01(v);
+  return v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055;
+};
+function hex(col) {
+  return "#" + toLinear(col).map((v) => Math.round(encode(v) * 255).toString(16).padStart(2, "0")).join("").toUpperCase();
+}
+function luminance(col) {
+  const [r, g, b] = toLinear(col).map(clamp01);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+function contrast(a, b) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+}
+// Text on a colour is a deep or pale shade of that same hue, never grey.
+function ink(col) {
+  const dark = fit({ l: 0.2, c: Math.min(col.c * 0.6, 0.06), h: col.h });
+  const light = fit({ l: 0.985, c: Math.min(col.c * 0.25, 0.02), h: col.h });
+  return contrast(col, dark) >= contrast(col, light) ? dark : light;
+}
+const SCHEMES = {
+  analogous: () => { const s = rand(12, 30); return [-2, -1, 0, 1, 2].map((k) => k * s); },
+  mono: () => [-6, -3, 0, 3, 6],
+  complement: () => [-12, 0, 12, 180, 192],
+  split: () => [0, 150, 12, 210, 162],
+  triad: () => [0, 120, 240, 12, 132],
+};
+
+// A lightness ramp swept through a hue scheme; locked colours stay and anchor the hue.
+function generate(prev, locked) {
+  const name = pick(["analogous", "analogous", "mono", "complement", "split", "triad"]);
+  const offsets = SCHEMES[name]();
+  const anchor = locked.findIndex(Boolean);
+  const base = anchor >= 0 ? prev[anchor].h - offsets[anchor] : rand(0, 360);
+  const muted = Math.random() < 0.2;
+  const peak = muted ? rand(0.035, 0.07) : name === "mono" ? rand(0.06, 0.15) : rand(0.09, 0.19);
+  const top = rand(0.9, 0.97);
+  const bottom = rand(0.24, 0.4);
+  const curve = rand(0.75, 1.35);
+  let ls = Array.from({ length: COUNT }, (_, i) => top + (bottom - top) * Math.pow(i / (COUNT - 1), curve));
+  if (Math.random() < 0.5) ls.reverse();
+  if (Math.random() < 0.3) ls = shuffled(ls);
+  return ls.map((l, i) => {
+    if (locked[i]) return prev[i];
+    const vivid = 0.25 + 0.75 * Math.sin(Math.PI * clamp01((l - 0.2) / 0.8));
+    let col = fit({ l: l + rand(-0.02, 0.02), c: peak * vivid * rand(0.85, 1.1), h: wrap(base + offsets[i] + rand(-6, 6)) });
+    // Mid-tones can miss 4.5:1 with both inks, so step lightness away from the middle until one clears it.
+    for (let n = 0; n < 16 && contrast(col, ink(col)) < 4.5; n++) {
+      col = fit({ ...col, l: col.l + (col.l < 0.59 ? -0.01 : 0.01) });
+    }
+    return col;
+  });
+}
+
+const state = (() => {
+  const valid = (list) => Array.isArray(list) && list.length === COUNT &&
+    list.every((col) => col && [col.l, col.c, col.h].every(Number.isFinite));
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(STORE_KEY)); } catch {}
+  const s = { colors: null, locked: Array(COUNT).fill(false), back: [], forward: [] };
+  if (saved && valid(saved.colors)) {
+    s.colors = saved.colors;
+    if (Array.isArray(saved.locked)) s.locked = s.locked.map((_, i) => !!saved.locked[i]);
+    if (Array.isArray(saved.back)) s.back = saved.back.filter(valid).slice(-HISTORY);
+    if (Array.isArray(saved.forward)) s.forward = saved.forward.filter(valid).slice(-HISTORY);
+  } else {
+    s.colors = generate(Array(COUNT).fill(null), s.locked);
+  }
+  return s;
+})();
+
+// === RENDER ===
+const SVG_NS = "http://www.w3.org/2000/svg";
+const ICONS = {
+  copy: '<rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5"/>',
+  check: '<path d="M3.5 8.5l3 3 6-7"/>',
+  open: '<rect x="3.5" y="7.5" width="9" height="6" rx="1.5"/><path d="M5.5 7.5V5a2.5 2.5 0 0 1 4.9-.7"/>',
+  closed: '<rect x="3.5" y="7.5" width="9" height="6" rx="1.5" fill="currentColor"/><path d="M5.5 7.5V5a2.5 2.5 0 0 1 5 0v2.5"/>',
+  back: '<path d="M5.5 3.5l-3 3 3 3"/><path d="M2.5 6.5h7a3.5 3.5 0 0 1 0 7h-2"/>',
+  forward: '<path d="M10.5 3.5l3 3-3 3"/><path d="M13.5 6.5h-7a3.5 3.5 0 0 0 0 7h2"/>',
+  shuffle: '<path d="M2.5 4.5h2c1.5 0 2.5.8 3.3 2l1.4 3c.8 1.2 1.8 2 3.3 2h1"/><path d="M2.5 11.5h2c1 0 1.8-.4 2.5-1.1"/><path d="M9 5.6c.7-.7 1.5-1.1 2.5-1.1h2"/><path d="M11.5 2.5l2 2-2 2"/><path d="M11.5 9.5l2 2-2 2"/>',
+};
+
+function icon(name, cls) {
+  const svg = document.createElementNS(SVG_NS, "svg");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("aria-hidden", "true");
+  if (cls) svg.setAttribute("class", cls);
+  svg.innerHTML = ICONS[name];
+  return svg;
+}
+
+function el(tag, cls, props) {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (props) Object.assign(node, props);
+  return node;
+}
+
+function button(cls, action, label) {
+  const node = el("button", cls, { type: "button" });
+  node.dataset.action = action;
+  if (label) node.setAttribute("aria-label", label);
+  return node;
+}
+
+const refs = { cols: [] };
+
+// Built once; after that paint() updates the same nodes in place so motion never restarts.
+function render() {
+  const strip = el("div", "strip");
+  refs.cols = state.colors.map((_, i) => {
+    const col = el("div", "col");
+
+    const label = el("span", "label");
+    const val = el("span", "val");
+    label.append(val);
+    const doneText = el("span", "", { textContent: "Copied" });
+    const done = el("span", "glyph-done");
+    done.append(icon("check"), doneText);
+    const glyphs = el("span", "glyphs");
+    glyphs.append(icon("copy", "glyph-copy"), done);
+    const pick = button("pick", "copy");
+    pick.dataset.index = i;
+    pick.append(label, glyphs);
+
+    const lock = button("lock", "lock");
+    lock.dataset.index = i;
+    lock.append(icon("open", "open"), icon("closed", "closed"));
+    const meta = el("div", "meta");
+    meta.append(pick, lock);
+
+    col.append(el("div", "fill"), meta);
+    strip.append(col);
+    return { col, pick, lock, val, doneText, hex: null, ink: null, timer: 0 };
+  });
+
+  const dock = el("div", "dock");
+  refs.back = button("step", "back", "Previous palette");
+  refs.back.append(icon("back"));
+  const generate = button("generate", "generate", "Generate palette");
+  generate.title = "Generate (Space)";
+  generate.append(icon("shuffle"));
+  refs.forward = button("step", "forward", "Next palette");
+  refs.forward.append(icon("forward"));
+  dock.append(refs.back, generate, refs.forward);
+
+  root.replaceChildren(strip, dock);
+  paint(false);
+}
+
+// A new colour fades in over the old one and its hex rolls along the spine, left to right in a short wave.
+function swap(c, value) {
+  const fills = c.col.querySelectorAll(".fill");
+  const fill = el("div", "fill entering");
+  fill.style.background = value;
+  fills[fills.length - 1].after(fill);
+  void fill.offsetWidth;
+  fill.classList.remove("entering");
+
+  const old = c.val;
+  old.style.color = c.ink;
+  old.classList.add("out");
+  const val = el("span", "val in", { textContent: value });
+  old.after(val);
+  void val.offsetWidth;
+  val.classList.remove("in");
+  c.val = val;
+
+  setTimeout(() => {
+    old.remove();
+    let prev = fill.previousElementSibling;
+    while (prev && prev.classList.contains("fill")) {
+      const next = prev.previousElementSibling;
+      prev.remove();
+      prev = next;
+    }
+    if (fill.isConnected && c.val === val) c.col.style.setProperty("--d", "0ms");
+  }, SETTLE);
+}
+
+function paint(animate) {
+  const moving = animate && !REDUCE;
+  state.colors.forEach((colour, i) => {
+    const c = refs.cols[i];
+    const value = hex(colour);
+    const shade = hex(ink(colour));
+    c.col.style.setProperty("--d", moving ? `${i * STAGGER}ms` : "0ms");
+    if (value !== c.hex) {
+      c.col.classList.remove("is-copied");
+      if (animate && c.hex) {
+        swap(c, value);
+      } else {
+        c.col.querySelector(".fill").style.background = value;
+        c.val.textContent = value;
+      }
+      c.hex = value;
+    }
+    c.col.style.setProperty("--ink", shade);
+    c.ink = shade;
+    c.pick.setAttribute("aria-label", `Copy ${value}`);
+    const locked = !!state.locked[i];
+    c.lock.setAttribute("aria-pressed", String(locked));
+    c.lock.setAttribute("aria-label", `${locked ? "Unlock" : "Lock"} ${value}`);
+  });
+  refs.back.disabled = !state.back.length;
+  refs.forward.disabled = !state.forward.length;
+}
+
+// === EVENTS ===
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch {}
+}
+
+function show(colors) {
+  state.colors = colors;
+  save();
+  paint(true);
+}
+
+function generateNext() {
+  const next = generate(state.colors, state.locked);
+  if (next.every((col, i) => hex(col) === hex(state.colors[i]))) return;
+  state.back.push(state.colors);
+  if (state.back.length > HISTORY) state.back.shift();
+  state.forward = [];
+  show(next);
+}
+
+// Back and forward walk the history; generating from an older palette drops the forward branch.
+function step(dir) {
+  const from = dir < 0 ? state.back : state.forward;
+  const to = dir < 0 ? state.forward : state.back;
+  if (!from.length) return;
+  to.push(state.colors);
+  show(from.pop());
+}
+
+function toggleLock(i) {
+  state.locked[i] = !state.locked[i];
+  save();
+  paint(false);
+}
+
+async function copy(i) {
+  const text = hex(state.colors[i]);
+  let ok = false;
+  try {
+    await navigator.clipboard.writeText(text);
+    ok = true;
+  } catch {
+    const area = el("textarea", "", { value: text });
+    area.setAttribute("readonly", "");
+    area.style.cssText = "position:fixed;opacity:0;pointer-events:none";
+    document.body.append(area);
+    area.select();
+    try { ok = document.execCommand("copy"); } catch {}
+    area.remove();
+  }
+  const c = refs.cols[i];
+  c.doneText.textContent = ok ? "Copied" : "Copy blocked";
+  c.col.classList.toggle("is-blocked", !ok);
+  c.col.classList.add("is-copied");
+  clearTimeout(c.timer);
+  c.timer = setTimeout(() => c.col.classList.remove("is-copied"), 1400);
+}
+
+root.addEventListener("click", (event) => {
+  const target = event.target.closest("[data-action]");
+  if (!target || target.disabled) return;
+  const i = Number(target.dataset.index);
+  switch (target.dataset.action) {
+    case "copy": copy(i); break;
+    case "lock": toggleLock(i); break;
+    case "generate": generateNext(); break;
+    case "back": step(-1); break;
+    case "forward": step(1); break;
+  }
+});
+
+// Space generates from anywhere in the widget; a focused button keeps Space for itself.
+document.addEventListener("keydown", (event) => {
+  const mod = event.metaKey || event.ctrlKey;
+  const onControl = event.target.closest?.("button, input, textarea, [contenteditable]");
+  if (event.key === " " && !mod && !onControl) {
+    event.preventDefault();
+    if (!event.repeat) generateNext();
+  } else if (mod && event.key.toLowerCase() === "z") {
+    event.preventDefault();
+    step(event.shiftKey ? 1 : -1);
+  }
+});
+// The shell calls render() once. Do not call it again here.
+
+if (typeof render === "function") { render(); }
+</script></body></html>

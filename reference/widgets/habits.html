@@ -1,0 +1,1373 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data: blob:; connect-src 'none'; form-action 'none'; frame-src 'none'; base-uri 'none'" /><meta charset="utf-8" /><style data-widget-shell>:root {
+  color-scheme: var(--widget-color-scheme, light);
+  --widget-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --widget-background: transparent;
+  --widget-color-scheme: light;
+  --widget-canvas: #f2f2f2;
+  --widget-surface: #FCFCFC;
+  --widget-border: #e4e4e4;
+  --widget-text: #1A1A1A;
+  --widget-text-muted: #555555;
+  --widget-accent: #2988C1;
+  --widget-gap: 12px;
+  --widget-font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Source Code Pro', monospace;
+  --widget-font-size: 14px;
+  --widget-line-height: 1.6;
+  --widget-title-size: 16px;
+  --widget-title-weight: 500;
+  --widget-title-line-height: 1.4;
+  --widget-radius: 12px;
+}
+html {
+  height: 100%;
+  background: var(--widget-background, transparent);
+  overflow: clip;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M14.185 13.14l5.644 -2.202c1.625 -.634 1.538 -2.962 -.13 -3.473l-14.319 -4.382c-1.41 -.431 -2.73 .888 -2.298 2.298l4.382 14.318c.51 1.668 2.84 1.755 3.473 .13l2.202 -5.644a1.84 1.84 0 0 1 1.045 -1.045z' fill='%231A1A1A' stroke='%23FFFFFF' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E") 1 1, default;
+}
+/* Back to the browser's own where the browser's own is the honest answer: the
+   I-beam over text the user can select, the arrow over a checkbox. Inherited
+   from html, the app pointer would sit over a focused input and say nothing.
+   Zero-specificity so a widget that wants its own cursor still wins. */
+:where(input, textarea, select, [contenteditable=''], [contenteditable='true']) {
+  cursor: auto;
+}
+body {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  color: var(--widget-text);
+  font-family: var(--widget-font);
+  font-size: var(--widget-font-size);
+  line-height: var(--widget-line-height);
+  display: flex;
+  justify-content: center;
+}
+*, *::before, *::after { box-sizing: border-box; }
+:where(#root) { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: flex-start; }</style><style data-widget-style>
+/* === STYLE === */
+:root {
+  /* One source for every value the widget repeats. */
+  --hb-on: #e9622f;
+  --hb-on-hover: color-mix(in srgb, var(--hb-on) 88%, #000);
+  --hb-off: color-mix(in srgb, var(--widget-text) 6%, var(--widget-surface));
+  --hb-off-hover: color-mix(in srgb, var(--widget-text) 11%, var(--widget-surface));
+  --hb-tint: color-mix(in srgb, var(--widget-text) 6%, transparent);
+  --hb-pad: 20px;
+  --hb-section-gap: 16px;
+  --hb-dot: 28px;
+  --hb-dot-gap: 3px;
+  --hb-label-gap: 16px;
+  --hb-tint-inset: 6px;
+  --hb-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --hb-ease-in: cubic-bezier(0.4, 0, 1, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+#root {
+  height: 100%;
+  padding: var(--hb-pad);
+  background: var(--widget-surface);
+  color: var(--widget-text);
+  font-family: var(--widget-font);
+  font-size: var(--widget-font-size);
+  line-height: var(--widget-line-height);
+  display: flex;
+  flex-direction: column;
+  gap: var(--hb-section-gap);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hb-section-gap);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--widget-title-size);
+  font-weight: var(--widget-title-weight);
+  line-height: var(--widget-title-line-height);
+}
+
+/* The same box as a dot, so it sits directly above the last column. Vertical margins keep the header at title height. */
+.add {
+  width: var(--hb-dot);
+  height: var(--hb-dot);
+  margin: -6px 0;
+  display: grid;
+  place-items: center;
+  border-radius: var(--widget-radius);
+  color: var(--widget-text-muted);
+  transition: background-color 120ms, color 120ms;
+}
+.add svg { width: 16px; height: 16px; }
+
+/* Rows are subgrids, so every label and dot shares one set of tracks. */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(7, var(--hb-dot));
+  gap: var(--hb-dot-gap);
+  touch-action: none;
+}
+
+.row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: center;
+}
+
+.dot {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--hb-off);
+  transition: background-color 120ms, transform 280ms var(--hb-spring);
+}
+.dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--hb-on);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: transform 140ms var(--hb-ease-in), opacity 140ms var(--hb-ease-in), background-color 120ms;
+}
+.dot.on::after {
+  opacity: 1;
+  transform: scale(1);
+  transition: transform 360ms var(--hb-spring), opacity 90ms, background-color 120ms;
+}
+.dot.pressed { transform: scale(0.86); transition-duration: 120ms; }
+.dot:focus-visible { outline: 2px solid var(--hb-on); outline-offset: 2px; }
+
+.label {
+  justify-self: start;
+  /* Text sits on the content edge; the margins pull the tint box out and keep a 16px gap to the dots. */
+  margin-left: calc(var(--hb-tint-inset) * -1);
+  margin-right: calc(var(--hb-label-gap) - var(--hb-dot-gap) - var(--hb-tint-inset));
+  padding: 2px var(--hb-tint-inset);
+  border-radius: calc(var(--widget-radius) - 2px);
+  font-weight: 600;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  cursor: text;
+  outline: none;
+  transition: background-color 120ms;
+}
+.label[contenteditable] { background: var(--hb-tint); user-select: text; -webkit-user-select: text; }
+.label:empty::before { content: attr(data-placeholder); color: var(--widget-text-muted); }
+.label:focus-visible { background: var(--hb-tint); }
+
+@media (hover: hover) {
+  .add:hover { background: var(--hb-tint); color: var(--widget-text); }
+  .dot:hover { background: var(--hb-off-hover); }
+  .dot.on:hover::after { background: var(--hb-on-hover); }
+  .label:hover { background: var(--hb-tint); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot, .dot::after, .dot.on::after { transition-duration: 0ms; }
+}
+
+</style></head><body><div id="root">
+<!-- === MARKUP === -->
+
+</div><script data-widget-bridge>window.__widgetBoot = {"source":"widget-shell","protocol":1,"nodeId":"widget-70000be4-6376-479d-9515-406b20327fd2","storage":{"habits.v1":"{\"habits\":[{\"id\":\"h0\",\"name\":\"Read\",\"done\":{\"2026-09-08\":1,\"2026-09-09\":1,\"2026-09-16\":1,\"2026-09-17\":1,\"2026-09-19\":1,\"2026-09-18\":1,\"2026-09-25\":1,\"2026-09-24\":1,\"2026-10-07\":1,\"2026-10-09\":1,\"2026-10-08\":1,\"2026-10-10\":1,\"2026-10-17\":1,\"2026-10-12\":1,\"2026-10-13\":1,\"2026-10-14\":1,\"2026-10-15\":1,\"2026-10-16\":1}},{\"id\":\"h1\",\"name\":\"Move\",\"done\":{\"2026-09-08\":1,\"2026-09-09\":1,\"2026-09-10\":1,\"2026-09-16\":1,\"2026-09-17\":1,\"2026-09-24\":1,\"2026-09-25\":1,\"2026-09-26\":1,\"2026-09-27\":1,\"2026-10-07\":1,\"2026-10-08\":1,\"2026-10-17\":1,\"2026-10-16\":1}},{\"id\":\"h3\",\"name\":\"Journal\",\"done\":{\"2026-09-08\":1,\"2026-09-09\":1,\"2026-09-10\":1,\"2026-09-11\":1,\"2026-09-12\":1,\"2026-09-16\":1,\"2026-09-17\":1,\"2026-09-24\":1,\"2026-09-25\":1,\"2026-09-26\":1,\"2026-10-07\":1,\"2026-10-08\":1,\"2026-10-09\":1}},{\"id\":\"hmu1itrbv\",\"name\":\"Meditate\",\"done\":{\"2026-09-24\":1,\"2026-09-25\":1}}]}"},"lifecycle":"running","stateMaxBytes":262144,"heartbeatMs":1000,"capturePixelRatio":3,"readOnly":true};
+(function () {
+  var boot = window.__widgetBoot;
+  try { delete window.__widgetBoot; } catch (error) { /* non-configurable is harmless */ }
+  if (!boot) { return; }
+
+  var SOURCE = boot.source;
+  var PROTOCOL = boot.protocol;
+  var NODE_ID = boot.nodeId;
+  var STATE_MAX_BYTES = boot.stateMaxBytes;
+  var READ_ONLY = boot.readOnly === true;
+  var CAPTURE_PIXEL_RATIO = boot.capturePixelRatio || 1;
+  // The renderer is inlined immediately before this bridge only in Dev Mode.
+  // Hold the function in the shell closure, then remove its global so widget
+  // source cannot accidentally treat it as part of the authoring API.
+  var captureToBlob =
+    window.htmlToImage && typeof window.htmlToImage.toBlob === "function"
+      ? window.htmlToImage.toBlob
+      : null;
+  try { delete window.htmlToImage; } catch (error) { /* an exposed helper is harmless */ }
+
+  // Captured BEFORE the lifecycle gate replaces them on the window.
+  var rawSetTimeout = window.setTimeout.bind(window);
+  var rawClearTimeout = window.clearTimeout.bind(window);
+  var rawSetInterval = window.setInterval.bind(window);
+  var rawClearInterval = window.clearInterval.bind(window);
+  var rawRequestAnimationFrame =
+    typeof window.requestAnimationFrame === "function"
+      ? window.requestAnimationFrame.bind(window)
+      : null;
+  var rawCancelAnimationFrame =
+    typeof window.cancelAnimationFrame === "function"
+      ? window.cancelAnimationFrame.bind(window)
+      : null;
+
+  function now() {
+    return window.performance && typeof window.performance.now === "function"
+      ? window.performance.now()
+      : Date.now();
+  }
+
+  function post(payload) {
+    payload.source = SOURCE;
+    payload.protocol = PROTOCOL;
+    payload.nodeId = NODE_ID;
+    window.parent.postMessage(payload, "*");
+  }
+
+  // ---- did the widget's own script run? -----------------------------------
+  // The one widget failure with no other reporter. A top-level throw leaves a
+  // document that parsed, heartbeats, and shows whatever markup preceded the
+  // throw — indistinguishable, from out here, from a widget that draws very
+  // little. So the boot reports itself: ONE message, on load, carrying the
+  // first failure the widget's own code produced — a throw or a rejected
+  // promise — or null when it ran clean. The host writes it onto the node and
+  // the model reads it in its canvas context next turn; see
+  // widget-script-error.ts.
+  //
+  // ⚠️ Only failures BEFORE load count, and the listeners are installed here —
+  // at the top of the bridge, which runs before the widget's script — because a
+  // listener added later cannot hear the throw it exists for. An error after
+  // load belongs to an interaction, and a widget on screen and working must not
+  // be condemned by one throwing click handler.
+  //
+  // No truncation here: the host clamps, where the cap is a named constant it
+  // can import. Numbers are never interpolated into this script, so any number
+  // written into it is a twin that has to be kept in step by hand.
+  var firstError = null;
+  function recordBootError(message) {
+    if (firstError !== null) { return; }
+    firstError = message;
+  }
+
+  window.addEventListener("error", function (event) {
+    var message = event && event.message ? String(event.message) : "Uncaught error";
+    if (event && typeof event.lineno === "number" && event.lineno > 0) {
+      message += " (line " + event.lineno + ")";
+    }
+    recordBootError(message);
+  });
+
+  // ⚠️ A REJECTED PROMISE IS A FAILURE THE error LISTENER CANNOT HEAR, and in
+  // this frame it is the shape a blocked capability takes. The CSP is default-src
+  // none with connect-src none, so the fetch a model reaches for does not throw —
+  // it REJECTS, the then that was going to draw never runs, and the boot reported
+  // itself clean over an empty frame. Same slot as a throw, so whichever failure
+  // comes first is the one the model reads next turn.
+  //
+  // A failed RESOURCE load is deliberately NOT routed here. A capture-phase
+  // listener would see it — those events fire on the element and never bubble to
+  // window — but this slot is worded at the host end as the widget's own script
+  // having thrown and built nothing (describeWidgetScriptError), and it marks the
+  // node BROKEN WIDGET in every model-facing surface. A widget that runs
+  // perfectly except for one image the CSP refused is not that, and saying so
+  // would be worse than the silence. Reporting it wants a field of its own.
+  window.addEventListener("unhandledrejection", function (event) {
+    recordBootError("Unhandled promise rejection: " + describeRejection(event && event.reason));
+  });
+
+  // ⚠️ A rejection carries ANY value: an Error, a string, a DOM exception, an
+  // object whose message getter throws. Every read of it is inside the try,
+  // because the reporter must never become the failure it exists to describe.
+  function describeRejection(reason) {
+    try {
+      if (reason && typeof reason.message === "string" && reason.message) {
+        return reason.message;
+      }
+      return String(reason);
+    } catch (error) {
+      return "an unreadable reason";
+    }
+  }
+
+  window.addEventListener("load", function () {
+    post({ type: "booted", error: firstError });
+  });
+
+  // ---- dialogs: the blocked call that used to be silent -------------------
+  //
+  // The frame is sandboxed without allow-modals, so the browser DROPS a dialog
+  // call: nothing appears, prompt returns null, execution runs straight on
+  // through the guard written under it, and the control the user clicked is
+  // simply dead — with nothing thrown and nothing logged on either side of the
+  // frame. It is the most common way a finished widget reaches the canvas
+  // broken; widget-blocked-apis.ts records the incident.
+  //
+  // So the shell makes it LOUD instead. Each name is replaced with a function
+  // that throws, which turns a dead button into a console error the user can
+  // point at and — when the call sits on the boot path — into the booted error
+  // the model reads in its canvas context next turn.
+  //
+  // ⚠️ **This does NOT replace the write-time scan, and neither replaces the
+  // other.** write_widget refuses source containing these calls, and refusing
+  // before anything reaches the canvas is strictly the better failure. But that
+  // scan is a regular expression over source, so it only sees the spellings it
+  // was written for: a bare call and a window-qualified one. An alias, a
+  // computed member, globalThis and self all walk past it and are all ordinary
+  // JavaScript. They are also all the SAME PROPERTY — window, globalThis and
+  // self are one object in here, and a bare name resolves to it — so one shim
+  // is the backstop for every spelling the scan cannot see.
+  //
+  // Installed at the top of the bridge, beside the boot listeners, for the same
+  // reason they are: the widget's own script runs after this, and a shim
+  // installed later cannot intercept the call it exists for.
+  function installBlockedDialog(name) {
+    try {
+      window[name] = function () {
+        throw new Error(
+          name +
+            "() is blocked: a widget frame has no dialogs. Ask in the widget " +
+            "instead - the placeholder row becomes an input in place, Enter " +
+            "commits it and Escape cancels."
+        );
+      };
+    } catch (error) { /* non-configurable is harmless: the call was dead anyway */ }
+  }
+  var BLOCKED_DIALOGS = ["alert","confirm","prompt"];
+  for (var dialogIndex = 0; dialogIndex < BLOCKED_DIALOGS.length; dialogIndex += 1) {
+    installBlockedDialog(BLOCKED_DIALOGS[dialogIndex]);
+  }
+
+  // ---- lifecycle: the timer gate -----------------------------------------
+  var paused = boot.lifecycle === "paused";
+  var deferred = [];
+
+  function queueDeferred(key, run) {
+    for (var i = 0; i < deferred.length; i += 1) {
+      if (deferred[i].key === key) { return; }
+    }
+    deferred.push({ key: key, run: run });
+  }
+
+  function dropDeferred(key) {
+    for (var i = deferred.length - 1; i >= 0; i -= 1) {
+      if (deferred[i].key === key) { deferred.splice(i, 1); }
+    }
+  }
+
+  function setLifecycle(state) {
+    var next = state === "paused";
+    if (next === paused) { return; }
+    paused = next;
+    if (paused) { return; }
+
+    var pending = deferred;
+    deferred = [];
+    for (var i = 0; i < pending.length; i += 1) {
+      try { pending[i].run(); } catch (error) { /* one bad callback must not strand the rest */ }
+    }
+    // Whatever changed while frozen was measured as nothing; fit it now.
+    scheduleFit();
+  }
+
+  window.setTimeout = function (callback, delay) {
+    if (typeof callback !== "function") { return rawSetTimeout.apply(null, arguments); }
+    var args = Array.prototype.slice.call(arguments, 2);
+    var handle = rawSetTimeout(function () {
+      var run = function () { callback.apply(undefined, args); };
+      if (paused) { queueDeferred("timeout:" + handle, run); return; }
+      run();
+    }, delay);
+    return handle;
+  };
+
+  window.clearTimeout = function (handle) {
+    dropDeferred("timeout:" + handle);
+    return rawClearTimeout(handle);
+  };
+
+  window.setInterval = function (callback, delay) {
+    if (typeof callback !== "function") { return rawSetInterval.apply(null, arguments); }
+    var args = Array.prototype.slice.call(arguments, 2);
+    var handle = rawSetInterval(function () {
+      var run = function () { callback.apply(undefined, args); };
+      // Coalesced on purpose: one catch-up firing, never the N that were missed.
+      if (paused) { queueDeferred("interval:" + handle, run); return; }
+      run();
+    }, delay);
+    return handle;
+  };
+
+  window.clearInterval = function (handle) {
+    dropDeferred("interval:" + handle);
+    return rawClearInterval(handle);
+  };
+
+  if (rawRequestAnimationFrame) {
+    window.requestAnimationFrame = function (callback) {
+      if (typeof callback !== "function") { return rawRequestAnimationFrame(callback); }
+      var handle = rawRequestAnimationFrame(function () {
+        var run = function () { callback(now()); };
+        if (paused) { queueDeferred("frame:" + handle, run); return; }
+        run();
+      });
+      return handle;
+    };
+  }
+
+  if (rawCancelAnimationFrame) {
+    window.cancelAnimationFrame = function (handle) {
+      dropDeferred("frame:" + handle);
+      return rawCancelAnimationFrame(handle);
+    };
+  }
+
+  // ---- heartbeat ----------------------------------------------------------
+  rawSetInterval(function () { post({ type: "alive" }); }, boot.heartbeatMs);
+
+  // ---- storage ------------------------------------------------------------
+  var storageState = {};
+  if (boot.storage && typeof boot.storage === "object") {
+    for (var bootKey in boot.storage) {
+      if (Object.prototype.hasOwnProperty.call(boot.storage, bootKey)) {
+        storageState[bootKey] = String(boot.storage[bootKey]);
+      }
+    }
+  }
+
+  function cloneStorage() {
+    var copy = {};
+    for (var key in storageState) {
+      if (Object.prototype.hasOwnProperty.call(storageState, key)) { copy[key] = storageState[key]; }
+    }
+    return copy;
+  }
+
+  function byteSize(text) {
+    if (typeof TextEncoder === "function") { return new TextEncoder().encode(text).length; }
+    return text.length;
+  }
+
+  // COALESCED to one post per task -- the pending flag is what does it. The
+  // host does real work per message: a structured-clone deserialize of the
+  // WHOLE map plus a JSON.stringify of it, on the app's own main thread, which
+  // is the one thread this sandbox exists to protect (performance review P-5).
+  // A widget that persists several keys inside one render() posted one message
+  // per key for a state that only settles once. The RAW timer, never the gated
+  // one: a sync is host bookkeeping, and deferring it behind a pause would hold
+  // the user's last write hostage to the widget being off screen.
+  //
+  // A task boundary is the furthest this can safely go. Anything longer (an
+  // interval, a throttle) risks an eviction landing inside the window, and the
+  // host's write-through to the content cache is what a re-boot reads -- so a
+  // dropped sync is silently the user's data (W-08).
+  var syncPending = false;
+  function syncStorage() {
+    if (syncPending) { return; }
+    syncPending = true;
+    rawSetTimeout(function () {
+      syncPending = false;
+      post({ type: "storage-sync", storage: cloneStorage() });
+    }, 0);
+  }
+
+  var widgetLocalStorage = {
+    get length() { return Object.keys(storageState).length; },
+    key: function (index) {
+      var keys = Object.keys(storageState);
+      return index in keys ? keys[index] : null;
+    },
+    getItem: function (key) {
+      var name = String(key);
+      return Object.prototype.hasOwnProperty.call(storageState, name) ? storageState[name] : null;
+    },
+    setItem: function (key, value) {
+      var name = String(key);
+      var had = Object.prototype.hasOwnProperty.call(storageState, name);
+      var previous = storageState[name];
+      storageState[name] = String(value);
+
+      if (byteSize(JSON.stringify(storageState)) > STATE_MAX_BYTES) {
+        // Real localStorage throws at quota, so this is the failure shape the
+        // widget was written against. Dropping the write would show the user
+        // data that is not saved.
+        if (had) { storageState[name] = previous; } else { delete storageState[name]; }
+        var error = new Error("Widget storage is full.");
+        error.name = "QuotaExceededError";
+        throw error;
+      }
+
+      syncStorage();
+    },
+    removeItem: function (key) {
+      var name = String(key);
+      if (!Object.prototype.hasOwnProperty.call(storageState, name)) { return; }
+      delete storageState[name];
+      syncStorage();
+    },
+    clear: function () {
+      storageState = {};
+      syncStorage();
+    },
+  };
+
+  try {
+    Object.defineProperty(window, "localStorage", {
+      value: widgetLocalStorage,
+      configurable: true,
+      enumerable: false,
+      writable: false,
+    });
+  } catch (error) { /* leave the realm's own (throwing) localStorage in place */ }
+
+  // ---- shared predicates --------------------------------------------------
+  function isEditable(node) {
+    if (!node || typeof node.closest !== "function") { return false; }
+    return !!node.closest(
+      "input, textarea, select, [contenteditable=''], [contenteditable='true']"
+    );
+  }
+
+  // ══ THE LINE BETWEEN THE WIDGET'S GESTURE AND THE CANVAS'S ══
+  //
+  // Something the user OPERATES, as opposed to the widget's own scenery. Only
+  // the child can answer this — the host cannot see into a sandboxed document —
+  // and the whole pointer rule turns on it:
+  //
+  //   scenery      → the canvas gets it: the press selects the node and can
+  //                  become a drag, exactly like a press on any other node.
+  //   interactive  → the widget keeps it, whole. No selection, no drag handoff,
+  //                  and nothing after the press is relayed, so a slider slides,
+  //                  a list item reorders and a drag across a field selects its
+  //                  text instead of towing the node across the canvas.
+  //
+  // Text fields are in here on purpose and without regard to focus. Dragging
+  // across a field IS a text selection at every point in its life, and needing
+  // to click into it first to get that was the original complaint.
+  //
+  // The cost is real and accepted: a widget whose entire surface is controls has
+  // no drag handle left. Scenery is the drag handle, and almost every widget has
+  // some — padding, a heading, a background. The reverse default was worse: it
+  // made the widget's own interactions unusable, which is the whole point of a
+  // widget.
+  var INTERACTIVE_SELECTOR =
+    "[data-widget-interactive], a[href], button, input, textarea, select, option, label, summary, details, " +
+    "[role='button'], [role='link'], [role='checkbox'], [role='radio'], " +
+    "[role='switch'], [role='tab'], [role='menuitem'], [role='option'], " +
+    "[role='slider'], [role='spinbutton'], [role='textbox'], " +
+    "[contenteditable=''], [contenteditable='true'], [draggable='true'], " +
+    "[tabindex]:not([tabindex='-1'])";
+
+  function isInteractive(node) {
+    if (!node || typeof node.closest !== "function") { return false; }
+    if (node.closest(INTERACTIVE_SELECTOR)) { return true; }
+    // A widget builds many controls and drag handles out of plain divs, so no
+    // tag list is complete. A control/drag cursor is the author's own statement
+    // that this surface owns pointer interaction; the shell's inherited custom
+    // default cursor deliberately does not match any of these values.
+    try {
+      var cursor = window.getComputedStyle(node).cursor;
+      return (
+        cursor === "pointer" ||
+        cursor === "text" ||
+        cursor === "vertical-text" ||
+        cursor === "crosshair" ||
+        cursor === "cell" ||
+        cursor === "move" ||
+        cursor === "all-scroll" ||
+        cursor === "grab" ||
+        cursor === "grabbing" ||
+        cursor === "copy" ||
+        cursor === "alias" ||
+        cursor === "zoom-in" ||
+        cursor === "zoom-out" ||
+        cursor.indexOf("resize") !== -1
+      );
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function hasTextSelection() {
+    var selection =
+      typeof document.getSelection === "function" ? document.getSelection() : null;
+    return !!selection && selection.isCollapsed === false;
+  }
+
+  // ---- pointer ------------------------------------------------------------
+  var pointerActive = false;
+  var activePointerTarget = null;
+  var activePointerId = null;
+  var lastPointerSnapshot = null;
+
+  function pointerPayload(event) {
+    return {
+      clientX: event.clientX,
+      clientY: event.clientY,
+      screenX: event.screenX,
+      screenY: event.screenY,
+      button: event.button,
+      ctrlKey: !!event.ctrlKey,
+      metaKey: !!event.metaKey,
+      shiftKey: !!event.shiftKey,
+      altKey: !!event.altKey,
+    };
+  }
+
+  function relayPointer(type, event) {
+    lastPointerSnapshot = pointerPayload(event);
+    var payload = pointerPayload(event);
+    payload.type = type;
+    post(payload);
+  }
+
+  function releaseCapture() {
+    if (activePointerTarget && typeof activePointerTarget.releasePointerCapture === "function") {
+      try { activePointerTarget.releasePointerCapture(activePointerId); } catch (error) {}
+    }
+    activePointerTarget = null;
+    activePointerId = null;
+  }
+
+  window.addEventListener("pointerdown", function (event) {
+    if (event.button !== 0) { return; }
+
+    // Only one pointer is bridged. If a release went missing, a new press ends
+    // that stale session before deciding whether the new gesture belongs to
+    // the widget or the canvas.
+    if (pointerActive) { endPointer(lastPointerSnapshot || event); }
+
+    // A press on something the user operates belongs to the WIDGET, whole. It
+    // never crosses the iframe boundary: no press means the host cannot select
+    // the node or arm its drag handoff, and no move can start a canvas drag.
+    // A slider slides, a list item reorders and a drag across a field selects
+    // its text without towing or selecting the widget.
+    if (isInteractive(event.target)) {
+      return;
+    }
+
+    pointerActive = true;
+    activePointerId = event.pointerId;
+    activePointerTarget =
+      event.target && typeof event.target.setPointerCapture === "function" ? event.target : null;
+
+    if (activePointerTarget) {
+      try { activePointerTarget.setPointerCapture(event.pointerId); } catch (error) {}
+    }
+
+    relayPointer("pointerdown", event);
+  }, true);
+
+  window.addEventListener("pointermove", function (event) {
+    if (!pointerActive) { return; }
+
+    // ⚠️ A MOVE WITH NO BUTTON DOWN IS NOT PART OF A DRAG.
+    //
+    // pointerActive is set on the press and cleared on the release, and the
+    // release can go missing: it lands outside the frame, or the widget rebuilt
+    // the element the pointer was captured on while the user worked in it. The
+    // stale press then outlives its gesture, and the next HOVER over the widget
+    // relays as a drag — the host crosses its threshold and dispatches a real
+    // node drag from a mouse move with nothing held down. The widget follows
+    // the cursor around the canvas and only lets go when the user clicks.
+    //
+    // event.buttons is the only honest answer to "is this still a press", so a
+    // move that reports none ENDS the gesture rather than being ignored: the
+    // host is holding an armed press and needs the release to disarm it.
+    // Strictly zero, so a browser that omits the field cannot silently cancel
+    // every real drag.
+    if (event.buttons === 0) { endPointer(event); return; }
+
+    relayPointer("pointermove", event);
+  }, true);
+
+  function endPointer(event) {
+    if (!pointerActive) { return; }
+    pointerActive = false;
+    releaseCapture();
+    relayPointer("pointerup", event);
+  }
+
+  window.addEventListener("pointerup", endPointer, true);
+  window.addEventListener("pointercancel", endPointer, true);
+
+  // Drag recovery: the frame losing focus mid-press means the gesture ended
+  // somewhere we cannot see. Synthesise the release from the last position
+  // rather than leaving the widget stuck to the cursor. The snapshot carries
+  // exactly the fields a real event is read for, so it relays as one.
+  //
+  // Deliberately not endPointer: the capture is dropped by forgetting it rather
+  // than by releasePointerCapture, because the element it was taken on may be
+  // gone by the time focus comes back and the call would throw for nothing.
+  window.addEventListener("blur", function () {
+    if (pointerActive && lastPointerSnapshot) {
+      relayPointer("pointerup", lastPointerSnapshot);
+    }
+    pointerActive = false;
+    activePointerTarget = null;
+    activePointerId = null;
+  });
+
+  // ---- wheel --------------------------------------------------------------
+  function findScrollRegion(event) {
+    var path = typeof event.composedPath === "function" ? event.composedPath() : [];
+    for (var i = 0; i < path.length; i += 1) {
+      var node = path[i];
+      if (node && typeof node.matches === "function" && node.matches("[data-widget-scroll]")) {
+        return node;
+      }
+    }
+    return null;
+  }
+
+  function canScroll(element, deltaX, deltaY) {
+    if (deltaY !== 0) {
+      var maxY = element.scrollHeight - element.clientHeight;
+      if (maxY > 1 && ((deltaY < 0 && element.scrollTop > 0) || (deltaY > 0 && element.scrollTop < maxY - 1))) {
+        return true;
+      }
+    }
+    if (deltaX !== 0) {
+      var maxX = element.scrollWidth - element.clientWidth;
+      if (maxX > 1 && ((deltaX < 0 && element.scrollLeft > 0) || (deltaX > 0 && element.scrollLeft < maxX - 1))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  window.addEventListener("wheel", function (event) {
+    // The canvas wins unless the widget explicitly marked a scroll region that
+    // can still move in this direction — and Ctrl/Cmd+wheel is always a canvas
+    // zoom. Content taller than a 300px frame is the NORMAL case, so an
+    // automatic "something under the cursor can scroll" rule would hand the
+    // wheel to the widget almost always and the canvas would be dead over it.
+    if (!event.ctrlKey && !event.metaKey) {
+      var region = findScrollRegion(event);
+      if (region && canScroll(region, event.deltaX, event.deltaY)) { return; }
+    }
+
+    event.preventDefault();
+    post({
+      type: "wheel",
+      clientX: event.clientX,
+      clientY: event.clientY,
+      deltaX: event.deltaX,
+      deltaY: event.deltaY,
+      deltaMode: event.deltaMode,
+      ctrlKey: !!event.ctrlKey,
+      shiftKey: !!event.shiftKey,
+    });
+  }, { capture: true, passive: false });
+
+  // ---- context menu -------------------------------------------------------
+  window.addEventListener("contextmenu", function (event) {
+    // A right-click on the widget's own text field keeps the browser's
+    // spell-check menu.
+    if (isEditable(event.target)) { return; }
+
+    // ONLY the child can answer this one (F-27). The preventDefault below is
+    // what lets the host open the CANVAS menu instead of the browser's -- but
+    // the share view deliberately never attaches that listener (Canvas.tsx
+    // skips it when readOnly, leaving the native menu intact), so on
+    // /s/[token] the relay landed on nothing and a visitor right-clicking a
+    // widget got no menu at all, where right-clicking a card beside it gave
+    // them Chrome's. The host cannot fix it: by the time the message arrives
+    // the default is already prevented, in a document it cannot reach into.
+    if (READ_ONLY) { return; }
+
+    event.preventDefault();
+    post({ type: "contextmenu", clientX: event.clientX, clientY: event.clientY });
+  }, true);
+
+  // ---- keyboard -----------------------------------------------------------
+  function isRelayableKey(event) {
+    var mod = event.metaKey || event.ctrlKey;
+    var key = event.key;
+
+    if (key === "Escape") { return !mod; }
+    if (key === "Backspace" || key === "Delete") {
+      // A user with text selected inside a widget is deleting TEXT, not a node.
+      return !mod && !hasTextSelection();
+    }
+    if (mod && (key === "z" || key === "Z")) { return true; }
+
+    // Never a bare letter (it would arm a canvas placement behind the widget),
+    // and never Cmd+A / Cmd+C / Cmd+X — see rule 3 in this file's header.
+    return false;
+  }
+
+  window.addEventListener("keydown", function (event) {
+    if (isEditable(event.target) || isEditable(document.activeElement)) { return; }
+    if (!isRelayableKey(event)) { return; }
+
+    post({
+      type: "key",
+      key: event.key,
+      code: event.code,
+      ctrlKey: !!event.ctrlKey,
+      metaKey: !!event.metaKey,
+      shiftKey: !!event.shiftKey,
+      altKey: !!event.altKey,
+    });
+  }, true);
+
+  // ---- clipboard ----------------------------------------------------------
+  // Native events never cross an iframe boundary, and a relayed keydown cannot
+  // synthesize one. Write the copy marker HERE, synchronously on the real event;
+  // the host records the selected nodes against that exact marker. This needs
+  // neither async Clipboard API permissions nor access to the frame's DOM.
+  // Cut writes the same marker; the host also takes the copied selection off
+  // the board.
+  function publishCopyMarker(type) {
+    return function (event) {
+      if (READ_ONLY || isEditable(event.target) || isEditable(document.activeElement) || hasTextSelection()) { return; }
+      if (!event.clipboardData) { return; }
+      var bytes = window.crypto.getRandomValues(new Uint8Array(16));
+      var id = Array.from(bytes, function (byte) { return byte.toString(16).padStart(2, "0"); }).join("");
+      var text = "causal:nodes:" + id;
+      event.clipboardData.setData("text/plain", text);
+      event.preventDefault();
+      post({ type: type, text: text });
+    };
+  }
+  window.addEventListener("copy", publishCopyMarker("copy"));
+  window.addEventListener("cut", publishCopyMarker("cut"));
+
+  window.addEventListener("paste", function (event) {
+    if (READ_ONLY || isEditable(event.target) || isEditable(document.activeElement)) { return; }
+    if (!event.clipboardData) { return; }
+    var text = event.clipboardData.getData("text/plain").trim();
+    // A copy of one picture carries its marker on the HTML, not as text.
+    if (!text) {
+      var onHtml = event.clipboardData.getData("text/html").match(/data-causal-nodes="([^"]+)"/);
+      if (onHtml) { text = onHtml[1]; }
+    }
+    if (text.indexOf("causal:nodes:") !== 0 && text.indexOf("causal-widget:v1:") !== 0) { return; }
+    event.preventDefault();
+    post({ type: "paste", text: text });
+  });
+
+  // ---- host → child -------------------------------------------------------
+  function applyTheme(vars) {
+    if (!vars || typeof vars !== "object") { return; }
+    var root = document.documentElement;
+    if (!root || !root.style || typeof root.style.setProperty !== "function") { return; }
+
+    for (var name in vars) {
+      if (!Object.prototype.hasOwnProperty.call(vars, name)) { continue; }
+      // The host owns this namespace and nothing else: a theme message must
+      // never be able to set an arbitrary property on the widget's root.
+      if (name.indexOf("--widget-") !== 0) { continue; }
+      root.style.setProperty(name, String(vars[name]));
+    }
+  }
+
+  // ---- measurement: the box this widget's content actually wants ----------
+  //
+  // The no-opinion answer, shared so every early-out reports it identically. A
+  // caller cannot tell a missing DOM API from a widget with genuinely no
+  // intrinsic size, and does not need to: both mean leave the frame alone.
+  var NO_SIZE = { width: null, height: null };
+  //
+  // ⚠️ **Probe, read and restore all inside ONE task.** The browser paints at
+  // the end of a task, so nothing below is ever visible; split it across an
+  // await or a frame and the probe geometry flashes on the user's canvas.
+  //
+  // What makes this cheap is that the SHELL owns the whole height chain
+  // (html and body are 100%, :where(#root) is zero-specificity). A
+  // widget's own #root { height: 100% } is a PERCENTAGE against that chain,
+  // so releasing html/body to auto makes CSS resolve it to auto on its own.
+  // There is nothing to override, so the shell needs no forced rule here --
+  // which is what keeps the no-forced-override invariant intact.
+  //
+  // The axis is the standing fit's (below); the host's measure passes none and
+  // gets both. A height fit keeps the frame's width, so its height has to be
+  // read AT that width — a height measured at a narrower fit-content width
+  // belongs to a layout the frame will never have.
+  function measureContent(axis) {
+    if (typeof document.getElementById !== "function") { return NO_SIZE; }
+    var root = document.getElementById("root");
+    var html = document.documentElement;
+    var body = document.body;
+    if (!root || !root.style || !html || !html.style || !body || !body.style) { return NO_SIZE; }
+    if (typeof root.getBoundingClientRect !== "function") { return NO_SIZE; }
+
+    // A pane that opted into its own scrollbar is deliberately unbounded —
+    // fitting to its content turns a hundred-row list into a hundred-row
+    // widget. Each is pinned at the height it occupies right now and measured
+    // as furniture, so the fit accounts for everything around it.
+    var panes =
+      typeof document.querySelectorAll === "function"
+        ? document.querySelectorAll("[data-widget-scroll]")
+        : [];
+    var pinned = [];
+    for (var i = 0; i < panes.length; i += 1) {
+      pinned.push({ node: panes[i], height: panes[i].style.height });
+      panes[i].style.height = panes[i].getBoundingClientRect().height + "px";
+    }
+
+    var saved = {
+      htmlHeight: html.style.height,
+      bodyHeight: body.style.height,
+      bodyDisplay: body.style.display,
+      rootWidth: root.style.width,
+      rootHeight: root.style.height,
+      rootFlex: root.style.flex,
+    };
+
+    var measured = NO_SIZE;
+    try {
+      // The frame's own width, read before anything moves. clientWidth is the
+      // viewport, and overflow: clip means no scrollbar is ever subtracted
+      // from it.
+      var frameWidth = html.clientWidth;
+
+      html.style.height = "auto";
+      body.style.height = "auto";
+      // Out of the shell's centring flex row. A flex item is shrunk back onto
+      // the line, so max-content below would just read the frame width back
+      // and every widget would measure exactly as wide as it already is.
+      body.style.display = "block";
+      root.style.height = "auto";
+      root.style.flex = "none";
+
+      // The two intrinsic widths, which between them say everything about what
+      // this content can do horizontally.
+      root.style.width = "max-content";
+      var natural = root.getBoundingClientRect().width;
+      root.style.width = "min-content";
+      var floor = root.getBoundingClientRect().width;
+
+      // CSS already has a name for the answer: this is fit-content against the
+      // frame as the available width, and each branch earns its place.
+      //
+      //  - Content that ENDS before the frame does: close the frame up to it.
+      //  - Content that cannot fit at all: the frame is over-compressed and is
+      //    clipping, so grow to the narrowest width that stops that. Without
+      //    this branch a squashed widget could only ever be fitted TALLER, and
+      //    a fit that leaves content clipped is not a fit.
+      //  - Anything else is wrapping happily inside the frame. The frame width
+      //    is the user's own choice there, and max-content for a paragraph is
+      //    one absurd unbroken line — so only the height is fitted.
+      var width =
+        axis === "height"
+          ? frameWidth
+          : natural > 0 && natural < frameWidth
+            ? natural
+            : floor > frameWidth
+              ? floor
+              : frameWidth;
+      root.style.width = width + "px";
+      var height = root.getBoundingClientRect().height;
+
+      // A widget with nothing in flow — an absolutely-positioned layout, a
+      // full-bleed background — measures as nothing. Fitting to that would
+      // collapse the frame, so it reports no opinion and the caller leaves the
+      // widget alone.
+      if (width > 0 && height > 0) {
+        measured = { width: width, height: height };
+      }
+    } catch (error) {
+      // A widget can throw from its own CSSOM. It must not take the fit with
+      // it, and measured already holds the no-opinion answer.
+    }
+
+    html.style.height = saved.htmlHeight;
+    body.style.height = saved.bodyHeight;
+    body.style.display = saved.bodyDisplay;
+    root.style.width = saved.rootWidth;
+    root.style.height = saved.rootHeight;
+    root.style.flex = saved.rootFlex;
+    for (var j = 0; j < pinned.length; j += 1) {
+      pinned[j].node.style.height = pinned[j].height;
+    }
+
+    return measured;
+  }
+
+  // ---- standing fit: the axis a widget names on its root ------------------
+  //
+  // A widget that sets the fit attribute on its root owns that axis of its
+  // frame: the shell refits it after any change to what is drawn, and after
+  // any change to the frame itself, because a width change rewraps text and
+  // moves a height fit. Coalesced to one measurement per task, like
+  // storage-sync, so a render that rebuilds fifty rows measures once. The RAW
+  // timer: a frozen frame measures as nothing anyway, and its resume refits.
+  //
+  // No dedupe in here. The host compares the reply with the frame the store
+  // holds, which is the only way a hand resize of an owned axis is put back.
+  //
+  // ⚠️ The observer watches structure, text and the attributes that show or
+  // hide things, NEVER style. measureContent writes style on the root and on
+  // every scroll pane, so watching style would make each fit schedule the next
+  // one for ever — and a widget animating through inline style would be
+  // measured every frame.
+  var FIT_ATTRIBUTE = "data-widget-fit";
+  var fitPending = false;
+
+  function readFitAxis() {
+    if (typeof document.getElementById !== "function") { return null; }
+    var root = document.getElementById("root");
+    var value = root && typeof root.getAttribute === "function" ? root.getAttribute(FIT_ATTRIBUTE) : null;
+    return value === "height" || value === "width" || value === "both" ? value : null;
+  }
+
+  function scheduleFit() {
+    // A share view cannot write the size, so it never measures for one.
+    if (READ_ONLY || fitPending || !readFitAxis()) { return; }
+    fitPending = true;
+    rawSetTimeout(function () {
+      fitPending = false;
+      var axis = readFitAxis();
+      if (!axis) { return; }
+      var box = measureContent(axis);
+      if (box.width === null || box.height === null) { return; }
+      post({ type: "fit", axis: axis, width: box.width, height: box.height });
+    }, 0);
+  }
+
+  if (!READ_ONLY) {
+    var fitRoot =
+      typeof document.getElementById === "function"
+        ? document.getElementById("root")
+        : null;
+    if (fitRoot && typeof MutationObserver === "function") {
+      new MutationObserver(scheduleFit).observe(fitRoot, {
+        subtree: true,
+        childList: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: [FIT_ATTRIBUTE, "class", "hidden", "open"],
+      });
+    }
+    window.addEventListener("resize", scheduleFit);
+    window.addEventListener("load", scheduleFit);
+  }
+
+  // ---- PNG capture: the pixels inside the current frame -------------------
+  //
+  // The host cannot read this DOM: the iframe deliberately has an opaque
+  // origin. Rasterize here and structured-clone the Blob back. Width and
+  // height come from the document viewport, not the content's scroll box, so
+  // this is a literal snapshot of the visible frame rather than a full-page
+  // export of whatever may be clipped below it.
+  function capturePng(requestId) {
+    var html = document.documentElement;
+    var body = document.body;
+    var width = html && html.clientWidth;
+    var height = html && html.clientHeight;
+    if (!captureToBlob || !body || !(width > 0) || !(height > 0)) {
+      post({ type: "captured-png", requestId: requestId, blob: null });
+      return;
+    }
+
+    try {
+      Promise.resolve(captureToBlob(body, {
+        width: width,
+        height: height,
+        canvasWidth: width,
+        canvasHeight: height,
+        pixelRatio: CAPTURE_PIXEL_RATIO,
+        // Widget fonts are the shell's system stacks or data URLs. Skipping the
+        // downloader keeps capture inside the CSP's no-network boundary.
+        skipFonts: true,
+      })).then(function (blob) {
+        post({ type: "captured-png", requestId: requestId, blob: blob || null });
+      }, function () {
+        post({ type: "captured-png", requestId: requestId, blob: null });
+      });
+    } catch (error) {
+      post({ type: "captured-png", requestId: requestId, blob: null });
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    // A widget may host its own iframes; only the parent drives this bridge.
+    // There is no origin to check — this document has an opaque origin.
+    if (event.source !== window.parent) { return; }
+
+    var data = event.data;
+    if (!data || typeof data !== "object") { return; }
+    if (data.source !== SOURCE || data.protocol !== PROTOCOL || data.nodeId !== NODE_ID) { return; }
+
+    if (data.type === "lifecycle") { setLifecycle(data.state); return; }
+    if (data.type === "theme") { applyTheme(data.vars); return; }
+    if (data.type === "measure") {
+      var requestId = data.requestId;
+      // One task later, and rawSetTimeout so the lifecycle gate cannot defer
+      // it. This bridge runs BEFORE the widget's own script, so a widget that
+      // builds its UI from a zero-delay timer would otherwise be measured empty.
+      rawSetTimeout(function () {
+        var box = measureContent();
+        post({
+          type: "measured",
+          requestId: requestId,
+          width: box.width,
+          height: box.height,
+        });
+      }, 0);
+      return;
+    }
+    if (data.type === "capture-png") {
+      capturePng(data.requestId);
+      return;
+    }
+    if (data.type === "gesture-taken") {
+      // The host took the gesture: stop relaying and let go, so the drag runs
+      // as a real parent-document drag from here.
+      releaseCapture();
+      pointerActive = false;
+    }
+  });
+
+  // LAST STATEMENT. Everything the host sent before this was queued.
+  post({ type: "ready" });
+})();</script><script data-widget-source>
+// === STATE ===
+const DAYS = 7;
+const STORE = "habits.v1";
+
+const state = (() => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE) || "null");
+    if (saved && Array.isArray(saved.habits)) return saved;
+  } catch {}
+  return {
+    habits: ["Read", "Move", "Meditate", "Journal"].map((name, i) => ({
+      id: "h" + i,
+      name,
+      done: {},
+    })),
+  };
+})();
+
+let editingId = null; // habit whose name is open for editing
+let freshId = null; // habit just added; cancelling or leaving it empty removes it
+let paint = null; // { on, pointerId, last } while dragging across dots
+let renderedDay = null;
+
+function dayKey(date) {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+function lastDays() {
+  const today = new Date();
+  return Array.from({ length: DAYS }, (_, i) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() - (DAYS - 1 - i));
+    return date;
+  });
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORE, JSON.stringify(state));
+  } catch {}
+}
+
+// === RENDER ===
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  node.className = className;
+  if (text != null) node.textContent = text;
+  return node;
+}
+
+function formatDay(date) {
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+function render() {
+  renderedDay = dayKey(new Date());
+  const days = lastDays();
+
+  const header = el("div", "header");
+  const add = el("button", "add");
+  add.type = "button";
+  add.dataset.action = "add";
+  add.setAttribute("aria-label", "Add habit");
+  add.innerHTML =
+    '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg>';
+  header.append(el("h3", "title", "Habits"), add);
+  root.replaceChildren(header);
+
+  if (!state.habits.length) return;
+
+  const grid = el("div", "grid");
+  for (const habit of state.habits) {
+    const row = el("div", "row");
+    row.dataset.habit = habit.id;
+    for (const date of days) {
+      const key = dayKey(date);
+      const on = Boolean(habit.done[key]);
+      const dot = el("button", on ? "dot on" : "dot");
+      dot.type = "button";
+      dot.dataset.day = key;
+      dot.setAttribute("aria-pressed", String(on));
+      dot.setAttribute("aria-label", `${habit.name || "New habit"}, ${formatDay(date)}`);
+      row.append(dot);
+    }
+    const label = el("div", "label", habit.name);
+    label.dataset.placeholder = "New habit";
+    if (habit.id === editingId) {
+      label.contentEditable = "plaintext-only";
+    } else {
+      label.tabIndex = 0;
+      label.setAttribute("role", "button");
+    }
+    row.prepend(label);
+    grid.append(row);
+  }
+
+  root.append(grid);
+
+  const editing = root.querySelector(".label[contenteditable]");
+  if (editing) {
+    editing.focus();
+    const range = document.createRange();
+    range.selectNodeContents(editing);
+    range.collapse(false);
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+}
+
+// === EVENTS ===
+function habitOf(node) {
+  const row = node.closest(".row");
+  return row ? state.habits.find((habit) => habit.id === row.dataset.habit) : null;
+}
+
+function setDot(dot, on) {
+  const habit = habitOf(dot);
+  if (!habit || dot.classList.contains("on") === on) return;
+  if (on) habit.done[dot.dataset.day] = 1;
+  else delete habit.done[dot.dataset.day];
+  dot.classList.toggle("on", on);
+  dot.setAttribute("aria-pressed", String(on));
+}
+
+function startEdit(id) {
+  editingId = id;
+  render();
+}
+
+function finishEdit(label, cancel) {
+  const habit = habitOf(label);
+  // Re-rendering removes the focused label; this guard ignores the focusout that follows.
+  if (!habit || habit.id !== editingId) return;
+  editingId = null;
+  const name = label.textContent.replace(/\s+/g, " ").trim();
+  const remove = cancel ? habit.id === freshId : !name;
+  if (remove) state.habits = state.habits.filter((h) => h !== habit);
+  else if (!cancel) habit.name = name;
+  freshId = null;
+  save();
+  render();
+}
+
+function endPaint() {
+  if (!paint) return;
+  root.querySelectorAll(".dot.pressed").forEach((dot) => dot.classList.remove("pressed"));
+  paint = null;
+  save();
+}
+
+root.addEventListener("pointerdown", (event) => {
+  if (event.button !== 0) return;
+  const editing = root.querySelector(".label[contenteditable]");
+  if (editing && !editing.contains(event.target)) editing.blur();
+  // The blur may have re-rendered, so find the dot under the pointer again.
+  const dot = document.elementFromPoint(event.clientX, event.clientY)?.closest(".dot");
+  if (!dot) return;
+  event.preventDefault();
+  paint = { on: !dot.classList.contains("on"), pointerId: event.pointerId, last: dot };
+  dot.classList.add("pressed");
+  setDot(dot, paint.on);
+});
+
+window.addEventListener("pointermove", (event) => {
+  if (!paint || event.pointerId !== paint.pointerId) return;
+  if (event.buttons === 0) return endPaint();
+  const dot = document.elementFromPoint(event.clientX, event.clientY)?.closest(".dot");
+  if (!dot || dot === paint.last) return;
+  const from = paint.last;
+  paint.last = dot;
+  from.classList.remove("pressed");
+  // Fill every dot between the last and current one so a fast drag leaves no gaps.
+  if (from.parentElement === dot.parentElement) {
+    const dots = [...dot.parentElement.querySelectorAll(".dot")];
+    const a = dots.indexOf(from);
+    const b = dots.indexOf(dot);
+    const step = a < b ? 1 : -1;
+    for (let i = a + step; i !== b + step; i += step) setDot(dots[i], paint.on);
+  } else {
+    setDot(dot, paint.on);
+  }
+});
+
+window.addEventListener("pointerup", endPaint);
+window.addEventListener("pointercancel", endPaint);
+window.addEventListener("blur", endPaint);
+
+root.addEventListener("click", (event) => {
+  if (event.target.closest('[data-action="add"]')) {
+    const id = "h" + Date.now().toString(36);
+    state.habits.push({ id, name: "", done: {} });
+    freshId = id;
+    startEdit(id);
+    return;
+  }
+  const dot = event.target.closest(".dot");
+  // Pointer toggles happen on pointerdown; detail 0 is a keyboard activation.
+  if (dot && event.detail === 0) {
+    setDot(dot, !dot.classList.contains("on"));
+    save();
+    return;
+  }
+  const label = event.target.closest(".label:not([contenteditable])");
+  if (label) startEdit(habitOf(label).id);
+});
+
+root.addEventListener("keydown", (event) => {
+  const label = event.target.closest?.(".label");
+  if (!label) return;
+  if (label.isContentEditable) {
+    if (event.key === "Enter" || event.key === "Escape") {
+      event.preventDefault();
+      finishEdit(label, event.key === "Escape");
+    }
+  } else if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    startEdit(habitOf(label).id);
+  }
+});
+
+root.addEventListener("focusout", (event) => {
+  const label = event.target.closest?.(".label[contenteditable]");
+  if (label) finishEdit(label, false);
+});
+
+// Roll the window forward at midnight without interrupting a drag or an edit.
+setInterval(() => {
+  if (!paint && !editingId && dayKey(new Date()) !== renderedDay) render();
+}, 60000);
+
+if (typeof render === "function") { render(); }
+</script></body></html>

@@ -1,0 +1,1 @@
+var e=`/roadmap`,t=`/roadmap/suggest`,n={[t]:e};function r(e){return e.length>1?e.replace(/\/+$/,``):e}function i(e,t){let i=r(e),a=r(t);return n[i]===a||n[a]===i}export{r as i,t as n,i as r,e as t};

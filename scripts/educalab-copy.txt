@@ -1,0 +1,438 @@
+Home|||Inicio
+Causal, home|||EducaLabCR, inicio
+Solutions|||Soluciones
+Templates|||Productos
+Pricing|||Asesoría
+Resources|||Recursos
+Founders|||Docentes
+Designers|||Instituciones
+Content creators|||Equipos
+Canvas|||Productos
+Widgets|||Herramientas
+MCP|||Ecosistema
+Blog|||Guías
+Roadmap|||Novedades
+Changelog|||Actualizaciones
+Chrome extension|||Formación profesional
+Start for free|||Explorar soluciones
+Get started|||Conocer más
+AI canvas workspace|||Tecnología que transforma
+for your ideas.|||tu forma de aprender.
+Your inspiration, notes, and plans are scattered across tools.|||Herramientas, inteligencia artificial y formación para avanzar.
+Causal brings everything into one place.|||Descubrí el ecosistema de EducaLabCR.
+The most ambitious ideas require space to proliferate.|||Las mejores ideas merecen herramientas para hacerlas realidad.
+Give your plan the space it deserves.|||Conectá conocimiento, creatividad y tecnología.
+Save ideas of all forms.|||Herramientas para ir más allá.
+Get started with templates.|||Explorá nuestros productos.
+Features for productivity.|||Más posibilidades, menos límites.
+Causal MCP|||Ecosistema EducaLabCR
+Collaborate and hand off work to agents|||Soluciones para aprender, crear y conectar.
+Set up MCP|||Conocer el ecosistema
+Reviews from creatives|||Un ecosistema. Muchas posibilidades.
+Trusted by creatives.|||Soluciones para diferentes desafíos.
+Questions|||Preguntas frecuentes
+Articles.|||Ideas para transformar.
+See all|||Ver todo
+Features|||Herramientas
+Productivity|||Posibilidades
+FAQ|||Preguntas frecuentes
+Information|||Información
+Report a bug|||Soporte
+Feedback|||Escribinos
+Terms|||Información del sitio
+Privacy Policy|||Privacidad
+Contact|||Contacto
+Connect|||Conectemos
+Product|||EducaLabCR
+Designed and developed by|||Tecnología, formación e innovación de
+Causal Software Limited|||EducaLabCR
+ in London||| en Costa Rica
+causal|||educalab
+Causal|||EducaLabCR
+Instagram|||Sitio oficial
+X|||WhatsApp
+TikTok|||Formación
+Substack|||Soporte
+Medium|||Contacto
+Plan the app before you build it.\nFlows, specs and the launch on one canvas.|||Prepará tus clases con nuevas herramientas.\nGestión, recursos e inteligencia artificial.
+Turn references into a brief.\nImages, colours and notes side by side.|||Impulsá la transformación de tu institución.\nTecnología y formación con propósito.
+Map every shoot, scene by scene.\nVoice memos, shot lists and scripts.|||Conectá las ideas de tu equipo.\nAgentes, automatización y comunicación.
+Text editor|||Planificación
+Turn inspiration into written briefs|||Dale estructura a tus ideas y tus clases.
+Images|||Recursos
+Store pictures and videos.|||Reuní materiales para enseñar y crear.
+Links|||Conexiones
+Never lose a reference.|||Encontrá nuevas formas de trabajar.
+Colours|||Tu identidad
+Add your favourite colors.|||Dale un estilo propio a cada proyecto.
+Voice memos|||Ideas en voz alta
+For ideas that can only be voiced|||Del primer apunte a una idea clara.
+Drawing tools|||Creatividad
+Bring your canvas to life.|||Convertí una idea en algo que se ve.
+Show text editor|||Mostrar planificación
+Show images|||Mostrar recursos
+Show links|||Mostrar conexiones
+Show colours|||Mostrar identidad
+Show voice memos|||Mostrar ideas en voz alta
+Show drawing tools|||Mostrar creatividad
+Pause|||Pausar
+Play|||Reproducir
+Replace|||Reemplazar
+Audio|||Audio
+Transcribing audio|||Preparando transcripción
+Move the launch to Thursday and send the final deck round by Monday morning.|||Prepará la clase del jueves y compartí los materiales con tu equipo.
+Spaced repetition|||Aprender con propósito
+The gap between reviews|||Una buena experiencia educativa
+matters more than the hours|||empieza con una idea clara
+Regular text|||Texto normal
+Center|||Centrar
+What the studies agree on|||El punto de partida
+Retrieval beats re-reading, even when it feels harder|||Definí qué querés que tus estudiantes aprendan
+The optimal gap widens after each successful recall|||Conectá los contenidos con situaciones cercanas
+Spacing related items apart cuts interference|||Elegí recursos que acompañen tus objetivos
+Testing yourself is itself the study|||Revisá el proceso y ajustá la propuesta
+Every scheduler still guesses at the timing.|||La tecnología acompaña tu criterio docente.
+quietly underpins most of them.|||Tu experiencia le da sentido al resultado.
+What I am changing|||De la idea a la práctica
+Shorter sessions, wider spacing, and no more re-reading the same page the night before. The deck gets rebuilt around the gaps rather than the totals.|||Organizá la secuencia de tu clase, prepará materiales y reservá tiempo para acompañar a tus estudiantes. Las herramientas ayudan a convertir esa intención en una propuesta concreta.
+I will check it again in four weeks and keep only what actually stuck.|||Revisá siempre cada material antes de llevarlo al aula.
+Add a link|||Añadir un enlace
+An Infinite Space for Ideas|||Tecnología para transformar
+A canvas where notes, images, and links connect into finished ideas.|||Un ecosistema de soluciones educativas, herramientas creativas y agentes de IA.
+Orange light bleeding through a halftone screen. Saving this one for the poster palette.|||Una nueva forma de preparar tus ideas. Guardá tus materiales y elegí cómo compartirlos.
+AI agent|||Agentes con Relay
+Canvas to page|||De la idea al material
+Share|||Compartir
+What did we agree on yesterday?|||¿Qué vamos a preparar para la clase?
+Read Launch sync|||Revisar propuesta de clase
+Three things: ship the beta on the\n14th, cut onboarding to three steps,\nand keep feedback on one board.|||Tres pasos: definir los objetivos,\npreparar las actividades y revisar\nlos materiales antes de compartir.
+Turn those into cards for the team|||Organizá los próximos pasos del equipo
+Thinking|||Preparando
+Building layout…|||Organizando los materiales…
+Wrote 3 cards into a layout|||La propuesta ya tiene una estructura
+Reading Room|||Espacio de trabajo
+Moodboard|||Recursos de clase
+Launch sync|||Propuesta de clase
+Added in canvas|||Material guardado
+Blank canvas freeze|||El primer paso de una buena clase
+Five of eight sat on an empty board before placing anything. Two asked where to start.|||Empezá con un objetivo de aprendizaje y elegí los recursos que mejor lo acompañen.
+Onboarding audit|||Preparación de la clase
+Round two · eight interviews|||Una guía para organizar tus ideas
+Findings|||Punto de partida
+Most of the friction sat in the first ten minutes, before anyone had made something they cared about. Once a board had three or four cards on it, people stopped asking what to do next.|||La planificación empieza con una pregunta: ¿qué queremos que nuestros estudiantes puedan comprender y hacer? A partir de esa intención, las herramientas ayudan a ordenar recursos, actividades y momentos de evaluación.
+Toolbar labels|||Recursos con propósito
+Icons alone did not carry the meaning. Three people hovered every tool before choosing one, and two never found the page view at all.|||Elegí materiales claros y accesibles. Una presentación, una hoja de trabajo o una actividad deben ayudar a comprender el contenido y acompañar la participación del grupo.
+Recommendations|||Próximos pasos
+Seed every new board with one starter card.|||Definí el objetivo de la clase.
+Label the toolbar on first run, then let the labels fade.|||Prepará materiales adecuados para tu grupo.
+Point to the page view once the first card is placed.|||Revisá la propuesta antes de compartirla.
+Next round|||Después de la clase
+Re-test with six designers in October, on the same three tasks, and compare the time it takes to place a first card.|||Observá qué funcionó, recuperá las preguntas de tus estudiantes y ajustá la siguiente experiencia de aprendizaje.
+Recordings and raw notes live on the research board.|||Conservá tus ideas y materiales para seguir construyendo.
+Client brief|||Material de clase
+Link copied|||Enlace copiado
+Skills|||Habilidades
+Research|||Investigación
+Soft skills|||Comunicación
+Writing|||Escritura
+Strategy|||Estrategia
+UI|||Diseño
+UX|||Experiencia
+Harbour Coffee|||EducaLabCR · Sigma
+Rebrand plan|||Plan de clase
+Studio admin|||Ejemplo ilustrativo
+Ideas|||Ideas
+Reading list|||Biblioteca
+Photo walks|||Presentaciones
+Lisbon in May|||Mi organización
+New space|||Nuevo proyecto
+Settings|||Configuración
+Brief|||Objetivo de aprendizaje
+Take Harbour from café cups to supermarket shelves by spring. Same anchor, same cream, a louder bag.|||Prepará una experiencia de aprendizaje que conecte objetivos, actividades y materiales. Tu criterio docente guía cada decisión.
+Brand guidelines 2019|||Guía de herramientas
+Questions for Mara|||Preguntas para la clase
+Do the café cups change too? Who signs off the copy on the back of the bag?|||¿Qué conocimientos previos tiene el grupo? ¿Cómo vamos a acompañar las distintas formas de aprender?
+Brand voice|||Nuestra propuesta
+Cups|||Materiales
+Same cream cup, with the anchor a touch smaller so it clears the sleeve.|||Recursos claros, accesibles y conectados con los objetivos de la clase.
+Kraft paper finishes, compared|||Ideas para trabajar en equipo
+Packaging direction|||Secuencia de actividades
+Kraft bags with one spot colour per roast. The harbour drawing goes on every size, not just the 1kg.|||Organizá el inicio, el desarrollo y el cierre de la clase. Elegí actividades y recursos que acompañen la participación del grupo.
+Ashford Press quote|||Guía de actividades
+One loud colour and type as big as the bag will take. This is the shelf presence we want for Harbour.|||Una idea clara, materiales bien organizados y una propuesta que invite a aprender. Así empieza una gran clase.
+Client call, 2 Oct|||Notas de planificación
+Keep the anchor, lose the navy. We sit next to the big brands now, so the bags have to read from across an aisle. And the harbour on every size, please.|||Partí del objetivo de aprendizaje. Elegí actividades cercanas al grupo y revisá siempre los materiales antes de compartirlos.
+Café menu copy|||Documento de clase
+Bag sizes|||Formatos de trabajo
+250g, 500g and 1kg, all with the same front. Only the roast colour changes.|||Una presentación, una hoja de trabajo y una actividad para acompañar distintos momentos de la clase.
+Wholesale prices|||Opciones de acompañamiento
+This week|||Esta semana
+Send bag dielines to Ashford|||Preparar los materiales
+Book the shelf photo shoot|||Organizar las actividades
+Test the slab on the 250g bag|||Revisar la propuesta
+Roast names|||Ideas para la clase
+Harbour House for the blend, Low Tide for the decaf, and Spike for the espresso.|||Un objetivo para empezar, una actividad para explorar y un espacio para compartir lo aprendido.
+Colour|||Identidad visual
+Cream ground, harbour red for the house blend, sea green for decaf. No navy anywhere.|||Colores claros, jerarquías simples y recursos visuales que acompañen el contenido.
+Compostable coffee bags, compared|||Recursos para aprender
+Type|||Tipografía
+A rounded grotesk for the wordmark and a slab for the prices on the café boards.|||Elegí textos legibles y una estructura que facilite encontrar la información importante.
+Shelf space contract|||Acuerdos del equipo
+Signage|||Comunicación
+Repaint the old sign rather than replace it. Gold leaf on the anchor only.|||Compartí las instrucciones con claridad y acompañá cada etapa del proceso.
+Roaster contacts|||Equipo de trabajo
+Photography|||Recursos visuales
+Window light only, kraft on oak, nothing glossy. Shoot the bags in threes.|||Usá imágenes y ejemplos que ayuden a comprender y conecten con el contexto del grupo.
+Decaf|||Actividad de cierre
+A sea green bag with the same layout, and Low Tide set in the slab.|||Recuperá lo trabajado e invitá al grupo a expresar qué aprendió y qué preguntas conserva.
+Dieline, 250g bag|||Hoja de trabajo
+Competitors|||Referencias
+Most bags on the shelf are black or brown. Cream with one red band will stand out without shouting.|||Reuní materiales confiables y elegí los que aportan valor a la experiencia de aprendizaje.
+Print run costs|||Recursos necesarios
+Budget|||Organización
+Print and photography inside £14k. Signage comes out of next year.|||Definí qué materiales necesitás y preparalos según los tiempos y posibilidades de tu grupo.
+Supermarket listing terms|||Acuerdos de trabajo
+Launch|||Puesta en práctica
+Soft launch in the café first, then the three Bristol shops in March.|||Probá la propuesta, escuchá al grupo y ajustá los siguientes pasos.
+How supermarkets plan a coffee aisle|||Cómo organizar una clase
+Harbour Coffee has roasted on Spike Island since 2014. Mara wants the bags on supermarket shelves by spring without losing what the regulars already know them by.|||EducaLabCR reúne tecnología, formación y herramientas para acompañar la enseñanza y el trabajo de los equipos. Esta vista ilustra cómo conectar ideas y materiales en una propuesta de clase.
+What we are keeping|||Lo que guía la propuesta
+The anchor mark, redrawn with a heavier line so it holds at 16 px|||Un objetivo de aprendizaje claro y significativo
+Cream as the ground colour on bags, cups and boards|||Materiales adecuados al contexto del grupo
+Hand-lettered prices on the café menu|||Tu criterio profesional en cada decisión
+Next two weeks|||Organizá los próximos pasos
+Packaging first, then the café menu. Final artwork goes to the printer on the 18th for the October run. Ashford Press need the bag dielines by the 4th to hold that slot, so the 250g bag is finished first and the other two sizes follow from it. The shelf shoot is booked for the 11th, with all three roasts on oak in window light. Mara signs off the colours on the 14th, once she has seen the bags on a real shelf, and the café boards are repainted the week after, when the slab is final.|||Definí los objetivos y seleccioná los contenidos. Después, organizá las actividades y prepará los materiales que necesitás. Sigma acompaña la gestión docente y la creación de recursos; Luma permite dar forma visual a tus ideas. Revisá cada resultado, realizá los ajustes necesarios y compartí la propuesta con tu equipo antes de llevarla al aula.
+Roasts|||El ecosistema
+Harbour House, the house blend, in harbour red|||Sigma: gestión y recursos educativos
+Low Tide, the decaf, in sea green|||Luma: presentaciones con inteligencia artificial
+Spike, the espresso, in bistre brown|||Relay: agentes de IA y comunicación
+Shelf test|||Revisión de materiales
+Mock up all three bags at full size and stand them on a real shelf next to the big brands. If the anchor does not read from six metres away, it gets bigger before anything goes to print.|||Antes de compartir, revisá la claridad de las instrucciones, la legibilidad del contenido y la relación entre las actividades y los objetivos. Ajustá lo que haga falta para tu grupo.
+Timeline|||Próximos pasos
+Bag dielines to Ashford Press by the 4th|||Definir los objetivos de aprendizaje
+Shelf photo shoot on the 11th|||Preparar actividades y materiales
+Final artwork to the printer on the 18th|||Revisar la propuesta con el equipo
+New bags in the café from the first week of November|||Compartir y poner en práctica
+Open questions|||Preguntas abiertas
+Do the café cups change in the same run, or wait for the next order? Who writes the copy on the back of the bag, and should it tell the Spike Island story?|||¿Qué recursos necesita el grupo? ¿Cómo vamos a ofrecer distintas formas de participar? ¿Qué evidencias nos ayudarán a acompañar el aprendizaje?
+Mara would also like a version of the wordmark for the van and the market stall, which can wait until the bags are signed off.|||Cada contexto necesita decisiones propias. La tecnología acompaña el trabajo; la mirada docente le da sentido.
+Three things came up on the call:|||Tres ideas para preparar la clase:
+Keep the anchor, but lose the navy.|||Partir de un objetivo claro.
+The bags sit next to the big brands, so they need to read from across an aisle.|||Elegir actividades y materiales adecuados para el grupo.
+Put the harbour drawing on every size, not only the 1kg.|||Revisar la propuesta antes de compartirla.
+The last one is already in your packaging note on this page.|||Podés seguir desarrollando estas ideas en tu documento de clase.
+What did Mara ask for on the call?|||¿Qué necesitamos para preparar la clase?
+Reading Client call, 2 Oct|||Revisando notas de planificación
+Read Client call, 2 Oct|||Notas de planificación revisadas
+Branding brief|||Guía para tu clase
+Mood Board|||Biblioteca de recursos
+Website Brief|||Propuesta educativa
+Causal Planning|||Ecosistema EducaLabCR
+To-do:|||Por hacer:
+Create first canvas|||Explorar las herramientas
+Ready for something new|||Preparar una nueva idea
+Sign up to Causal|||Conocer EducaLabCR
+Pearl Bush|||Crema
+Mojo|||Azul
+Viridian Green|||Verde
+Bistre|||Grafito
+Tan|||Arena
+Terracotta|||Coral
+Wheat|||Marfil
+Bamboo|||Naranja
+Gray Chateau|||Gris
+Wine Berry|||Ciruela
+Salmon|||Salmón
+Text|||Texto
+Copy|||Copiar
+Copied|||Copiado
+Copy failed. Try again|||No se pudo copiar. Intentá de nuevo.
+Open in Causal|||Conocer EducaLabCR
+Open on desktop|||Abrir en computadora
+Open menu|||Abrir menú
+Close menu|||Cerrar menú
+Close sidebar|||Cerrar panel
+Open assistant|||Abrir asistente
+Start typing...|||Escribí tu idea…
+Add to this message|||Añadir al mensaje
+Stop generation|||Detener
+Bold|||Negrita
+Italic|||Cursiva
+Underline|||Subrayado
+Strikethrough|||Tachado
+Bullet list|||Lista con viñetas
+Numbered list|||Lista numerada
+To-do list|||Lista de tareas
+Highlight|||Resaltar
+Caption|||Descripción
+Video brief|||Sigma · Registro docente
+App plan|||Relay · Agentes de IA
+Video script|||Luma · Presentaciones
+Website plan|||Sigma · Planeamiento
+Mood board|||Sigma · Recursos
+Competitor research|||Relay · Atención
+Brand research|||Luma · Ideas visuales
+Story board|||Luma · Contenido
+App flow|||Relay · Conversaciones
+Colour study|||Luma · Diseño
+Weekly planner|||Sigma · Asistencia
+Design Tools|||Sigma Lápiz
+Portfolio|||Sigma · Evaluación
+Automation Loop|||Relay · Automatización
+Software guide|||Formación con IA
+New Client|||Relay · Equipos
+Bookshelf|||Biblioteca educativa
+Video Scenes|||Luma · Diapositivas
+Video Moodboard|||Luma · Recursos
+Weekday Plan|||Organización docente
+Kanban Board|||Planificación de proyectos
+Goal Pyramid|||Objetivos de aprendizaje
+Priorities Grid|||Prioridades del equipo
+App Infrastructure|||Soluciones para instituciones
+Maya|||Sigma
+Motion Designer|||Gestión docente
+Ota|||Sigma Lápiz
+Product Designer|||Recursos educativos
+Isabel|||Luma
+Content Creator|||Presentaciones
+Abel|||Relay
+Creative Director|||Agentes de IA
+Alex|||Formación
+Akriti|||Equipos
+Brand Designer|||Innovación aplicada
+I started using it to plan a new concept animation I am working on, I love the UI it is so simple and clean. I also love the AI feature honestly everything about this is soo good|||Organizá la gestión académica, prepará planeamientos y reuní las herramientas que acompañan tu trabajo docente.
+What I liked most is that everything lives in one place: images, links, docs, Figma files, call recordings - all the stuff I usually have scattered across different apps.|||Dale forma a hojas de trabajo y materiales de clase. Elegí el contenido, revisá la propuesta y adaptala a tu grupo.
+I've been using Causal to organize my brand identity and map out the content strategy for my upcoming song release. It's been really helpful for visualizing my workflow and keeping my ideas connected in one place.|||Transformá un tema, un texto o un apunte en una presentación. Ordená el contenido y dale un estilo visual propio.
+Since I started using it, Causal is slowly becoming my dump yard for ideas. The whole experience is top-notch, especially the AI integration on the canvas. It makes getting ideas out of my head and into something tangible feel ridiculously easy.|||Creá agentes de inteligencia artificial para acompañar conversaciones, organizar la atención y conectar el trabajo de tu equipo.
+Really love the idea behind Causal. Super clean UI and a great way to keep all your inspiration and ideas in one place. Definitely something I'd use as a designer|||Cursos, talleres y capacitaciones para integrar inteligencia artificial y nuevas herramientas a tu práctica profesional.
+It's been great for brand research. I did a breakdown of a project i am working on, and having images, notes and links side by side felt much lighter than doing it in figma. I can also see it working for sharing early direction and moodboards with clients before any design exists, and maybe even as a brand hub I hand over at the end of a project.|||Cada proyecto empieza por una necesidad concreta. Conversá con EducaLabCR para explorar herramientas, formación y posibilidades para tu organización.
+What is this app for?|||¿Qué es EducaLabCR?
+How is this different from Notion or Obsidian?|||¿Qué puedo hacer con Sigma?
+Is there a free plan?|||¿Cómo puedo conocer las opciones disponibles?
+Can I share my canvas with someone?|||¿Para qué sirve Luma?
+How do I stop a canvas turning into a mess?|||¿Qué es Relay?
+What file types can I upload, and can I open them without downloading?|||¿EducaLabCR también ofrece formación?
+Can I write proper documents, or is it just short notes?|||¿Puedo usar estas herramientas para preparar materiales?
+Is there a desktop app, and does it work on my phone?|||¿Cómo elijo la solución para mi institución?
+Do I have to start from a blank canvas?|||¿Cómo me pongo en contacto?
+A plan for launch day.|||Más tiempo para enseñar.
+Map screens from inspiration, plan the roadmap, and track the progress. Built with agentic collaboration in mind.|||Gestión docente, planeamiento y materiales educativos con el acompañamiento de la tecnología.
+From idea to launch.|||De la planificación al aula.
+Design the flow|||Organizá tu propuesta
+Map out the flow of a new feature from inspiration.|||Definí los objetivos y prepará las actividades de tu clase.
+Track progress|||Acompañá el proceso
+Create a Kanban board to monitor progress.|||Conectá la organización y el seguimiento de tus tareas.
+Hand off to agent|||Explorá nuevas herramientas
+Point your agent to your board with Causal MCP.|||La inteligencia artificial acompaña tus ideas y tu criterio profesional.
+Land the direction the first time.|||Innovación para tu institución.
+Shape your references into a brief your client approves from a shared canvas.|||Tecnología, formación y acompañamiento para avanzar desde las necesidades de tu comunidad educativa.
+Inspiration to Execution.|||De las ideas a la acción.
+Store inspiration|||Reuní tus recursos
+Drop cool images, videos, and colours.|||Conectá materiales, objetivos y experiencias de aprendizaje.
+Convert to brief|||Dale forma a la propuesta
+Turn the canvas into a page.|||Organizá las ideas en materiales claros para tu equipo.
+Share the canvas|||Trabajá en equipo
+Send clients a link to the canvas.|||Compartí la propuesta y construí los siguientes pasos.
+Plan quality videos, faster.|||Ideas que conectan equipos.
+Streamline planning the content of each shot and store all your plans in one place.|||Explorá agentes de IA, herramientas creativas y formación para acompañar tu trabajo.
+A plan for shoot day|||Un proceso con propósito.
+Project space|||Organizá el proyecto
+Everything kept in one place.|||Dale un lugar a las ideas y los próximos pasos.
+Map every scene|||Prepará el contenido
+Pull everything together.|||Conectá la información con lo que querés comunicar.
+Script with AI|||Creá con inteligencia artificial
+Turn your scenes into a script.|||Explorá nuevas formas de preparar y compartir tus ideas.
+Pending|||Por hacer
+In progress|||En proceso
+Completed|||Completado
+High|||Alta
+Low|||Baja
+Urgent|||Urgente
+UI kit|||Identidad visual
+Habits|||Hábitos
+Priorities|||Prioridades
+Schedule|||Programar
+Do first|||Hacer primero
+Drop|||Descartar
+Delegate|||Delegar
+Plan next quarter|||Planificar el período
+Tidy inbox|||Ordenar los mensajes
+Finish pitch deck|||Revisar la presentación
+Book flights|||Preparar la reunión
+Building our website with Claude|||Enseñar con inteligencia artificial
+Introducing Canvas AI|||Ideas que se convierten en materiales
+Product design|||Tecnología con propósito educativo
+Guide|||Guía
+Company|||EducaLabCR
+Related articles.|||Seguí explorando.
+ min||| min de lectura
+Drag to move block|||Arrastrá para mover el bloque
+Formatting|||Formato
+Curious Blue|||Azul claro
+Bean|||Café
+Hampton|||Crema
+Dingley|||Verde oliva
+Chalet Green|||Verde bosque
+Done.|||Listo.
+Turn my Launch board|||Organizá estas ideas
+into a working app|||para una nueva clase
+ChatGPT is working|||Asistente preparando
+Send the moodboard by Friday|||Compartir los materiales
+Pick two type pairings|||Elegir los recursos visuales
+Shoot the espresso on green|||Preparar la presentación
+Book the review call|||Coordinar con el equipo
+Read|||Leer
+Move|||Moverse
+Journal|||Escribir
+Meditate|||Reflexionar
+Add|||Añadir
+Assistant is |||El asistente está 
+ready|||listo
+working on the canvas|||organizando la propuesta
+Canvases|||Proyectos
+Saved|||Guardado
+Image 1|||Recurso 1
+Image 2|||Recurso 2
+Image 3|||Recurso 3
+Image 4|||Recurso 4
+Image 5|||Recurso 5
+Image 6|||Recurso 6
+Image 7|||Recurso 7
+Image 8|||Recurso 8
+Coffee beans on green|||Vista de herramientas de EducaLabCR
+Kraft bag mockup|||Materiales de EducaLabCR
+Espresso on a saucer|||Recursos educativos
+Bags on the shelf|||Herramientas de trabajo
+Bean sketches|||Materiales para el aula
+Beans in window light|||Recursos de clase
+Iced coffee outside|||Productos de EducaLabCR
+Wordmark reference|||Referencias del ecosistema
+Breadcrumb|||Ruta de navegación
+Spaces|||Proyectos
+Shared|||Compartido
+Assistant|||Asistente
+Send|||Enviar
+Expand|||Ampliar
+
+A founder's plan: two app screens joined by an arrow|||Una propuesta educativa conectada paso a paso.
+ChatGPT reading a Causal board and building an app from it|||Un asistente organiza los objetivos y los recursos de una propuesta educativa.
+A brush, a highlighter and an eraser at work on a hand sketch of the Causal mark on a white sheet|||Herramientas de dibujo en una demostración creativa.
+A deep red coffee bag printed Based Shake|||Vista de una herramienta del ecosistema EducaLabCR.
+Save to Causal|||Guardar recurso
+A MacBook Air open on a pale blue ledge against a curved wall|||Vista ilustrativa de Luma y sus herramientas de presentación.
+A silver MacBook Air from above, open on a pale blue desk|||Vista de un producto del ecosistema EducaLabCR.
+Ai in Design 2026 poster: the title in a black block over melted salmon and lilac shapes|||Vista de materiales y herramientas educativas de Sigma.
+Salmon and lilac melted together, with the role tags cropped in at the edges. Keep the title block solid black so it still reads as a thumbnail.|||Organizá el contenido, revisá los materiales y adaptá la propuesta al contexto de tu grupo.
+Primary|||Navegación principal
+About|||Nuestra propuesta
+Menu|||Menú
+text editor|||editor de texto
+images|||imágenes
+links|||enlaces
+colours|||colores
+voice memos|||notas de voz
+drawing tools|||herramientas de dibujo
+Set up MCP|||Explorar el ecosistema
+Building our website with Claude|||Enseñar con inteligencia artificial
+Introducing Canvas AI|||Ideas que se convierten en materiales
+Product design|||Tecnología con propósito educativo

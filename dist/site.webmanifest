@@ -1,0 +1,21 @@
+{
+  "name": "EducaLab CR",
+  "short_name": "EducaLab",
+  "description": "Conocimiento, Innovación y Éxito",
+  "icons": [
+    {
+      "src": "/favicon.svg?v=original",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png?v=original",
+      "type": "image/png",
+      "sizes": "180x180"
+    }
+  ],
+  "theme_color": "#87bf58",
+  "background_color": "#f9f9f9",
+  "display": "browser"
+}
