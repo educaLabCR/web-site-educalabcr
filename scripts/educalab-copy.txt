@@ -17,9 +17,9 @@ Chrome extension|||Formación profesional
 Start for free|||Explorar soluciones
 Get started|||Conocer más
 AI canvas workspace|||Tecnología que transforma
-for your ideas.|||tu forma de aprender.
+for your ideas.|||su forma de aprender.
 Your inspiration, notes, and plans are scattered across tools.|||Herramientas, inteligencia artificial y formación para avanzar.
-Causal brings everything into one place.|||Descubrí el ecosistema de EducaLabCR.
+Causal brings everything into one place.|||Conozca el ecosistema de EducaLabCR.
 The most ambitious ideas require space to proliferate.|||Las mejores ideas merecen herramientas para hacerlas realidad.
 Give your plan the space it deserves.|||Conectá conocimiento, creatividad y tecnología.
 Save ideas of all forms.|||Herramientas para ir más allá.
@@ -38,7 +38,7 @@ Productivity|||Posibilidades
 FAQ|||Preguntas frecuentes
 Information|||Información
 Report a bug|||Soporte
-Feedback|||Escribinos
+Feedback|||Escríbanos
 Terms|||Información del sitio
 Privacy Policy|||Privacidad
 Contact|||Contacto
@@ -55,8 +55,8 @@ TikTok|||Formación
 Substack|||Soporte
 Medium|||Contacto
 Plan the app before you build it.\nFlows, specs and the launch on one canvas.|||Prepará tus clases con nuevas herramientas.\nGestión, recursos e inteligencia artificial.
-Turn references into a brief.\nImages, colours and notes side by side.|||Impulsá la transformación de tu institución.\nTecnología y formación con propósito.
-Map every shoot, scene by scene.\nVoice memos, shot lists and scripts.|||Conectá las ideas de tu equipo.\nAgentes, automatización y comunicación.
+Turn references into a brief.\nImages, colours and notes side by side.|||Impulse la transformación de su institución.\nTecnología y formación con propósito.
+Map every shoot, scene by scene.\nVoice memos, shot lists and scripts.|||Conecte el trabajo de su equipo.\nAgentes, tareas y comunicación.
 Text editor|||Planificación
 Turn inspiration into written briefs|||Dale estructura a tus ideas y tus clases.
 Images|||Recursos
@@ -201,7 +201,7 @@ The anchor mark, redrawn with a heavier line so it holds at 16 px|||Un objetivo 
 Cream as the ground colour on bags, cups and boards|||Materiales adecuados al contexto del grupo
 Hand-lettered prices on the café menu|||Tu criterio profesional en cada decisión
 Next two weeks|||Organizá los próximos pasos
-Packaging first, then the café menu. Final artwork goes to the printer on the 18th for the October run. Ashford Press need the bag dielines by the 4th to hold that slot, so the 250g bag is finished first and the other two sizes follow from it. The shelf shoot is booked for the 11th, with all three roasts on oak in window light. Mara signs off the colours on the 14th, once she has seen the bags on a real shelf, and the café boards are repainted the week after, when the slab is final.|||Definí los objetivos y seleccioná los contenidos. Después, organizá las actividades y prepará los materiales que necesitás. Sigma acompaña la gestión docente y la creación de recursos; Luma permite dar forma visual a tus ideas. Revisá cada resultado, realizá los ajustes necesarios y compartí la propuesta con tu equipo antes de llevarla al aula.
+Packaging first, then the café menu. Final artwork goes to the printer on the 18th for the October run. Ashford Press need the bag dielines by the 4th to hold that slot, so the 250g bag is finished first and the other two sizes follow from it. The shelf shoot is booked for the 11th, with all three roasts on oak in window light. Mara signs off the colours on the 14th, once she has seen the bags on a real shelf, and the café boards are repainted the week after, when the slab is final.|||Defina los objetivos y seleccione los contenidos. Después, organice las actividades y prepare los materiales. Sigma Docente acompaña la gestión; LUMA, las presentaciones; Relay, los agentes. TEKU, la práctica de idoneidad docente y taskOs completan el ecosistema. Revise cada resultado antes de llevarlo al aula.
 Roasts|||El ecosistema
 Harbour House, the house blend, in harbour red|||Sigma: gestión y recursos educativos
 Low Tide, the decaf, in sea green|||Luma: presentaciones con inteligencia artificial
@@ -307,14 +307,14 @@ Since I started using it, Causal is slowly becoming my dump yard for ideas. The 
 Really love the idea behind Causal. Super clean UI and a great way to keep all your inspiration and ideas in one place. Definitely something I'd use as a designer|||Cursos, talleres y capacitaciones para integrar inteligencia artificial y nuevas herramientas a tu práctica profesional.
 It's been great for brand research. I did a breakdown of a project i am working on, and having images, notes and links side by side felt much lighter than doing it in figma. I can also see it working for sharing early direction and moodboards with clients before any design exists, and maybe even as a brand hub I hand over at the end of a project.|||Cada proyecto empieza por una necesidad concreta. Conversá con EducaLabCR para explorar herramientas, formación y posibilidades para tu organización.
 What is this app for?|||¿Qué es EducaLabCR?
-How is this different from Notion or Obsidian?|||¿Qué puedo hacer con Sigma?
-Is there a free plan?|||¿Cómo puedo conocer las opciones disponibles?
-Can I share my canvas with someone?|||¿Para qué sirve Luma?
+How is this different from Notion or Obsidian?|||¿Qué es Sigma Docente?
+Is there a free plan?|||¿Qué es TEKU?
+Can I share my canvas with someone?|||¿Qué es LUMA?
 How do I stop a canvas turning into a mess?|||¿Qué es Relay?
-What file types can I upload, and can I open them without downloading?|||¿EducaLabCR también ofrece formación?
-Can I write proper documents, or is it just short notes?|||¿Puedo usar estas herramientas para preparar materiales?
-Is there a desktop app, and does it work on my phone?|||¿Cómo elijo la solución para mi institución?
-Do I have to start from a blank canvas?|||¿Cómo me pongo en contacto?
+What file types can I upload, and can I open them without downloading?|||¿Qué es la práctica de idoneidad docente?
+Can I write proper documents, or is it just short notes?|||¿Qué es taskOs?
+Is there a desktop app, and does it work on my phone?|||¿Hay formación para docentes?
+Do I have to start from a blank canvas?|||¿Cómo me comunico con EducaLabCR?
 A plan for launch day.|||Más tiempo para enseñar.
 Map screens from inspiration, plan the roadmap, and track the progress. Built with agentic collaboration in mind.|||Gestión docente, planeamiento y materiales educativos con el acompañamiento de la tecnología.
 From idea to launch.|||De la planificación al aula.

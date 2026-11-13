@@ -1,1 +1,1 @@
-import {page,meta} from "./educalab-pages.js";export default page("guias");export {meta};
+import {page,metaFor} from "./educalab-pages.js";export default page("guias");export function meta(a){return metaFor("guias",undefined,a);}
