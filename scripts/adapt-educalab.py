@@ -23,14 +23,14 @@ def original(path):
 faq_source = original('assets/seo-CEuDsIHT.js')
 faq_answers = [
  'EducaLabCR integra tecnología, formación e innovación aplicada en Costa Rica. El ecosistema reúne Sigma Docente, TEKU, LUMA, Relay, la práctica de idoneidad docente y taskOs.',
- 'Sigma Docente es la plataforma de registro y gestión educativa. Incluye asistencia, reportes de notas, Lápiz para generar materiales con inteligencia artificial y Ágora. Hay una demostración pública.',
- 'TEKU es un piloto para investigar y escribir una tesis o un proyecto, con tutor socrático y editor con fuentes. El piloto está en línea.',
- 'LUMA genera presentaciones en español, con modo Docente IA y 18 familias visuales. No hay una dirección pública verificada: el acceso se consulta con el equipo. Este sitio no publica planes ni cupos de uso.',
- 'Relay es la plataforma de agentes conversacionales, con base de conocimiento y atención en tiempo real. El panel está en línea. Relay Ventas, el agente de WhatsApp, es un producto distinto y se consulta aparte.',
- 'Es un simulador de las pruebas de idoneidad docente del MEP, con tutoría de inteligencia artificial. El acceso se consulta con el equipo porque no hay una dirección pública verificada.',
+ 'Sigma Docente es el sistema de gestión docente para instituciones, con registro académico, planeamiento con inteligencia artificial, Ágora y reportes. La demostración publica cuatro planes en colones.',
+ 'TEKU es un piloto para construir una investigación paso a paso, con conversación, decisiones y fuentes. El piloto está en línea.',
+ 'LUMA crea presentaciones y las convierte en clases guiadas con voz, subtítulos y cursor sincronizado. La demostración está en línea. Este sitio no publica planes ni cupos de uso.',
+ 'Relay es el constructor de agentes de inteligencia artificial. La entrada pública está en línea: se diseñan agentes, se conectan canales y la atención queda en un solo panel.',
+ 'Es el simulador de las pruebas de idoneidad docente del MEP, con casos pedagógicos y tutoría de inteligencia artificial. El simulador está en línea.',
  'taskOs es el gestor de tareas para una institución o para varias organizaciones. La aplicación está en línea.',
- 'Sí. Hay una oferta formativa para docentes. El catálogo publicado aquí sale del sitio anterior y falta confirmar vigencia e inscripción.',
- 'Por WhatsApp, al +506 7014 7031. Es el canal publicado. No hay un correo público confirmado en este sitio.'
+ 'Sí. EducaLabCR prepara cursos y capacitaciones a la medida para docentes e instituciones. No hay un catálogo cerrado: se conversa el programa.',
+ 'Por WhatsApp, al +506 7014 7031, o al correo info@educalabcr.com.'
 ]
 for match, answer in zip(re.finditer(r'answer:`((?:\\.|[^`])*)`',faq_source),faq_answers):
     COPY[match.group(1)] = answer
@@ -152,8 +152,8 @@ def process_js(path, content):
         content=content.replace('d=`/contacto`','d=`/productos`')
         content=content.replace('new URL(e),i=!1','new URL(e,window.location.origin),i=!1')
     if path.name.startswith('home-D0Nz'):
-        content='import{homeCards as EL_HOME}from"./educalab-catalog.js";'+content
-        home_fn='function Jt(){let e=(0,F.useRef)(null),i=r();return A(e),(0,I.jsxs)(`section`,{ref:e,id:`templates`,className:`bg-canvas px-6 py-section`,children:[(0,I.jsx)(N,{children:(0,I.jsxs)(`div`,{className:`flex items-baseline justify-between gap-6`,children:[(0,I.jsx)(`h2`,{"data-reveal":`0`,className:`text-h2 text-balance text-ink`,children:`Conozca los productos.`}),(0,I.jsx)(`a`,{href:`/productos`,onClick:a(`/productos`,i),"data-reveal":`0`,className:`shrink-0 rounded-sm text-body text-muted transition-ui hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink`,children:`Ver todos`})]})}),(0,I.jsx)(`div`,{"data-reveal":`1`,className:`home-product-grid mt-section-gap`,children:EL_HOME.map(function(p){return (0,I.jsxs)(`a`,{href:p.href,className:`home-product-card`,children:[(0,I.jsx)(`span`,{className:`home-product-status`,children:p.status}),(0,I.jsx)(`strong`,{children:p.name}),(0,I.jsx)(`p`,{children:p.text})]},p.href);})})]})}'
+        content='import{homeCards as EL_HOME,relayHome as EL_RELAY}from"./educalab-catalog.js";'+content
+        home_fn='function Jt(){let e=(0,F.useRef)(null),i=r();return A(e),(0,I.jsxs)(`section`,{ref:e,id:`templates`,className:`bg-canvas px-6 py-section`,children:[(0,I.jsx)(N,{children:(0,I.jsxs)(`div`,{className:`flex items-baseline justify-between gap-6`,children:[(0,I.jsx)(`h2`,{"data-reveal":`0`,className:`text-h2 text-balance text-ink`,children:`Conozca los productos.`}),(0,I.jsx)(`a`,{href:`/productos`,onClick:a(`/productos`,i),"data-reveal":`0`,className:`shrink-0 rounded-sm text-body text-muted transition-ui hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink`,children:`Ver todos`})]})}),(0,I.jsxs)(`a`,{href:EL_RELAY.href,"data-reveal":`1`,className:`home-relay`,children:[(0,I.jsx)(`img`,{src:EL_RELAY.image,alt:EL_RELAY.imageAlt}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`span`,{className:`home-product-status`,children:EL_RELAY.status}),(0,I.jsx)(`strong`,{children:EL_RELAY.title}),(0,I.jsx)(`p`,{children:EL_RELAY.text}),(0,I.jsx)(`span`,{className:`home-relay-cta`,children:EL_RELAY.cta})]})]}),(0,I.jsx)(`div`,{"data-reveal":`1`,className:`home-product-grid`,children:EL_HOME.map(function(p){return (0,I.jsxs)(`a`,{href:p.href,className:`home-product-card`,children:[(0,I.jsx)(`span`,{className:`home-product-status`,children:p.status}),(0,I.jsx)(`strong`,{children:p.name}),(0,I.jsx)(`p`,{children:p.text})]},p.href);})})]})}'
         content,count=re.subn(r'function Jt\(\)\{.*?\}function Yt\(', home_fn+'function Yt(', content, count=1, flags=re.S)
         if count!=1:
             raise SystemExit('No se encontró la sección de productos de la portada.')
@@ -288,12 +288,12 @@ def publish_product_routes():
     """Static shells and router entries for contact, training and product pages."""
     shell=(DIST/'docentes'/'index.html').read_text()
     pages=[
-      ('contacto','Contacto · EducaLabCR','Escriba a EducaLabCR por WhatsApp +506 7014 7031.','Contacto','Escríbanos por WhatsApp.','El canal publicado es WhatsApp +506 7014 7031.','contacto',None),
-      ('oferta-asincronica','Oferta formativa · EducaLabCR','Cursos y talleres para docentes. El catálogo está pendiente de confirmación.','Formación docente','Oferta formativa para docentes.','Catálogo del sitio anterior, con lo que falta confirmar marcado.','oferta',None),
+      ('contacto','Contacto · EducaLabCR','Escriba a info@educalabcr.com o por WhatsApp al +506 7014 7031.','Contacto','Escríbanos.','Correo info@educalabcr.com y WhatsApp +506 7014 7031.','contacto',None),
+      ('oferta-asincronica','Formación a la medida · EducaLabCR','Cursos y capacitaciones a la medida para docentes e instituciones.','Formación docente','Cursos a la medida.','EducaLabCR prepara la capacitación según el docente o la institución.','oferta',None),
       ('teku','TEKU · EducaLabCR','Piloto de investigación y tesis, con tutor socrático.','Piloto público','TEKU','Espacio de investigación y escritura. El piloto está en línea.','producto','teku'),
-      ('luma','LUMA · EducaLabCR','Presentaciones con inteligencia artificial. El acceso se consulta.','Por consulta','LUMA','Generador de presentaciones en español, sin dirección pública verificada.','producto','luma'),
+      ('luma','LUMA · EducaLabCR','Presentaciones que se convierten en clases guiadas.','Demostración pública','LUMA','Cree presentaciones y conviértalas en clases guiadas con voz, subtítulos y cursor sincronizado.','producto','luma'),
       ('relay','Relay · EducaLabCR','Agentes conversacionales. El panel está en línea.','Panel en línea','Relay','Agentes, conocimiento y conversación en tiempo real.','producto','relay'),
-      ('idoneidad','Práctica de idoneidad docente · EducaLabCR','Simulador de las pruebas de idoneidad del MEP, con tutoría de IA.','Por consulta','Práctica de idoneidad docente','Simulador de las pruebas del MEP. El acceso se consulta.','producto','idoneidad'),
+      ('idoneidad','Práctica de idoneidad docente · EducaLabCR','Simulador de las pruebas de idoneidad docente del MEP.','Simulador en línea','Práctica de idoneidad docente','Casos pedagógicos y tutoría de inteligencia artificial.','producto','idoneidad'),
       ('taskos','taskOs · EducaLabCR','Gestor de tareas para una o varias organizaciones.','Aplicación en línea','taskOs','Gestión de tareas. La aplicación está en línea.','producto','taskos'),
     ]
     manifest_path=DIST/'assets'/'manifest-c95204a1.js'
@@ -331,6 +331,11 @@ def publish_product_routes():
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(html)
     manifest_path.write_text(prefix+'='+json.dumps(data,ensure_ascii=False,separators=(',',':'))+(';' if semicolon else ''))
+    brand=DIST/'brand'
+    brand.mkdir(exist_ok=True)
+    for src in (ROOT/'design'/'relay').glob('*'):
+        if src.suffix.lower() in {'.webp','.png','.svg'}:
+            (brand/src.name).write_bytes(src.read_bytes())
     sigma=DIST/'sigma'/'index.html'
     sigma.parent.mkdir(parents=True, exist_ok=True)
     sigma.write_text('<!doctype html><html lang="es"><meta charset="utf-8"><title>Sigma Docente · EducaLabCR</title><meta http-equiv="refresh" content="0;url=/docentes"><link rel="canonical" href="'+SITE+'/docentes/"><p><a href="/docentes">Continuar a Sigma Docente</a></p></html>')

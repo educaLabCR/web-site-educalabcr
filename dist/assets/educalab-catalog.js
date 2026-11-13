@@ -1,5 +1,6 @@
-/** Datos públicos del ecosistema. Solo enlaces comprobados el 13 de noviembre de 2026. */
+/** Datos públicos. Enlaces comprobados el 13 de noviembre de 2026. Precios de Sigma copiados de la demostración. */
 export const whatsapp={href:'https://wa.me/50670147031',label:'WhatsApp +506 7014 7031'};
+export const email={href:'mailto:info@educalabcr.com',label:'info@educalabcr.com'};
 
 export const sigma={
  slug:'docentes',
@@ -10,37 +11,39 @@ export const sigma={
  kicker:'Registro y gestión educativa',
  status:'Demostración pública',
  image:'/brand/sigma.webp',
- home:'Gestión académica y administrativa para instituciones y docentes, con una demostración pública.',
- summary:'Plataforma de registro y gestión educativa de EducaLabCR. La demostración pública se presenta como sistema de gestión docente para instituciones, con apoyo de inteligencia artificial.',
- audience:'Docentes, instituciones educativas y equipos de administración.',
+ home:'Gestión académica y administrativa para instituciones y docentes del MEP, con planes publicados.',
+ summary:'Sistema de gestión docente. La demostración pública lo presenta así: ayuda a las instituciones a mejorar la gestión académica y administrativa con soluciones impulsadas por inteligencia artificial. Está descrita como plataforma de IA para docentes del MEP.',
+ audience:'Docentes e instituciones educativas.',
  points:[
-  ['Registro del aula','Asistencia, incluido el ajuste manual, y reportes de notas por evaluación.'],
-  ['Lápiz','Generaciones con inteligencia artificial para preparar materiales. El criterio docente revisa cada resultado antes de usarlo.'],
-  ['Ágora','La versión publicada de la plataforma incluye Ágora.'],
-  ['Instituciones','Cada institución trabaja por separado. Existe un LMS asociado que puede importar estudiantes desde Sigma; no tiene una dirección pública verificada.']
+  ['Registro académico','Estudiantes, grupos, materias y períodos. Asistencia diaria por materia, evaluaciones con el motor REAC 2026, rúbricas, concentrados de notas y boletas de conducta y comunicados.'],
+  ['Planeamiento con IA','Planeamientos alineados al MEP en ocho módulos: Matemáticas, Ciencias, Español, Cívica, ETP, Primaria, General y Correlacionado. Exportación a PDF y Word, adecuaciones curriculares, indicadores, rúbricas y repertorio.'],
+  ['Ágora','Sesiones interactivas organizadas en secciones. Cada sesión es una presentación con diapositivas: se edita, se comparte con un código de audiencia, se presenta y puede resumir las respuestas. En la oferta, Ágora interactiva entra desde Sigma Creador y, en Sigma Máster, llega hasta 50 participantes.'],
+  ['Reportes','Rendimiento por sección, estudiante y período. Actas, concentrados, alertas tempranas y exportación a PDF y Excel.']
  ],
  modules:[
-  {id:'registrar',name:'Registrar',title:'El registro del aula, en un solo lugar.',text:'Reúna la operación docente que ya forma parte de la versión publicada.',items:[['Asistencia','Registro de asistencia, con ajuste manual.'],['Notas','Reportes de notas por evaluación.'],['Institución','La plataforma separa el trabajo de cada institución.']]},
-  {id:'lapiz',name:'Lápiz',title:'Materiales con inteligencia artificial.',text:'Lápiz genera propuestas para acompañar la preparación. La revisión sigue en manos de quien da la clase.',items:[['Generaciones','Preparación de materiales con inteligencia artificial.'],['Criterio docente','Revise, ajuste y decida qué llega al grupo.'],['Alcance publicado','En este sitio no se describen funciones que todavía están en revisión.']]},
-  {id:'agora',name:'Ágora',title:'Ágora forma parte de Sigma.',text:'El nombre de versión de la plataforma incluye Ágora. Falta confirmar el texto público de este módulo.',items:[['En la plataforma','Ágora está en la versión publicada de Sigma.'],['Descripción','TODO: confirmar con el equipo qué debe decir esta página sobre Ágora.'],['LMS asociado','Sigma puede conectarse con un LMS que importa estudiantes. Ese LMS no tiene dirección pública verificada.']]}
+  {id:'registrar',name:'Registrar',title:'La gestión académica, en un solo lugar.',text:'Así lo describe la demostración pública, y coincide con los módulos del repositorio: estudiantes, grupos, materias, asistencia, evaluaciones y reportes.',items:[['Registro','Estudiantes, grupos, materias y períodos académicos.'],['Asistencia y evaluación','Asistencia diaria por materia, evaluaciones con motor REAC 2026, rúbricas y concentrados.'],['Comunicación','Boletas de conducta y comunicados.']]},
+  {id:'planear',name:'Planear',title:'Planeamiento didáctico con inteligencia artificial.',text:'La demostración publica ocho módulos de planeamiento alineados al MEP.',items:[['Ocho módulos','Matemáticas, Ciencias, Español, Cívica, ETP, Primaria, General y Correlacionado.'],['Para el aula','Adecuaciones curriculares, indicadores, rúbricas integradas y repertorio de planeamientos.'],['Entrega','Exportación a PDF y Word.']]},
+  {id:'agora',name:'Ágora',title:'Sesiones interactivas.',text:'En el repositorio, Ágora es el módulo de clases interactivas. La oferta pública lo nombra Ágora interactiva.',items:[['Secciones y sesiones','Las sesiones se agrupan en secciones. Una sesión nueva se llama «Nueva sesión interactiva» y puede quedar en borrador o lista para presentar.'],['Presentar y compartir','Se edita, se presenta, se comparte con un código de audiencia y puede resumir o reiniciar las respuestas.'],['En los planes','Incluida desde Sigma Creador. En Sigma Máster, hasta 50 participantes.']]}
  ],
  tools:[
-  ['01','Asistencia','Lleve la asistencia del grupo y ajuste el registro cuando haga falta.'],
-  ['02','Reportes de notas','Consulte reportes de notas por evaluación.'],
-  ['03','Lápiz','Genere materiales con inteligencia artificial y revíselos antes de usarlos.'],
-  ['04','Ágora','Módulo incluido en la plataforma. Su descripción pública está pendiente de confirmación.'],
-  ['05','LMS asociado','Un LMS puede importar estudiantes desde Sigma. No hay un enlace público verificado.'],
-  ['06','Demostración','La demostración oficial está en línea para conocer el sistema.']
+  ['01','Registro MEP','Estudiantes, grupos, materias, asistencia, evaluaciones REAC 2026 y reportes.'],
+  ['02','Planeamiento con IA','Ocho módulos alineados al MEP, con exportación a PDF y Word.'],
+  ['03','Ágora','Sesiones interactivas por secciones, con código de audiencia.'],
+  ['04','Pruebas escritas con IA','Exámenes con tipos de pregunta variados, tabla de especificaciones y exportación a PDF. Así lo describe la demostración.'],
+  ['05','Créditos Sigma','La oferta publica 75, 100 o 200 créditos al mes, según el plan.'],
+  ['06','Planes','Cuatro planes con precio publicado en colones, mensuales y anuales.']
+ ],
+ plans:[
+  {name:'Sigma Esencial',badge:'',text:'Orden básico del aula. Registro académico, estudiantes, grupos, materias, asistencia y evaluaciones.',credits:'',monthly:'₡1 000/mes',annual:'₡10 000/año',items:['Registro educativo completo','Estudiantes, grupos y materias','Asistencia y evaluaciones','Reportes básicos'],cta:'Contratar · ₡1 000'},
+  {name:'Sigma Creador',badge:'',text:'Herramientas creativas sin registro académico. Recursos visuales, gamificación y dinamismo.',credits:'Créditos Sigma · 75 al mes',monthly:'₡4 000/mes',annual:'₡32 000/año',items:['Sigma Presentaciones','Mapas mentales','Ágora interactiva'],cta:'Contratar · ₡4 000'},
+  {name:'Sigma Inteligente',badge:'Recomendado',text:'IA para el trabajo diario. Todo lo esencial más Créditos Sigma para crear materiales y recursos.',credits:'Créditos Sigma · 100 al mes',monthly:'₡5 000/mes',annual:'₡40 000/año',items:['Todo lo de Esencial','Planeamiento IA (8 módulos)','Créditos Sigma para todas las herramientas IA','Presentaciones, juegos y mapas incluidos','Alertas tempranas'],cta:'Contratar · ₡5 000'},
+  {name:'Sigma Máster',badge:'',text:'Máxima capacidad de creación con una asignación superior de Créditos Sigma.',credits:'Créditos Sigma · 200 al mes',monthly:'₡6 000/mes',annual:'₡55 000/año',items:['Todo lo de Inteligente','Créditos Sigma para todas las herramientas IA','Presentaciones, juegos y mapas incluidos','Ágora hasta 50 participantes','Soporte prioritario'],cta:'Contratar · ₡6 000'}
  ],
  links:[
   {href:'https://demo.educalabcr.tech/',label:'Abrir la demostración',external:true},
   {href:'/contacto',label:'Escribir al equipo'}
  ],
- todos:[
-  'Confirmar la descripción pública de Ágora.',
-  'Confirmar si deben volver a esta página las herramientas del manual anterior (hojas de Lápiz, Arcade, presentaciones, Geo, Clara, mediación inclusiva y auditor MEP). Esta versión solo conserva lo documentado como publicado en noviembre de 2026.',
-  'Confirmar si la sección de precios de la demostración es una oferta vigente. Este sitio no publica precios ni planes.'
- ]
+ todos:[]
 };
 
 export const teku={
@@ -49,16 +52,16 @@ export const teku={
  name:'TEKU',
  mark:'TE',
  color:'#1d4e89',
- kicker:'Investigación y tesis',
+ kicker:'Investigación',
  status:'Piloto público',
  image:null,
- home:'Piloto para iniciar un proyecto o una tesis, con tutor socrático y editor con fuentes.',
- summary:'Espacio de investigación y escritura de tesis o proyectos, con tutor socrático y editor con fuentes. El sitio publicado se titula «TEKU · Tu espacio de investigación». Es un piloto.',
- audience:'Investigadores y estudiantes que elaboran un proyecto o una tesis.',
+ home:'Piloto para construir una investigación doctoral paso a paso, con conversación, decisiones y fuentes.',
+ summary:'El sitio publicado se titula «TEKU · Tu espacio de investigación» y se describe como un espacio para construir la investigación doctoral paso a paso, con conversación, decisiones y fuentes. El repositorio lo presenta como piloto, con tutor socrático y editor con fuentes.',
+ audience:'Quien elabora una investigación, un proyecto o una tesis.',
  points:[
-  ['Inicio del proyecto','Abre un espacio para ordenar el trabajo de investigación.'],
-  ['Tutor socrático','Acompaña con preguntas, no con un texto cerrado para copiar.'],
-  ['Editor con fuentes','Escribe el documento y mantiene las fuentes a la vista.']
+  ['Paso a paso','La entrada pública habla de construir la investigación con conversación, decisiones y fuentes.'],
+  ['Tutor socrático','El repositorio describe un tutor que acompaña con preguntas.'],
+  ['Editor con fuentes','El documento y las fuentes se trabajan en el mismo espacio.']
  ],
  links:[{href:'https://teku.educalabcr.tech/',label:'Abrir el piloto de TEKU',external:true}],
  todos:[]
@@ -70,20 +73,19 @@ export const luma={
  name:'LUMA',
  mark:'LU',
  color:'#6356a5',
- kicker:'Presentaciones con inteligencia artificial',
- status:'Por consulta',
+ kicker:'Presentaciones que explican',
+ status:'Demostración pública',
  image:'/brand/luma.webp',
- home:'Presentaciones en español, con modo docente y 18 familias visuales. Sin dirección pública verificada.',
- summary:'Generador de presentaciones con interfaz en español. Incluye el modo Docente IA, un docente conversacional, y 18 familias visuales. La versión publicada también incorpora animaciones automáticas.',
+ home:'Cree presentaciones y conviértalas en clases guiadas con voz, subtítulos y cursor sincronizado.',
+ summary:'La demostración pública se titula «Luma · Presentaciones que explican». Su descripción dice: cree presentaciones y conviértalas en clases guiadas con voz, subtítulos y cursor sincronizado.',
  audience:'Docentes y otras personas que preparan presentaciones educativas.',
  points:[
-  ['Presentaciones','Ordena un tema o un texto en una presentación que después se puede revisar.'],
-  ['Docente IA','Modo de docente conversacional para acompañar la preparación.'],
-  ['Familias visuales','18 familias visuales documentadas para variar la composición.'],
-  ['Sin planes publicados','Este sitio no publica cupos ni planes de uso. Esa propuesta todavía no forma parte de la versión publicada.']
+  ['Presentaciones','La demostración parte de crear la presentación.'],
+  ['Clase guiada','La misma presentación puede convertirse en una clase con voz, subtítulos y cursor sincronizado.'],
+  ['Sin planes en este sitio','Los cupos Free, Plus y Pro no están en la versión publicada del repositorio. Esta página no los ofrece.']
  ],
- links:[{href:'/contacto',label:'Consultar LUMA'}],
- todos:['Confirmar la dirección pública de LUMA cuando exista. No se encontró un dominio desplegado en la documentación revisada.']
+ links:[{href:'https://luma-luma-3susod-d48721-76-13-234-106.sslip.io/',label:'Abrir la demostración de LUMA',external:true}],
+ todos:[]
 };
 
 export const relay={
@@ -92,22 +94,33 @@ export const relay={
  name:'Relay',
  mark:'RE',
  color:'#2067b0',
- kicker:'Agentes conversacionales',
+ kicker:'Agentes de inteligencia artificial',
  status:'Panel en línea',
- image:'/brand/relay.webp',
- home:'Agentes para atender conversaciones. El panel responde; Relay Ventas se consulta aparte.',
- summary:'Plataforma de agentes conversacionales para operar la atención de una organización: agentes, base de conocimiento y conversación en tiempo real. El panel que respondió en la verificación se describe como un lugar para gestionar conversaciones con clientes desde distintos canales.',
- audience:'Organizaciones que atienden conversaciones o ventas con agentes.',
+ image:'/brand/relay-entrada.webp',
+ home:'Con Relay, todo se maneja mejor. Agentes para atender, ofrecer y acompañar desde un solo panel.',
+ summary:'Constructor de agentes de inteligencia artificial. La entrada pública dice: «Con Relay, todo se maneja mejor». Sirve para crear agentes, conectar canales y organizar la atención de una empresa desde un solo lugar.',
+ audience:'Organizaciones e instituciones que atienden conversaciones, consultas o ventas.',
  points:[
-  ['Agentes','Configure agentes con una base de conocimiento.'],
-  ['Tiempo real','Las conversaciones se atienden en tiempo real.'],
-  ['Relay Ventas','Producto distinto: agente de ventas por WhatsApp, con campañas, citas y traspaso a una persona. No tiene una dirección pública verificada.']
+  ['Agentes','Cada agente tiene nombre, personalidad, instrucciones y un proveedor de inteligencia artificial. Puede responder con la información del negocio.'],
+  ['Conocimiento','La base se arma con documentos y páginas web, y se procesa en segundo plano.'],
+  ['Canales','Widget de chat para un sitio, conversaciones en tiempo real y WhatsApp mediante Evolution API, con vinculación por código QR cuando esa integración está configurada.'],
+  ['Personas al mando','La derivación a un agente humano queda en el equipo. Los cobros y el seguimiento de las ventas los registra una persona autorizada.']
  ],
  links:[
   {href:'https://relay.educalabagentes.tech/',label:'Abrir el panel de Relay',external:true},
-  {href:'/contacto',label:'Consultar Relay Ventas'}
+  {href:'/contacto',label:'Escribir al equipo'}
  ],
- todos:['Confirmar si el panel enlazado debe ser la entrada pública. El 13 de noviembre de 2026 respondió con el título «Relay - Configuración» y la marca noindex. Otra dirección documentada en el README no resolvió y no se enlaza.']
+ todos:[]
+};
+
+export const relayHome={
+ href:'/relay',
+ image:'/brand/relay-entrada.webp',
+ imageAlt:'Entrada pública de Relay, con la frase Con Relay, todo se maneja mejor',
+ status:'Panel en línea',
+ title:'Con Relay, todo se maneja mejor.',
+ text:'Agentes de inteligencia artificial para atender, ofrecer y acompañar. Diseñe, conecte y automatice desde un solo panel.',
+ cta:'Conocer Relay'
 };
 
 export const idoneidad={
@@ -116,18 +129,19 @@ export const idoneidad={
  name:'Práctica de idoneidad docente',
  mark:'ID',
  color:'#0f6b5c',
- kicker:'Simulador de pruebas del MEP',
- status:'Por consulta',
+ kicker:'Simulador del MEP',
+ status:'Simulador en línea',
  image:null,
- home:'Simulador de las pruebas de idoneidad docente del MEP, con tutoría de inteligencia artificial.',
- summary:'Simulador de las pruebas de idoneidad docente del Ministerio de Educación Pública, con tutoría de inteligencia artificial, para quien se prepara para esas pruebas.',
+ home:'Simulador de las pruebas de idoneidad docente del MEP, con casos pedagógicos y tutoría de inteligencia artificial.',
+ summary:'El sitio publicado se titula «EducaLab - Simulador de Idoneidad Docente MEP». Se describe como simulador de las pruebas de idoneidad docente del MEP de Costa Rica, con casos pedagógicos y tutoría de inteligencia artificial. La entrada pide iniciar sesión y ofrece crear una cuenta.',
  audience:'Docentes que se preparan para las pruebas de idoneidad del MEP.',
  points:[
-  ['Simulación','Practique el formato de las pruebas de idoneidad.'],
-  ['Tutoría','La preparación incluye tutoría con inteligencia artificial.']
+  ['Simulación','Práctica de las pruebas de idoneidad docente del MEP.'],
+  ['Casos y tutoría','La descripción pública habla de casos pedagógicos y de tutoría de inteligencia artificial.'],
+  ['Acceso','La entrada pública es un inicio de sesión. También ofrece registrarse.']
  ],
- links:[{href:'/contacto',label:'Consultar acceso'}],
- todos:['Confirmar la dirección pública. La indicada en el repositorio no resolvió el 13 de noviembre de 2026, así que esta página no la enlaza.']
+ links:[{href:'https://practicaidoneidaddocente.educalabcr.tech/',label:'Abrir el simulador',external:true}],
+ todos:[]
 };
 
 export const taskos={
@@ -139,60 +153,21 @@ export const taskos={
  kicker:'Gestión de tareas',
  status:'Aplicación en línea',
  image:null,
- home:'Gestor de tareas para una institución o para varias organizaciones. La aplicación respondió en línea.',
- summary:'Aplicación de gestión de tareas y organización. El sitio publicado se titula «TaskOS — Gestor de Tareas». Sirve para trabajar en una institución y para pertenecer a varias organizaciones.',
+ home:'Gestor de tareas para una institución o para varias. La aplicación está en línea.',
+ summary:'La aplicación publicada se titula «TaskOS — Gestor de Tareas» y se describe como gestor de tareas con inteligencia artificial integrada. En el repositorio, aísla el trabajo por institución y permite pertenecer a varias organizaciones.',
  audience:'Personas y equipos que organizan el trabajo en una o varias instituciones.',
  points:[
-  ['Tareas','Organice el trabajo pendiente de la institución.'],
-  ['Organizaciones','Aísle la información por institución y conserve la pertenencia a varias organizaciones.']
+  ['Tareas','Organice el trabajo de la institución.'],
+  ['Organizaciones','La información queda aislada por institución y la pertenencia a varias organizaciones se conserva.']
  ],
  links:[{href:'https://taskos.educalabcr.tech/',label:'Abrir taskOs',external:true}],
- todos:['Confirmar que la aplicación enlazada es la entrada pública. No estaba en el README revisado el 12 de noviembre de 2026. El 13 de noviembre respondió con el título «TaskOS — Gestor de Tareas».']
+ todos:[]
 };
 
 export const products=[sigma,teku,luma,relay,idoneidad,taskos];
 export const homeCards=products.map(p=>({name:p.name,status:p.status,text:p.home,href:p.path}));
 
 export const oferta={
- source:'Catálogo tomado del contenido semilla de la página anterior (populate_oferta_asincronica.js, rama de respaldo). No se volvió a comprobar contra un catálogo en vivo.',
- todos:[
-  'Confirmar si este catálogo sigue vigente, las horas de cada curso y cuáles están abiertos a inscripción.',
-  'Confirmar precios, certificación y modalidad. Este sitio no publica precios porque no aparecen en el material de origen.',
-  'El curso C-005, Domina APA, figuraba como no disponible en ese contenido semilla.'
- ],
- categories:[
-  {name:'Herramientas digitales y tecnología',text:'Plataformas y recursos para el aula.',courses:[
-   ['C-001','Introducción a herramientas digitales para la educación','40 h','Google Classroom, Teams, Zoom y gestión educativa.'],
-   ['C-002','Creación de contenidos digitales para el aula','200 h','Presentaciones interactivas, videos y podcasts.'],
-   ['C-004','Uso de Nearpod como herramienta didáctica','40 h','Evaluación interactiva.'],
-   ['C-006','Seguridad en internet y ciudadanía digital para docentes','120 h','Prevención y buenas prácticas en la web.'],
-   ['C-008','Uso de Padlet e inteligencia artificial en el aula','40 h','Inteligencia artificial para un aprendizaje más ajustado al grupo.'],
-   ['C-015','Herramientas de aprendizaje colaborativo en línea','200 h','GSuite, Office 365 y OneDrive.'],
-   ['C-037','IA para la creación de material didáctico','40 h','Generación de recursos para la clase.'],
-   ['C-038','ChatGPT: de la teoría a la práctica','80 h','Uso de indicaciones para organizar el tiempo docente.']
-  ]},
-  {name:'Pedagogía y evaluación',text:'Estrategias de enseñanza y de evaluación.',courses:[
-   ['C-003','Metodología constructivista y conductista','40 h','Diferencias y aplicación en el aula.'],
-   ['C-007','Evaluación diagnóstica en el desarrollo escolar','120 h','Identificación de habilidades y de lo que hay que fortalecer.'],
-   ['C-012','Evaluación sumativa del trabajo cotidiano','120 h','Instrumentos para calificar el trabajo del día a día.'],
-   ['C-014','Construcción de pruebas escritas y tablas de especificaciones','120 h','Elaboración de ítems.']
-  ]},
-  {name:'Inclusión y neurociencia',text:'Diseño de apoyos y comprensión del aprendizaje.',courses:[
-   ['C-009','Diseño de planes educativos inclusivos','120 h','Adecuaciones curriculares.'],
-   ['C-010','Neurociencia aplicada','120 h','El aprendizaje desde la infancia hasta la adultez.'],
-   ['C-011','DUA: diseño universal para el aprendizaje','40 h','Estrategias para diversificar la clase.'],
-   ['C-016','Diversidad de talentos: inteligencias múltiples','80 h','Reconocimiento de distintos potenciales.'],
-   ['C-017','Neurodidáctica','40 h','Estrategias para un aprendizaje con sentido.']
-  ]},
-  {name:'Habilidades profesionales y bienestar',text:'Práctica profesional dentro y fuera del aula.',courses:[
-   ['C-005','Domina APA','40 h','En el contenido anterior figuraba como no disponible.'],
-   ['C-013','Estrategias para la salud mental en el entorno profesional','80 h','Manejo del estrés.'],
-   ['C-040','Comunicación asertiva en el entorno laboral','40 h','Conversaciones difíciles y conflictos.'],
-   ['C-041','Expresión oral en público','120 h','Oratoria para el trabajo docente.']
-  ]},
-  {name:'Preparación académica',text:'Razonamiento para pruebas y nuevas oportunidades.',courses:[
-   ['C-042','Lógica matemática para exámenes de admisión','80 h','Resolución de problemas.'],
-   ['C-043','Lógica verbal','40 h','Razonamiento verbal aplicado.']
-  ]}
- ]
+ title:'Cursos a la medida',
+ lead:'EducaLabCR prepara cursos y capacitaciones a la medida para docentes e instituciones. No hay un catálogo cerrado en este sitio: el programa se arma según lo que usted necesite.'
 };

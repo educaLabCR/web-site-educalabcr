@@ -33,8 +33,11 @@ for route in spanish:
 sigma=dist/'sigma'/'index.html'
 assert sigma.is_file() and 'url=/docentes' in sigma.read_text(),'sigma alias'
 catalog=(dist/'assets'/'educalab-catalog.js').read_text()
-for url in ['https://demo.educalabcr.tech/','https://teku.educalabcr.tech/','https://relay.educalabagentes.tech/','https://taskos.educalabcr.tech/','https://wa.me/50670147031']:
+for url in ['https://demo.educalabcr.tech/','https://teku.educalabcr.tech/','https://relay.educalabagentes.tech/','https://taskos.educalabcr.tech/','https://wa.me/50670147031','https://luma-luma-3susod-d48721-76-13-234-106.sslip.io/','https://practicaidoneidaddocente.educalabcr.tech/','info@educalabcr.com','₡1 000/mes','₡55 000/año']:
     assert url in catalog,url
+assert 'TODO' not in catalog
+assert 'brand-todo' not in (dist/'assets'/'educalab-pages.js').read_text()
+assert (dist/'brand'/'relay-entrada.webp').stat().st_size>1000
 for blocked in ['relay2.educalabagentes.tech','educalab.cr','github.io/Sigma-Model','DIRECTUS','traefik.me']:
     assert blocked not in catalog,blocked
 home=(dist/'assets'/'home-D0NzNBsQ.js').read_text()

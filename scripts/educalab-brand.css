@@ -127,5 +127,23 @@ footer>div[aria-hidden=true]>span{visibility:hidden}
 .brand-ecosystem-stage span:nth-child(4){color:#0f6b5c;animation-delay:-3s}
 .brand-ecosystem-stage span:nth-child(5){color:#8a4b2f;animation-delay:-4s}
 .brand-ecosystem-stage span:nth-child(6){color:#1d4e89;animation-delay:-2.5s}
-@media(max-width:900px){.home-product-grid{grid-template-columns:1fr 1fr}.brand-detail-actions{margin-top:0}}
-@media(max-width:700px){.home-product-grid{grid-template-columns:1fr}.brand-product-grid{grid-template-columns:1fr}}
+.home-relay{display:grid;grid-template-columns:minmax(200px,280px) 1fr;gap:28px;align-items:center;margin:28px 0 22px;padding:18px;border-radius:28px;background:#07111f;color:#f4f7fb;text-decoration:none}
+.home-relay img{width:100%;height:auto;max-height:360px;object-fit:cover;object-position:center top;border-radius:18px;display:block}
+.home-relay strong{display:block;font-size:clamp(28px,4vw,44px);letter-spacing:-.04em;line-height:1.05;margin:8px 0 12px}
+.home-relay p{margin:0;color:#d5deea;font-size:16px;line-height:1.55;max-width:46ch}
+.home-relay .home-product-status{color:#9fd7ff}
+.home-relay-cta{display:inline-block;margin-top:16px;font-weight:700}
+.sigma-plan-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:28px}
+.sigma-plan{border:1px solid #dce4de;border-radius:24px;padding:22px;background:#fff;display:flex;flex-direction:column}
+.sigma-plan-highlight{border-color:#144b3c}
+.sigma-plan h3{margin:0 0 8px;font-size:22px}
+.sigma-plan-price{font-size:28px;font-weight:700;letter-spacing:-.03em;margin:12px 0 0}
+.sigma-plan-annual,.sigma-plan-credits{color:#527363;margin:4px 0}
+.sigma-plan ul{margin:12px 0;padding-left:18px;color:#56645d}
+.sigma-plan-cta{font-weight:700;margin-top:auto}
+.sigma-plan-badge{display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:#144b3c;color:#fff;border-radius:99px;padding:4px 8px;margin-bottom:8px;width:max-content}
+.relay-figure{margin:0 auto 56px;max-width:920px}
+.relay-figure img{width:min(100%,520px);height:auto;border-radius:28px;display:block;margin:0 auto}
+.relay-figure figcaption{margin-top:12px;color:#56645d;font-size:14px;text-align:center}
+@media(max-width:900px){.home-product-grid{grid-template-columns:1fr 1fr}.brand-detail-actions{margin-top:0}.sigma-plan-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.home-product-grid,.home-relay,.sigma-plan-grid{grid-template-columns:1fr}.brand-product-grid{grid-template-columns:1fr}}
